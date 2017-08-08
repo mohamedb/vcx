@@ -25,14 +25,10 @@ interface IDialogExampleState {
 class DialogExample extends React.Component<{}, IDialogExampleState> {
     public state = { isOpen: false };
 
-
-   
-
-
     public render() {
         return (
-            <div style={{padding:'10%'}}>
-                 
+            <div style={{ padding: '10%' }}>
+
                 <Button onClick={this.toggleDialog} text="Show dialog" />
                 <Dialog
                     iconName="inbox"

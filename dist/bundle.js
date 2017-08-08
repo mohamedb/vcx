@@ -60,11 +60,21 @@
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 127);
+/******/ 	return __webpack_require__(__webpack_require__.s = 150);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(32);
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -251,16 +261,6 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(28);
 
 
 /***/ }),
@@ -451,6 +451,61 @@ function __asyncValues(o) {
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2016 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				classes.push(classNames.apply(null, arg));
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+			return classNames;
+		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -507,10 +562,10 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -526,7 +581,7 @@ module.exports = invariant;
 
 
 
-var emptyFunction = __webpack_require__(16);
+var emptyFunction = __webpack_require__(19);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -578,10 +633,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -593,7 +648,7 @@ module.exports = warning;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var intent_1 = __webpack_require__(104);
+var intent_1 = __webpack_require__(117);
 // modifiers
 exports.DARK = "pt-dark";
 exports.ACTIVE = "pt-active";
@@ -760,62 +815,80 @@ exports.intentClass = intentClass;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-  Copyright (c) 2016 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
+"use strict";
+/**
+ * @author Félix Girault <felix.girault@gmail.com>
+ * @license MIT
+ */
 
-(function () {
-	'use strict';
 
-	var hasOwn = {}.hasOwnProperty;
+var warning = __webpack_require__(5);
+var shallowEqual = __webpack_require__(52);
 
-	function classNames () {
-		var classes = [];
 
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
 
-			var argType = typeof arg;
+/**
+ * Tells if a component should update given it's next props
+ * and state.
+ *
+ * @param object nextProps Next props.
+ * @param object nextState Next state.
+ */
+function shouldComponentUpdate(nextProps, nextState) {
+  return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
+}
 
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg)) {
-				classes.push(classNames.apply(null, arg));
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
+/**
+ * Returns a text description of the component that can be
+ * used to identify it in error messages.
+ *
+ * @see https://github.com/facebook/react/blob/v15.4.0-rc.3/src/renderers/shared/stack/reconciler/ReactCompositeComponent.js#L1143
+ * @param {function} component The component.
+ * @return {string} The name of the component.
+ */
+function getComponentName(component) {
+  var constructor = component.prototype && component.prototype.constructor;
 
-		return classes.join(' ');
-	}
+  return (
+    component.displayName
+    || (constructor && constructor.displayName)
+    || component.name
+    || (constructor && constructor.name)
+    || 'a component'
+  );
+}
 
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = classNames;
-	} else if (true) {
-		// register as 'classnames', consistent with npm package name
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-			return classNames;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-		window.classNames = classNames;
-	}
-}());
+/**
+ * Makes the given component "pure".
+ *
+ * @param object component Component.
+ */
+function pureRenderDecorator(component) {
+  if (component.prototype.shouldComponentUpdate !== undefined) {
+    // We're not using the condition mecanism of warning()
+    // here to avoid useless calls to getComponentName().
+    warning(
+      false,
+      'Cannot decorate `%s` with @pureRenderDecorator, '
+      + 'because it already implements `shouldComponentUpdate().',
+      getComponentName(component)
+    )
+  }
+
+  component.prototype.shouldComponentUpdate = shouldComponentUpdate;
+  return component;
+}
+
+
+
+module.exports = pureRenderDecorator;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -859,7 +932,7 @@ function reactProdInvariant(code) {
 module.exports = reactProdInvariant;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -871,7 +944,7 @@ module.exports = reactProdInvariant;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = __webpack_require__(14);
+var errors_1 = __webpack_require__(16);
 /** Returns whether `process.env.NODE_ENV` exists and equals `env`. */
 function isNodeEnv(env) {
     return typeof process !== "undefined" && process.env && process.env.NODE_ENV === env;
@@ -960,10 +1033,10 @@ exports.throttleEvent = throttleEvent;
 
 //# sourceMappingURL=utils.js.map
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1060,79 +1133,6 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @author Félix Girault <felix.girault@gmail.com>
- * @license MIT
- */
-
-
-var warning = __webpack_require__(4);
-var shallowEqual = __webpack_require__(46);
-
-
-
-/**
- * Tells if a component should update given it's next props
- * and state.
- *
- * @param object nextProps Next props.
- * @param object nextState Next state.
- */
-function shouldComponentUpdate(nextProps, nextState) {
-  return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
-}
-
-/**
- * Returns a text description of the component that can be
- * used to identify it in error messages.
- *
- * @see https://github.com/facebook/react/blob/v15.4.0-rc.3/src/renderers/shared/stack/reconciler/ReactCompositeComponent.js#L1143
- * @param {function} component The component.
- * @return {string} The name of the component.
- */
-function getComponentName(component) {
-  var constructor = component.prototype && component.prototype.constructor;
-
-  return (
-    component.displayName
-    || (constructor && constructor.displayName)
-    || component.name
-    || (constructor && constructor.name)
-    || 'a component'
-  );
-}
-
-/**
- * Makes the given component "pure".
- *
- * @param object component Component.
- */
-function pureRenderDecorator(component) {
-  if (component.prototype.shouldComponentUpdate !== undefined) {
-    // We're not using the condition mecanism of warning()
-    // here to avoid useless calls to getComponentName().
-    warning(
-      false,
-      'Cannot decorate `%s` with @pureRenderDecorator, '
-      + 'because it already implements `shouldComponentUpdate().',
-      getComponentName(component)
-    )
-  }
-
-  component.prototype.shouldComponentUpdate = shouldComponentUpdate;
-  return component;
-}
-
-
-
-module.exports = pureRenderDecorator;
-
-
-/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1149,12 +1149,12 @@ module.exports = pureRenderDecorator;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var DOMProperty = __webpack_require__(23);
-var ReactDOMComponentFlags = __webpack_require__(79);
+var DOMProperty = __webpack_require__(27);
+var ReactDOMComponentFlags = __webpack_require__(92);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
 var Flags = ReactDOMComponentFlags;
@@ -1331,10 +1331,128 @@ var ReactDOMComponentTree = {
 };
 
 module.exports = ReactDOMComponentTree;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TABLE_BODY = "bp-table-body";
+exports.TABLE_BODY_SCROLL_CLIENT = "bp-table-body-scroll-client";
+exports.TABLE_BODY_VIRTUAL_CLIENT = "bp-table-body-virtual-client";
+exports.TABLE_BOTTOM_CONTAINER = "bp-table-bottom-container";
+exports.TABLE_CELL = "bp-table-cell";
+exports.TABLE_CELL_CLIENT = "bp-table-cell-client";
+exports.TABLE_CELL_GHOST = "bp-table-cell-ghost";
+exports.TABLE_CELL_INTERACTIVE = "bp-table-cell-interactive";
+exports.TABLE_CELL_LEDGER_EVEN = "bp-table-cell-ledger-even";
+exports.TABLE_CELL_LEDGER_ODD = "bp-table-cell-ledger-odd";
+exports.TABLE_COLUMN_HEADER_TR = "bp-table-column-header-tr";
+exports.TABLE_COLUMN_HEADERS = "bp-table-column-headers";
+exports.TABLE_COLUMN_NAME = "bp-table-column-name";
+exports.TABLE_COLUMN_NAME_TEXT = "bp-table-column-name-text";
+exports.TABLE_CONTAINER = "bp-table-container";
+exports.TABLE_DRAGGABLE = "bp-table-draggable";
+exports.TABLE_DRAGGING = "bp-table-dragging";
+exports.TABLE_EDITABLE_NAME = "bp-table-editable-name";
+exports.TABLE_FOCUS_REGION = "bp-table-focus-region";
+exports.TABLE_HEADER = "bp-table-header";
+exports.TABLE_HEADER_ACTIVE = "bp-table-header-active";
+exports.TABLE_HEADER_CONTENT = "bp-table-header-content";
+exports.TABLE_HEADER_REORDERABLE = "bp-table-header-reorderable";
+exports.TABLE_HEADER_SELECTED = "bp-table-header-selected";
+exports.TABLE_HORIZONTAL_CELL_DIVIDER = "bp-table-horizontal-cell-divider";
+exports.TABLE_HORIZONTAL_GUIDE = "bp-table-horizontal-guide";
+exports.TABLE_INTERACTION_BAR = "bp-table-interaction-bar";
+exports.TABLE_LAST_IN_COLUMN = "bp-table-last-in-column";
+exports.TABLE_LAST_IN_ROW = "bp-table-last-in-row";
+exports.TABLE_MENU = "bp-table-menu";
+exports.TABLE_NO_HORIZONTAL_SCROLL = "bp-table-no-horizontal-scroll";
+exports.TABLE_NO_LAYOUT = "bp-table-no-layout";
+exports.TABLE_NO_VERTICAL_SCROLL = "bp-table-no-vertical-scroll";
+exports.TABLE_NO_WRAP_TEXT = "bp-table-no-wrap-text";
+exports.TABLE_NULL = "bp-table-null";
+exports.TABLE_OVERLAY = "bp-table-overlay";
+exports.TABLE_OVERLAY_LAYER = "bp-table-overlay-layer";
+exports.TABLE_POPOVER_WHITESPACE_NORMAL = "bp-table-popover-whitespace-normal";
+exports.TABLE_POPOVER_WHITESPACE_PRE = "bp-table-popover-whitespace-pre";
+exports.TABLE_REGION = "bp-table-region";
+exports.TABLE_REORDER_HANDLE = "bp-table-reorder-handle";
+exports.TABLE_REORDER_HANDLE_TARGET = "bp-table-reorder-handle-target";
+exports.TABLE_REORDERING = "bp-table-reordering";
+exports.TABLE_RESIZE_GUIDES = "bp-table-resize-guides";
+exports.TABLE_RESIZE_HANDLE = "bp-table-resize-handle";
+exports.TABLE_RESIZE_HANDLE_TARGET = "bp-table-resize-handle-target";
+exports.TABLE_RESIZE_HORIZONTAL = "bp-table-resize-horizontal";
+exports.TABLE_RESIZE_SENSOR = "bp-table-resize-sensor";
+exports.TABLE_RESIZE_SENSOR_EXPAND = "bp-table-resize-sensor-expand";
+exports.TABLE_RESIZE_SENSOR_SHRINK = "bp-table-resize-sensor-shrink";
+exports.TABLE_RESIZE_VERTICAL = "bp-table-resize-vertical";
+exports.TABLE_ROUNDED_LAYOUT = "bp-table-rounded-layout";
+exports.TABLE_ROW_HEADERS = "bp-table-row-headers";
+exports.TABLE_ROW_NAME = "bp-table-row-name";
+exports.TABLE_ROW_NAME_TEXT = "bp-table-row-name-text";
+exports.TABLE_SELECTION_ENABLED = "bp-table-selection-enabled";
+exports.TABLE_SELECTION_REGION = "bp-table-selection-region";
+exports.TABLE_TH_MENU = "bp-table-th-menu";
+exports.TABLE_TH_MENU_CONTAINER = "bp-table-th-menu-container";
+exports.TABLE_TH_MENU_CONTAINER_BACKGROUND = "bp-table-th-menu-container-background";
+exports.TABLE_TH_MENU_OPEN = "bp-table-th-menu-open";
+exports.TABLE_THEAD = "bp-table-thead";
+exports.TABLE_TOP_CONTAINER = "bp-table-top-container";
+exports.TABLE_TRUNCATED_CELL = "bp-table-truncated-cell";
+exports.TABLE_TRUNCATED_FORMAT = "bp-table-truncated-format";
+exports.TABLE_TRUNCATED_FORMAT_TEXT = "bp-table-truncated-format-text";
+exports.TABLE_TRUNCATED_POPOVER = "bp-table-truncated-popover";
+exports.TABLE_TRUNCATED_POPOVER_TARGET = "bp-table-truncated-popover-target";
+exports.TABLE_TRUNCATED_TEXT = "bp-table-truncated-text";
+exports.TABLE_TRUNCATED_VALUE = "bp-table-truncated-value";
+exports.TABLE_VERTICAL_GUIDE = "bp-table-vertical-guide";
+/** Common code for row and column index class generator functions, since they're essentially the same. */
+function dimensionIndexClass(classPrefix, index) {
+    if (index == null) {
+        return undefined;
+    }
+    if (typeof index === "number") {
+        return "" + classPrefix + index;
+    }
+    return index.indexOf(classPrefix) === 0 ? index : "" + classPrefix + index;
+}
+/** Return CSS class for table colummn index, whether or not 'bp-table-col-' prefix is included. */
+function columnIndexClass(columnIndex) {
+    return dimensionIndexClass("bp-table-col-", columnIndex);
+}
+exports.columnIndexClass = columnIndexClass;
+/** Return CSS class for table row index, whether or not 'bp-table-row-' prefix is included. */
+function rowIndexClass(rowIndex) {
+    return dimensionIndexClass("bp-table-row-", rowIndex);
+}
+exports.rowIndexClass = rowIndexClass;
+/** Return CSS class for table colummn cell index, whether or not 'bp-table-cell-col-' prefix is included. */
+function columnCellIndexClass(columnIndex) {
+    return dimensionIndexClass("bp-table-cell-col-", columnIndex);
+}
+exports.columnCellIndexClass = columnCellIndexClass;
+/** Return CSS class for table row cell index, whether or not 'bp-table-cell-row-' prefix is included. */
+function rowCellIndexClass(rowIndex) {
+    return dimensionIndexClass("bp-table-cell-row-", rowIndex);
+}
+exports.rowCellIndexClass = rowCellIndexClass;
+
+//# sourceMappingURL=classes.js.map
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1375,7 +1493,34 @@ var ExecutionEnvironment = {
 module.exports = ExecutionEnvironment;
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(251));
+__export(__webpack_require__(31));
+__export(__webpack_require__(119));
+var iconClasses_1 = __webpack_require__(298);
+exports.IconClasses = iconClasses_1.IconClasses;
+var iconStrings_1 = __webpack_require__(299);
+exports.IconContents = iconStrings_1.IconContents;
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1388,8 +1533,8 @@ module.exports = ExecutionEnvironment;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var utils_1 = __webpack_require__(8);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(9);
 /**
  * An abstract component that Blueprint components can extend
  * in order to add some common functionality like runtime props validation.
@@ -1456,7 +1601,7 @@ exports.AbstractComponent = AbstractComponent;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1512,7 +1657,487 @@ exports.DIALOG_WARN_NO_HEADER_CLOSE_BUTTON = ns + " <Dialog> isCloseButtonShown 
 
 
 /***/ }),
-/* 15 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+;
+// tslint:enable
+/**
+ * Since Firefox doesn't provide a computed "font" property, we manually
+ * construct it using the ordered properties that can be specifed in CSS.
+ */
+var CSS_FONT_PROPERTIES = [
+    "font-style",
+    "font-variant",
+    "font-weight",
+    "font-size",
+    "font-family",
+];
+exports.Utils = {
+    /**
+     * Returns a clone of the ReactElement with a className that includes the
+     * element's original className and any other classes passed in with variadic
+     * arguments matching the `classNames` api.
+     */
+    assignClasses: function (elem) {
+        var extendedClasses = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            extendedClasses[_i - 1] = arguments[_i];
+        }
+        var classes = classNames.apply(void 0, [elem.props.className].concat(extendedClasses));
+        return React.cloneElement(elem, { className: classes });
+    },
+    /**
+     * Invokes the callback `n` times, collecting the results in an array, which
+     * is the return value. Similar to _.times
+     */
+    times: function (n, callback) {
+        var result = Array(n);
+        for (var index = 0; index < n; index++) {
+            result[index] = callback(index);
+        }
+        return result;
+    },
+    /**
+     * Takes an array of numbers, returns an array of numbers of the same length in which each
+     * value is the sum of current and previous values in the input array.
+     *
+     * Example input:  [10, 20, 50]
+     *         output: [10, 30, 80]
+     */
+    accumulate: function (numbers) {
+        var result = [];
+        var sum = 0;
+        for (var _i = 0, numbers_1 = numbers; _i < numbers_1.length; _i++) {
+            var num = numbers_1[_i];
+            sum += num;
+            result.push(sum);
+        }
+        return result;
+    },
+    /**
+     * Returns traditional spreadsheet-style column names
+     * e.g. (A, B, ..., Z, AA, AB, ..., ZZ, AAA, AAB, ...).
+     *
+     * Note that this isn't technically mathematically equivalent to base 26 since
+     * there is no zero element.
+     */
+    toBase26Alpha: function (num) {
+        var str = "";
+        while (true) {
+            var letter = num % 26;
+            str = String.fromCharCode(65 + letter) + str;
+            num = num - letter;
+            if (num <= 0) {
+                return str;
+            }
+            num = (num / 26) - 1;
+        }
+    },
+    /**
+     * Performs the binary search algorithm to find the index of the `value`
+     * parameter in a sorted list of numbers. If `value` is not in the list, the
+     * index where `value` can be inserted to maintain the sort is returned.
+     *
+     * Unlike a typical binary search implementation, we use a `lookup`
+     * callback to access the sorted list of numbers instead of an array. This
+     * avoids additional storage overhead.
+     *
+     * We use this to, for example, find the index of a row/col given its client
+     * coordinate.
+     *
+     * Adapted from lodash https://github.com/lodash/lodash/blob/4.11.2/lodash.js#L3579
+     *
+     * @param value - the query value
+     * @param high - the length of the sorted list of numbers
+     * @param lookup - returns the number from the list at the supplied index
+     */
+    binarySearch: function (value, high, lookup) {
+        var low = 0;
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2.0);
+            var computed = lookup(mid);
+            if (computed < value) {
+                low = mid + 1;
+            }
+            else {
+                high = mid;
+            }
+        }
+        return high;
+    },
+    /**
+     * Returns a copy of the array that will have a length of the supplied parameter.
+     * If the array is too long, it will be truncated. If it is too short, it will be
+     * filled with the suppleid `fillValue` argument.
+     *
+     * @param array - the `Array` to copy and adjust
+     * @param length - the target length of the array
+     * @param fillValue - the value to add to the array if it is too short
+     */
+    arrayOfLength: function (array, length, fillValue) {
+        if (array.length > length) {
+            return array.slice(0, length);
+        }
+        array = array.slice();
+        while (array.length < length) {
+            array.push(fillValue);
+        }
+        return array;
+    },
+    /**
+     * Takes in one full array of values and one sparse array of the same
+     * length and type. Returns a copy of the `defaults` array, where each
+     * value is replaced with the corresponding non-null value at the same
+     * index in `sparseOverrides`.
+     *
+     * @param defaults - the full array of default values
+     * @param sparseOverrides - the sparse array of override values
+     */
+    assignSparseValues: function (defaults, sparseOverrides) {
+        if (sparseOverrides == null || defaults.length !== sparseOverrides.length) {
+            return defaults;
+        }
+        defaults = defaults.slice();
+        for (var i = 0; i < defaults.length; i++) {
+            var override = sparseOverrides[i];
+            if (override != null) {
+                defaults[i] = override;
+            }
+        }
+        return defaults;
+    },
+    /**
+     * Measures the bounds of supplied element's textContent.
+     *
+     * We use the computed font from the supplied element and a non-DOM canvas
+     * context to measure the text.
+     *
+     * Returns a `TextMetrics` object.
+     */
+    measureElementTextContent: function (element) {
+        var context = document.createElement("canvas").getContext("2d");
+        var style = getComputedStyle(element, null);
+        context.font = CSS_FONT_PROPERTIES.map(function (prop) { return style.getPropertyValue(prop); }).join(" ");
+        return context.measureText(element.textContent);
+    },
+    /**
+     * Given a number, returns a value that is clamped within a
+     * minimum/maximum bounded range. The minimum and maximum are optional. If
+     * either is missing, that extrema limit is not applied.
+     *
+     * Assumes max >= min.
+     */
+    clamp: function (value, min, max) {
+        if (min != null && value < min) {
+            value = min;
+        }
+        if (max != null && value > max) {
+            value = max;
+        }
+        return value;
+    },
+    /**
+     * Shallow comparison between objects. If `keys` is provided, just that subset of keys will be
+     * compared; otherwise, all keys will be compared.
+     */
+    shallowCompareKeys: function (objA, objB, keys) {
+        // treat `null` and `undefined` as the same
+        if (objA == null && objB == null) {
+            return true;
+        }
+        else if (objA == null || objB == null) {
+            return false;
+        }
+        else if (Array.isArray(objA) || Array.isArray(objB)) {
+            return false;
+        }
+        else if (keys != null) {
+            return _shallowCompareKeys(objA, objB, keys);
+        }
+        else {
+            // shallowly compare all keys from both objects
+            var keysA = Object.keys(objA);
+            var keysB = Object.keys(objB);
+            return _shallowCompareKeys(objA, objB, { include: keysA })
+                && _shallowCompareKeys(objA, objB, { include: keysB });
+        }
+    },
+    /**
+     * Deep comparison between objects. If `keys` is provided, just that subset of keys will be
+     * compared; otherwise, all keys will be compared.
+     */
+    deepCompareKeys: function (objA, objB, keys) {
+        if (objA === objB) {
+            return true;
+        }
+        else if (objA == null && objB == null) {
+            // treat `null` and `undefined` as the same
+            return true;
+        }
+        else if (objA == null || objB == null) {
+            return false;
+        }
+        else if (Array.isArray(objA) || Array.isArray(objB)) {
+            return exports.Utils.arraysEqual(objA, objB, exports.Utils.deepCompareKeys);
+        }
+        else if (_isSimplePrimitiveType(objA) || _isSimplePrimitiveType(objB)) {
+            return objA === objB;
+        }
+        else if (keys != null) {
+            return _deepCompareKeys(objA, objB, keys);
+        }
+        else if (objA.constructor !== objB.constructor) {
+            return false;
+        }
+        else {
+            var keysA = Object.keys(objA);
+            var keysB = Object.keys(objB);
+            if (keysA == null || keysB == null) {
+                return false;
+            }
+            if (keysA.length === 0 && keysB.length === 0) {
+                return true;
+            }
+            return exports.Utils.arraysEqual(keysA, keysB) && _deepCompareKeys(objA, objB, keysA);
+        }
+    },
+    /**
+     * Returns a descriptive object for each key whose values are shallowly unequal between two
+     * provided objects. Useful for debugging shouldComponentUpdate.
+     */
+    getShallowUnequalKeyValues: function (objA, objB, keys) {
+        // default param values let null values pass through, so we have to take this more thorough approach
+        var definedObjA = (objA == null) ? {} : objA;
+        var definedObjB = (objB == null) ? {} : objB;
+        var filteredKeys = _filterKeys(definedObjA, definedObjB, keys == null ? { exclude: [] } : keys);
+        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.shallowCompareKeys(a, b, { include: [key] }); });
+    },
+    /**
+     * Returns a descriptive object for each key whose values are deeply unequal between two
+     * provided objects. Useful for debugging shouldComponentUpdate.
+     */
+    getDeepUnequalKeyValues: function (objA, objB, keys) {
+        var definedObjA = (objA == null) ? {} : objA;
+        var definedObjB = (objB == null) ? {} : objB;
+        var filteredKeys = (keys == null) ? _unionKeys(definedObjA, definedObjB) : keys;
+        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.deepCompareKeys(a, b, [key]); });
+    },
+    /**
+     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
+     * at the absolute index in the original ordering but emit the new index in the reordered list.
+     * This function converts an absolute "guide" index to a relative "reordered" index.
+     *
+     * Example: Say we want to move the first three columns two spots to the right. While we drag, a
+     * vertical guide is shown to preview where we'll be dropping the columns. (In the following
+     * ASCII art, `*` denotes a selected column, `·` denotes a cell border, and `|` denotes a
+     * vertical guide).
+     *
+     *     Before mousedown:
+     *     · 0 · 1 · 2 · 3 · 4 · 5 ·
+     *       *   *   *
+     *
+     *     During mousemove two spots to the right:
+     *     · 0 · 1 · 2 · 3 · 4 | 5 ·
+     *       *   *   *
+     *
+     *     After mouseup:
+     *     · 3 · 4 · 0 · 1 · 2 · 5 ·
+     *               *   *   *
+     *
+     * Note that moving the three columns beyond index 4 effectively moves them two spots rightward.
+     *
+     * In this case, the inputs to this function would be:
+     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
+     *     - newIndex: 5 (the index on whose left boundary the guide appears in the original ordering)
+     *     - length: 3 (the number of columns to move)
+     *
+     * The return value will then be 2, the left-most index of the columns in the new ordering.
+     */
+    guideIndexToReorderedIndex: function (oldIndex, newIndex, length) {
+        if (newIndex < oldIndex) {
+            return newIndex;
+        }
+        else if (oldIndex <= newIndex && newIndex < oldIndex + length) {
+            return oldIndex;
+        }
+        else {
+            return Math.max(0, newIndex - length);
+        }
+    },
+    /**
+     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
+     * at the absolute index in the original ordering but emit the new index in the reordered list.
+     * This function converts a relative "reordered"" index to an absolute "guide" index.
+     *
+     * For the scenario in the example above, the inputs to this function would be:
+     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
+     *     - newIndex: 2 (the left-most index of the selected column range in the new ordering)
+     *     - length: 3 (the number of columns to move)
+     *
+     * The return value will then be 5, the index on whose left boundary the guide should appear in
+     * the original ordering.
+     */
+    reorderedIndexToGuideIndex: function (oldIndex, newIndex, length) {
+        return (newIndex <= oldIndex) ? newIndex : newIndex + length;
+    },
+    /**
+     * Returns a copy of the provided array with the `length` contiguous elements starting at the
+     * `from` index reordered to start at the `to` index.
+     *
+     * For example, given the array [A,B,C,D,E,F], reordering the 3 contiguous elements starting at
+     * index 1 (B, C, and D) to start at index 2 would yield [A,E,B,C,D,F].
+     */
+    reorderArray: function (array, from, to, length) {
+        if (length === void 0) { length = 1; }
+        if (length === 0 || length === array.length || from === to) {
+            // return an unchanged copy
+            return array.slice();
+        }
+        if (length < 0 || length > array.length || from + length > array.length) {
+            return undefined;
+        }
+        var before = array.slice(0, from);
+        var within = array.slice(from, from + length);
+        var after = array.slice(from + length);
+        var result = [];
+        var i = 0;
+        var b = 0;
+        var w = 0;
+        var a = 0;
+        while (i < to) {
+            if (b < before.length) {
+                result.push(before[b]);
+                b += 1;
+            }
+            else {
+                result.push(after[a]);
+                a += 1;
+            }
+            i += 1;
+        }
+        while (w < length) {
+            result.push(within[w]);
+            w += 1;
+            i += 1;
+        }
+        while (i < array.length) {
+            if (b < before.length) {
+                result.push(before[b]);
+                b += 1;
+            }
+            else {
+                result.push(after[a]);
+                a += 1;
+            }
+            i += 1;
+        }
+        return result;
+    },
+    /**
+     * Returns true if the mouse event was triggered by the left mouse button.
+     */
+    isLeftClick: function (event) {
+        return event.button === 0;
+    },
+    /**
+     * Returns true if the arrays are equal. Elements will be shallowly compared by default, or they
+     * will be compared using the custom `compare` function if one is provided.
+     */
+    arraysEqual: function (arrA, arrB, compare) {
+        if (compare === void 0) { compare = function (a, b) { return a === b; }; }
+        // treat `null` and `undefined` as the same
+        if (arrA == null && arrB == null) {
+            return true;
+        }
+        else if (arrA == null || arrB == null || arrA.length !== arrB.length) {
+            return false;
+        }
+        else {
+            return arrA.every(function (a, i) { return compare(a, arrB[i]); });
+        }
+    },
+};
+/**
+ * Partial shallow comparison between objects using the given list of keys.
+ */
+function _shallowCompareKeys(objA, objB, keys) {
+    return _filterKeys(objA, objB, keys).every(function (key) {
+        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
+            && objA[key] === objB[key];
+    });
+}
+/**
+ * Partial deep comparison between objects using the given list of keys.
+ */
+function _deepCompareKeys(objA, objB, keys) {
+    return keys.every(function (key) {
+        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
+            && exports.Utils.deepCompareKeys(objA[key], objB[key]);
+    });
+}
+function _isSimplePrimitiveType(value) {
+    return typeof value === "number"
+        || typeof value === "string"
+        || typeof value === "boolean";
+}
+function _filterKeys(objA, objB, keys) {
+    if (isWhitelist(keys)) {
+        return keys.include;
+    }
+    else {
+        var keysA = Object.keys(objA);
+        var keysB = Object.keys(objB);
+        // merge keys from both objects into a big set for quick access
+        var keySet_1 = _arrayToObject(keysA.concat(keysB));
+        // delete blacklisted keys from the key set
+        keys.exclude.forEach(function (key) { return delete keySet_1[key]; });
+        // return the remaining keys as an array
+        return Object.keys(keySet_1);
+    }
+}
+function isWhitelist(keys) {
+    return keys != null && keys.include != null;
+}
+function _arrayToObject(arr) {
+    return arr.reduce(function (obj, element) {
+        obj[element] = true;
+        return obj;
+    }, {});
+}
+function _getUnequalKeyValues(objA, objB, keys, compareFn) {
+    var unequalKeys = keys.filter(function (key) { return !compareFn(objA, objB, key); });
+    var unequalKeyValues = unequalKeys.map(function (key) { return ({
+        key: key,
+        valueA: objA[key],
+        valueB: objB[key],
+    }); });
+    return unequalKeyValues;
+}
+function _unionKeys(objA, objB) {
+    var keysA = Object.keys(objA);
+    var keysB = Object.keys(objB);
+    var concatKeys = keysA.concat(keysB);
+    var keySet = _arrayToObject(concatKeys);
+    return Object.keys(keySet);
+}
+
+//# sourceMappingURL=utils.js.map
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1529,12 +2154,12 @@ exports.DIALOG_WARN_NO_HEADER_CLOSE_BUTTON = ns + " <Dialog> isCloseButtonShown 
 
 
 
-var _prodInvariant = __webpack_require__(29);
+var _prodInvariant = __webpack_require__(33);
 
-var ReactCurrentOwner = __webpack_require__(18);
+var ReactCurrentOwner = __webpack_require__(23);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 function isNative(fn) {
   // Based on isNative() from Lodash
@@ -1894,10 +2519,10 @@ var ReactComponentTreeHook = {
 };
 
 module.exports = ReactComponentTreeHook;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1941,7 +2566,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1963,15 +2588,620 @@ module.exports = emptyFunction;
 var debugTool = null;
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactDebugTool = __webpack_require__(152);
+  var ReactDebugTool = __webpack_require__(175);
   debugTool = ReactDebugTool;
 }
 
 module.exports = { debugTool: debugTool };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 18 */
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+/**
+ * `Region`s contain sets of cells. Additionally, a distinction is drawn, for
+ * example, between all cells within a column and the whole column itself.
+ * The `RegionCardinality` enum represents these distinct types of `Region`s.
+ */
+var RegionCardinality;
+(function (RegionCardinality) {
+    /**
+     * A region that contains a finite rectangular group of table cells
+     */
+    RegionCardinality[RegionCardinality["CELLS"] = 0] = "CELLS";
+    /**
+     * A region that represents all cells within 1 or more rows.
+     */
+    RegionCardinality[RegionCardinality["FULL_ROWS"] = 1] = "FULL_ROWS";
+    /**
+     * A region that represents all cells within 1 or more columns.
+     */
+    RegionCardinality[RegionCardinality["FULL_COLUMNS"] = 2] = "FULL_COLUMNS";
+    /**
+     * A region that represents all cells in the table.
+     */
+    RegionCardinality[RegionCardinality["FULL_TABLE"] = 3] = "FULL_TABLE";
+})(RegionCardinality = exports.RegionCardinality || (exports.RegionCardinality = {}));
+/**
+ * A convenience object for subsets of `RegionCardinality` that are commonly
+ * used as the `selectionMode` prop of the `<Table>`.
+ */
+exports.SelectionModes = {
+    ALL: [
+        RegionCardinality.FULL_TABLE,
+        RegionCardinality.FULL_COLUMNS,
+        RegionCardinality.FULL_ROWS,
+        RegionCardinality.CELLS,
+    ],
+    COLUMNS_AND_CELLS: [
+        RegionCardinality.FULL_COLUMNS,
+        RegionCardinality.CELLS,
+    ],
+    COLUMNS_ONLY: [
+        RegionCardinality.FULL_COLUMNS,
+    ],
+    NONE: [],
+    ROWS_AND_CELLS: [
+        RegionCardinality.FULL_ROWS,
+        RegionCardinality.CELLS,
+    ],
+    ROWS_ONLY: [
+        RegionCardinality.FULL_ROWS,
+    ],
+};
+exports.ColumnLoadingOption = {
+    CELLS: "cells",
+    HEADER: "column-header",
+};
+exports.RowLoadingOption = {
+    CELLS: "cells",
+    HEADER: "row-header",
+};
+exports.TableLoadingOption = {
+    CELLS: "cells",
+    COLUMN_HEADERS: exports.ColumnLoadingOption.HEADER,
+    ROW_HEADERS: exports.RowLoadingOption.HEADER,
+};
+var Regions = (function () {
+    function Regions() {
+    }
+    /**
+     * Determines the cardinality of a region. We use null values to indicate
+     * an unbounded interval. Therefore, an example of a region containing the
+     * second and third columns would be:
+     *
+     *     {
+     *         rows: null,
+     *         cols: [1, 2]
+     *     }
+     *
+     * In this case, this method would return `RegionCardinality.FULL_COLUMNS`.
+     *
+     * If both rows and columns are unbounded, then the region covers the
+     * entire table. Therefore, a region like this:
+     *
+     *     {
+     *         rows: null,
+     *         cols: null
+     *     }
+     *
+     * will return `RegionCardinality.FULL_TABLE`.
+     *
+     * An example of a region containing a single cell in the table would be:
+     *
+     *     {
+     *         rows: [5, 5],
+     *         cols: [2, 2]
+     *     }
+     *
+     * In this case, this method would return `RegionCardinality.CELLS`.
+     */
+    Regions.getRegionCardinality = function (region) {
+        if (region.cols != null && region.rows != null) {
+            return RegionCardinality.CELLS;
+        }
+        else if (region.cols != null) {
+            return RegionCardinality.FULL_COLUMNS;
+        }
+        else if (region.rows != null) {
+            return RegionCardinality.FULL_ROWS;
+        }
+        else {
+            return RegionCardinality.FULL_TABLE;
+        }
+    };
+    Regions.getFocusCellCoordinatesFromRegion = function (region) {
+        var regionCardinality = Regions.getRegionCardinality(region);
+        switch (regionCardinality) {
+            case RegionCardinality.FULL_TABLE:
+                return { col: 0, row: 0 };
+            case RegionCardinality.FULL_COLUMNS:
+                return { col: region.cols[0], row: 0 };
+            case RegionCardinality.FULL_ROWS:
+                return { col: 0, row: region.rows[0] };
+            case RegionCardinality.CELLS:
+                return { col: region.cols[0], row: region.rows[0] };
+            default:
+                return null;
+        }
+    };
+    /**
+     * Returns a region containing one or more cells.
+     */
+    Regions.cell = function (row, col, row2, col2) {
+        return {
+            cols: this.normalizeInterval(col, col2),
+            rows: this.normalizeInterval(row, row2),
+        };
+    };
+    /**
+     * Returns a region containing one or more full rows.
+     */
+    Regions.row = function (row, row2) {
+        return { rows: this.normalizeInterval(row, row2) };
+    };
+    /**
+     * Returns a region containing one or more full columns.
+     */
+    Regions.column = function (col, col2) {
+        return { cols: this.normalizeInterval(col, col2) };
+    };
+    /**
+     * Returns a region containing the entire table.
+     */
+    Regions.table = function () {
+        return {};
+    };
+    /**
+     * Adds the region to the end of a cloned copy of the supplied region
+     * array.
+     */
+    Regions.add = function (regions, region) {
+        var copy = regions.slice();
+        copy.push(region);
+        return copy;
+    };
+    /**
+     * Replaces the region at the end of a cloned copy of the supplied region
+     * array.
+     */
+    Regions.update = function (regions, region) {
+        var copy = regions.slice();
+        copy.pop();
+        copy.push(region);
+        return copy;
+    };
+    /**
+     * Returns true iff the specified region is equal to the last region in
+     * the region list. This allows us to avoid immediate additive re-selection.
+     */
+    Regions.lastRegionIsEqual = function (regions, region) {
+        if (regions == null || regions.length === 0) {
+            return false;
+        }
+        var lastRegion = regions[regions.length - 1];
+        return Regions.regionsEqual(lastRegion, region);
+    };
+    /**
+     * Returns the index of the region that is equal to the supplied
+     * parameter. Returns -1 if no such region is found.
+     */
+    Regions.findMatchingRegion = function (regions, region) {
+        if (regions == null) {
+            return -1;
+        }
+        for (var i = 0; i < regions.length; i++) {
+            if (Regions.regionsEqual(regions[i], region)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Returns the index of the region that wholly contains the supplied
+     * parameter. Returns -1 if no such region is found.
+     */
+    Regions.findContainingRegion = function (regions, region) {
+        if (regions == null) {
+            return -1;
+        }
+        for (var i = 0; i < regions.length; i++) {
+            if (Regions.regionContains(regions[i], region)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_COLUMNS
+     * cardinality and contains the specified column index.
+     */
+    Regions.hasFullColumn = function (regions, col) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_1 = regions; _i < regions_1.length; _i++) {
+            var region = regions_1[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+            if (cardinality === RegionCardinality.FULL_COLUMNS && Regions.intervalContainsIndex(region.cols, col)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_ROWS
+     * cardinality and contains the specified row index.
+     */
+    Regions.hasFullRow = function (regions, row) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_2 = regions; _i < regions_2.length; _i++) {
+            var region = regions_2[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+            if (cardinality === RegionCardinality.FULL_ROWS && Regions.intervalContainsIndex(region.rows, row)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_TABLE cardinality
+     */
+    Regions.hasFullTable = function (regions) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_3 = regions; _i < regions_3.length; _i++) {
+            var region = regions_3[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions fully contain the query region.
+     */
+    Regions.containsRegion = function (regions, query) {
+        return Regions.overlapsRegion(regions, query, false);
+    };
+    /**
+     * Returns true if the regions at least partially overlap the query region.
+     */
+    Regions.overlapsRegion = function (regions, query, allowPartialOverlap) {
+        if (allowPartialOverlap === void 0) { allowPartialOverlap = false; }
+        var intervalCompareFn = allowPartialOverlap ? Regions.intervalOverlaps : Regions.intervalContains;
+        if (regions == null || query == null) {
+            return false;
+        }
+        for (var _i = 0, regions_4 = regions; _i < regions_4.length; _i++) {
+            var region = regions_4[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            switch (cardinality) {
+                case RegionCardinality.FULL_TABLE:
+                    return true;
+                case RegionCardinality.FULL_COLUMNS:
+                    if (intervalCompareFn(region.cols, query.cols)) {
+                        return true;
+                    }
+                    continue;
+                case RegionCardinality.FULL_ROWS:
+                    if (intervalCompareFn(region.rows, query.rows)) {
+                        return true;
+                    }
+                    continue;
+                case RegionCardinality.CELLS:
+                    if (intervalCompareFn(region.cols, query.cols)
+                        && intervalCompareFn(region.rows, query.rows)) {
+                        return true;
+                    }
+                    continue;
+                default:
+                    break;
+            }
+        }
+        return false;
+    };
+    Regions.eachUniqueFullColumn = function (regions, iteratee) {
+        if (regions == null || regions.length === 0 || iteratee == null) {
+            return;
+        }
+        var seen = {};
+        regions.forEach(function (region) {
+            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_COLUMNS) {
+                var _a = region.cols, start = _a[0], end = _a[1];
+                for (var col = start; col <= end; col++) {
+                    if (!seen[col]) {
+                        seen[col] = true;
+                        iteratee(col);
+                    }
+                }
+            }
+        });
+    };
+    Regions.eachUniqueFullRow = function (regions, iteratee) {
+        if (regions == null || regions.length === 0 || iteratee == null) {
+            return;
+        }
+        var seen = {};
+        regions.forEach(function (region) {
+            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_ROWS) {
+                var _a = region.rows, start = _a[0], end = _a[1];
+                for (var row = start; row <= end; row++) {
+                    if (!seen[row]) {
+                        seen[row] = true;
+                        iteratee(row);
+                    }
+                }
+            }
+        });
+    };
+    /**
+     * Using the supplied array of non-contiguous `IRegion`s, this method
+     * returns an ordered array of every unique cell that exists in those
+     * regions.
+     */
+    Regions.enumerateUniqueCells = function (regions, numRows, numCols) {
+        if (regions == null || regions.length === 0) {
+            return [];
+        }
+        var seen = {};
+        var list = [];
+        for (var _i = 0, regions_5 = regions; _i < regions_5.length; _i++) {
+            var region = regions_5[_i];
+            Regions.eachCellInRegion(region, numRows, numCols, function (row, col) {
+                // add to list if not seen
+                var key = row + "-" + col;
+                if (seen[key] !== true) {
+                    seen[key] = true;
+                    list.push([row, col]);
+                }
+            });
+        }
+        // sort list by rows then columns
+        list.sort(Regions.rowFirstComparator);
+        return list;
+    };
+    /**
+     * Using the supplied region, returns an "equivalent" region of
+     * type CELLS that define the bounds of the given region
+     */
+    Regions.getCellRegionFromRegion = function (region, numRows, numCols) {
+        var regionCardinality = Regions.getRegionCardinality(region);
+        switch (regionCardinality) {
+            case RegionCardinality.FULL_TABLE:
+                return Regions.cell(0, 0, numRows - 1, numCols - 1);
+            case RegionCardinality.FULL_COLUMNS:
+                return Regions.cell(0, region.cols[0], numRows - 1, region.cols[1]);
+            case RegionCardinality.FULL_ROWS:
+                return Regions.cell(region.rows[0], 0, region.rows[1], numCols - 1);
+            case RegionCardinality.CELLS:
+                return Regions.cell(region.rows[0], region.cols[0], region.rows[1], region.cols[1]);
+            default:
+                return null;
+        }
+    };
+    /**
+     * Maps a dense array of cell coordinates to a sparse 2-dimensional array
+     * of cell values.
+     *
+     * We create a new 2-dimensional array representing the smallest single
+     * contiguous `IRegion` that contains all cells in the supplied array. We
+     * invoke the mapper callback only on the cells in the supplied coordinate
+     * array and store the result. Returns the resulting 2-dimensional array.
+     */
+    Regions.sparseMapCells = function (cells, mapper) {
+        var bounds = Regions.getBoundingRegion(cells);
+        if (bounds == null) {
+            return null;
+        }
+        var numRows = bounds.rows[1] + 1 - bounds.rows[0];
+        var numCols = bounds.cols[1] + 1 - bounds.cols[0];
+        var result = utils_1.Utils.times(numRows, function () { return new Array(numCols); });
+        cells.forEach(function (_a) {
+            var row = _a[0], col = _a[1];
+            result[row - bounds.rows[0]][col - bounds.cols[0]] = mapper(row, col);
+        });
+        return result;
+    };
+    /**
+     * Returns the smallest single contiguous `IRegion` that contains all cells in the
+     * supplied array.
+     */
+    Regions.getBoundingRegion = function (cells) {
+        var minRow;
+        var maxRow;
+        var minCol;
+        var maxCol;
+        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
+            var _a = cells_1[_i], row = _a[0], col = _a[1];
+            minRow = (minRow == null || row < minRow) ? row : minRow;
+            maxRow = (maxRow == null || row > maxRow) ? row : maxRow;
+            minCol = (minCol == null || col < minCol) ? col : minCol;
+            maxCol = (maxCol == null || col > maxCol) ? col : maxCol;
+        }
+        if (minRow == null) {
+            return null;
+        }
+        return {
+            cols: [minCol, maxCol],
+            rows: [minRow, maxRow],
+        };
+    };
+    Regions.isValid = function (region) {
+        if (region == null) {
+            return false;
+        }
+        if ((region.rows != null) && (region.rows[0] < 0 || region.rows[1] < 0)) {
+            return false;
+        }
+        if ((region.cols != null) && (region.cols[0] < 0 || region.cols[1] < 0)) {
+            return false;
+        }
+        return true;
+    };
+    Regions.isRegionValidForTable = function (region, numRows, numCols) {
+        if (region.rows != null && (region.rows[0] >= numRows || region.rows[1] >= numRows)) {
+            return false;
+        }
+        if (region.cols != null && (region.cols[0] >= numCols || region.cols[1] >= numCols)) {
+            return false;
+        }
+        return true;
+    };
+    Regions.joinStyledRegionGroups = function (selectedRegions, otherRegions, focusedCell) {
+        var regionGroups = [];
+        if (otherRegions != null) {
+            regionGroups = regionGroups.concat(otherRegions);
+        }
+        if (selectedRegions != null && selectedRegions.length > 0) {
+            regionGroups.push({
+                className: Classes.TABLE_SELECTION_REGION,
+                regions: selectedRegions,
+            });
+        }
+        if (focusedCell != null) {
+            regionGroups.push({
+                className: Classes.TABLE_FOCUS_REGION,
+                regions: [Regions.cell(focusedCell.row, focusedCell.col)],
+            });
+        }
+        return regionGroups;
+    };
+    Regions.regionsEqual = function (regionA, regionB) {
+        return Regions.intervalsEqual(regionA.rows, regionB.rows)
+            && Regions.intervalsEqual(regionA.cols, regionB.cols);
+    };
+    /**
+     * Iterates over the cells within an `IRegion`, invoking the callback with
+     * each cell's coordinates.
+     */
+    Regions.eachCellInRegion = function (region, numRows, numCols, iteratee) {
+        var cardinality = Regions.getRegionCardinality(region);
+        switch (cardinality) {
+            case RegionCardinality.FULL_TABLE:
+                for (var row = 0; row < numRows; row++) {
+                    for (var col = 0; col < numCols; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.FULL_COLUMNS:
+                for (var row = 0; row < numRows; row++) {
+                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.FULL_ROWS:
+                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
+                    for (var col = 0; col < numCols; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.CELLS:
+                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
+                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    };
+    Regions.regionContains = function (regionA, regionB) {
+        // containsRegion expects an array of regions as the first param
+        return Regions.overlapsRegion([regionA], regionB, false);
+    };
+    Regions.intervalsEqual = function (ivalA, ivalB) {
+        if (ivalA == null) {
+            return ivalB == null;
+        }
+        else if (ivalB == null) {
+            return false;
+        }
+        else {
+            return ivalA[0] === ivalB[0] && ivalA[1] === ivalB[1];
+        }
+    };
+    Regions.intervalContainsIndex = function (interval, index) {
+        if (interval == null) {
+            return false;
+        }
+        return interval[0] <= index && interval[1] >= index;
+    };
+    Regions.intervalContains = function (ivalA, ivalB) {
+        if (ivalA == null || ivalB == null) {
+            return false;
+        }
+        return ivalA[0] <= ivalB[0] && ivalB[1] <= ivalA[1];
+    };
+    Regions.intervalOverlaps = function (ivalA, ivalB) {
+        if (ivalA == null || ivalB == null) {
+            return false;
+        }
+        if (ivalA[1] < ivalB[0] || ivalA[0] > ivalB[1]) {
+            return false;
+        }
+        return true;
+    };
+    Regions.rowFirstComparator = function (a, b) {
+        var rowDiff = a[0] - b[0];
+        return rowDiff === 0 ? a[1] - b[1] : rowDiff;
+    };
+    Regions.numericalComparator = function (a, b) {
+        return a - b;
+    };
+    Regions.normalizeInterval = function (coord, coord2) {
+        if (coord2 == null) {
+            coord2 = coord;
+        }
+        var interval = [coord, coord2];
+        interval.sort(Regions.numericalComparator);
+        return interval;
+    };
+    return Regions;
+}());
+exports.Regions = Regions;
+
+//# sourceMappingURL=regions.js.map
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(165);
+
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2005,7 +3235,7 @@ var ReactCurrentOwner = {
 module.exports = ReactCurrentOwner;
 
 /***/ }),
-/* 19 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2021,16 +3251,16 @@ module.exports = ReactCurrentOwner;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var CallbackQueue = __webpack_require__(83);
-var PooledClass = __webpack_require__(26);
-var ReactFeatureFlags = __webpack_require__(84);
-var ReactReconciler = __webpack_require__(30);
-var Transaction = __webpack_require__(41);
+var CallbackQueue = __webpack_require__(96);
+var PooledClass = __webpack_require__(30);
+var ReactFeatureFlags = __webpack_require__(97);
+var ReactReconciler = __webpack_require__(34);
+var Transaction = __webpack_require__(47);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var dirtyComponents = [];
 var updateBatchNumber = 0;
@@ -2259,20 +3489,10 @@ var ReactUpdates = {
 };
 
 module.exports = ReactUpdates;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(142);
-
-
-/***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2288,12 +3508,12 @@ module.exports = __webpack_require__(142);
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var PooledClass = __webpack_require__(26);
+var PooledClass = __webpack_require__(30);
 
-var emptyFunction = __webpack_require__(16);
-var warning = __webpack_require__(4);
+var emptyFunction = __webpack_require__(19);
+var warning = __webpack_require__(5);
 
 var didWarnForAddedNewProperty = false;
 var isProxySupported = typeof Proxy === 'function';
@@ -2541,10 +3761,10 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
     process.env.NODE_ENV !== 'production' ? warning(warningCondition, "This synthetic event is reused for performance reasons. If you're seeing this, " + "you're %s `%s` on a released/nullified synthetic event. %s. " + 'If you must keep the original synthetic event around, use event.persist(). ' + 'See https://fb.me/react-event-pooling for more information.', action, propName, result) : void 0;
   }
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2588,7 +3808,7 @@ exports.isPositionVertical = isPositionVertical;
 
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2604,9 +3824,9 @@ exports.isPositionVertical = isPositionVertical;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 function checkMask(value, bitmask) {
   return (value & bitmask) === bitmask;
@@ -2800,10 +4020,10 @@ var DOMProperty = {
 };
 
 module.exports = DOMProperty;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2831,7 +4051,7 @@ exports.DELETE = 46;
 
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2847,15 +4067,15 @@ exports.DELETE = 46;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var ReactCurrentOwner = __webpack_require__(18);
+var ReactCurrentOwner = __webpack_require__(23);
 
-var warning = __webpack_require__(4);
-var canDefineProperty = __webpack_require__(38);
+var warning = __webpack_require__(5);
+var canDefineProperty = __webpack_require__(44);
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-var REACT_ELEMENT_TYPE = __webpack_require__(74);
+var REACT_ELEMENT_TYPE = __webpack_require__(87);
 
 var RESERVED_PROPS = {
   key: true,
@@ -3175,10 +4395,10 @@ ReactElement.isValidElement = function (object) {
 };
 
 module.exports = ReactElement;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3195,9 +4415,9 @@ module.exports = ReactElement;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Static poolers. Several custom versions for each potential number of
@@ -3293,10 +4513,10 @@ var PooledClass = {
 };
 
 module.exports = PooledClass;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3311,15 +4531,15 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(13));
-__export(__webpack_require__(232));
-__export(__webpack_require__(104));
-__export(__webpack_require__(22));
-__export(__webpack_require__(32));
-__export(__webpack_require__(105));
-var classes = __webpack_require__(5);
-var keys = __webpack_require__(24);
-var utils = __webpack_require__(8);
+__export(__webpack_require__(15));
+__export(__webpack_require__(254));
+__export(__webpack_require__(117));
+__export(__webpack_require__(26));
+__export(__webpack_require__(36));
+__export(__webpack_require__(118));
+var classes = __webpack_require__(6);
+var keys = __webpack_require__(28);
+var utils = __webpack_require__(9);
 exports.Classes = classes;
 exports.Keys = keys;
 exports.Utils = utils;
@@ -3329,7 +4549,7 @@ exports.Utils = utils;
 
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3345,26 +4565,26 @@ exports.Utils = utils;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var ReactBaseClasses = __webpack_require__(72);
-var ReactChildren = __webpack_require__(128);
-var ReactDOMFactories = __webpack_require__(132);
-var ReactElement = __webpack_require__(25);
-var ReactPropTypes = __webpack_require__(136);
-var ReactVersion = __webpack_require__(138);
+var ReactBaseClasses = __webpack_require__(85);
+var ReactChildren = __webpack_require__(151);
+var ReactDOMFactories = __webpack_require__(155);
+var ReactElement = __webpack_require__(29);
+var ReactPropTypes = __webpack_require__(159);
+var ReactVersion = __webpack_require__(161);
 
-var createReactClass = __webpack_require__(139);
-var onlyChild = __webpack_require__(141);
+var createReactClass = __webpack_require__(162);
+var onlyChild = __webpack_require__(164);
 
 var createElement = ReactElement.createElement;
 var createFactory = ReactElement.createFactory;
 var cloneElement = ReactElement.cloneElement;
 
 if (process.env.NODE_ENV !== 'production') {
-  var lowPriorityWarning = __webpack_require__(51);
-  var canDefineProperty = __webpack_require__(38);
-  var ReactElementValidator = __webpack_require__(76);
+  var lowPriorityWarning = __webpack_require__(59);
+  var canDefineProperty = __webpack_require__(44);
+  var ReactElementValidator = __webpack_require__(89);
   var didWarnPropTypesDeprecated = false;
   createElement = ReactElementValidator.createElement;
   createFactory = ReactElementValidator.createFactory;
@@ -3464,10 +4684,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = React;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3511,7 +4731,7 @@ function reactProdInvariant(code) {
 module.exports = reactProdInvariant;
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3527,10 +4747,10 @@ module.exports = reactProdInvariant;
 
 
 
-var ReactRef = __webpack_require__(150);
-var ReactInstrumentation = __webpack_require__(17);
+var ReactRef = __webpack_require__(173);
+var ReactInstrumentation = __webpack_require__(20);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 /**
  * Helper to call ReactRef.attachRefs with this composite component, split out
@@ -3680,10 +4900,10 @@ var ReactReconciler = {
 };
 
 module.exports = ReactReconciler;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3699,11 +4919,11 @@ module.exports = ReactReconciler;
 
 
 
-var DOMNamespaces = __webpack_require__(59);
-var setInnerHTML = __webpack_require__(43);
+var DOMNamespaces = __webpack_require__(67);
+var setInnerHTML = __webpack_require__(49);
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(60);
-var setTextContent = __webpack_require__(88);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(68);
+var setTextContent = __webpack_require__(101);
 
 var ELEMENT_NODE_TYPE = 1;
 var DOCUMENT_FRAGMENT_NODE_TYPE = 11;
@@ -3806,7 +5026,7 @@ DOMLazyTree.queueText = queueText;
 module.exports = DOMLazyTree;
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3862,7 +5082,7 @@ exports.removeNonHTMLProps = removeNonHTMLProps;
 
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3875,20 +5095,20 @@ exports.removeNonHTMLProps = removeNonHTMLProps;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var react_dom_1 = __webpack_require__(20);
-var Tether = __webpack_require__(234);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var PosUtils = __webpack_require__(22);
-var TetherUtils = __webpack_require__(105);
-var Utils = __webpack_require__(8);
-var overlay_1 = __webpack_require__(47);
-var tooltip_1 = __webpack_require__(68);
-var Arrows = __webpack_require__(248);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var react_dom_1 = __webpack_require__(22);
+var Tether = __webpack_require__(256);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var PosUtils = __webpack_require__(26);
+var TetherUtils = __webpack_require__(118);
+var Utils = __webpack_require__(9);
+var overlay_1 = __webpack_require__(53);
+var tooltip_1 = __webpack_require__(76);
+var Arrows = __webpack_require__(270);
 var SVG_SHADOW_PATH = "M8.11 6.302c1.015-.936 1.887-2.922 1.887-4.297v26c0-1.378" +
     "-.868-3.357-1.888-4.297L.925 17.09c-1.237-1.14-1.233-3.034 0-4.17L8.11 6.302z";
 var SVG_ARROW_PATH = "M8.787 7.036c1.22-1.125 2.21-3.376 2.21-5.03V0v30-2.005" +
@@ -4297,7 +5517,7 @@ exports.PopoverFactory = React.createFactory(Popover);
 
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4313,12 +5533,12 @@ exports.PopoverFactory = React.createFactory(Popover);
 
 
 
-var EventPluginHub = __webpack_require__(35);
-var EventPluginUtils = __webpack_require__(53);
+var EventPluginHub = __webpack_require__(39);
+var EventPluginUtils = __webpack_require__(61);
 
-var accumulateInto = __webpack_require__(80);
-var forEachAccumulated = __webpack_require__(81);
-var warning = __webpack_require__(4);
+var accumulateInto = __webpack_require__(93);
+var forEachAccumulated = __webpack_require__(94);
+var warning = __webpack_require__(5);
 
 var getListener = EventPluginHub.getListener;
 
@@ -4434,10 +5654,10 @@ var EventPropagators = {
 };
 
 module.exports = EventPropagators;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4453,15 +5673,15 @@ module.exports = EventPropagators;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var EventPluginRegistry = __webpack_require__(40);
-var EventPluginUtils = __webpack_require__(53);
-var ReactErrorUtils = __webpack_require__(54);
+var EventPluginRegistry = __webpack_require__(46);
+var EventPluginUtils = __webpack_require__(61);
+var ReactErrorUtils = __webpack_require__(62);
 
-var accumulateInto = __webpack_require__(80);
-var forEachAccumulated = __webpack_require__(81);
-var invariant = __webpack_require__(3);
+var accumulateInto = __webpack_require__(93);
+var forEachAccumulated = __webpack_require__(94);
+var invariant = __webpack_require__(4);
 
 /**
  * Internal store for event listeners
@@ -4714,10 +5934,10 @@ var EventPluginHub = {
 };
 
 module.exports = EventPluginHub;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4733,9 +5953,9 @@ module.exports = EventPluginHub;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
-var getEventTarget = __webpack_require__(55);
+var getEventTarget = __webpack_require__(63);
 
 /**
  * @interface UIEvent
@@ -4781,7 +6001,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 module.exports = SyntheticUIEvent;
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4832,7 +6052,194 @@ var ReactInstanceMap = {
 module.exports = ReactInstanceMap;
 
 /***/ }),
-/* 38 */
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var utils_1 = __webpack_require__(17);
+var dragEvents_1 = __webpack_require__(140);
+var REATTACH_PROPS_KEYS = [
+    "stopPropagation",
+    "preventDefault",
+];
+/**
+ * This component provides a simple interface for combined drag and/or click
+ * events.
+ *
+ * Since the mouse interactions for drag and click are overloaded, here are
+ * the events that will fire in these cases:
+ *
+ * A Click Interaction
+ * 1. The user presses down on the render element, triggering the onActivate
+ *    callback.
+ * 2. The user releases the mouse button without moving it, triggering the
+ *    onClick callback.
+ *
+ * A Drag Interaction
+ * 1. The user presses down on the render element, triggering the onActivate
+ *    callback.
+ * 2. The user moves the mouse, triggering the onDragMove callback.
+ * 3. The user moves the mouse, triggering the onDragMove callback.
+ * 4. The user moves the mouse, triggering the onDragMove callback.
+ * 5. The user releases the mouse button, triggering a final onDragMove
+ *    callback as well as an onDragEnd callback.
+ *
+ * If `false` is returned from the onActivate callback, no further events
+ * will be fired until the next activation.
+ */
+var Draggable = (function (_super) {
+    tslib_1.__extends(Draggable, _super);
+    function Draggable() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Draggable.prototype.render = function () {
+        return React.Children.only(this.props.children);
+    };
+    Draggable.prototype.componentWillReceiveProps = function (nextProps) {
+        var propsWhitelist = { include: REATTACH_PROPS_KEYS };
+        if (this.events && !utils_1.Utils.shallowCompareKeys(this.props, nextProps, propsWhitelist)) {
+            this.events.attach(ReactDOM.findDOMNode(this), nextProps);
+        }
+    };
+    Draggable.prototype.componentDidMount = function () {
+        this.events = new dragEvents_1.DragEvents();
+        this.events.attach(ReactDOM.findDOMNode(this), this.props);
+    };
+    Draggable.prototype.componentWillUnmount = function () {
+        this.events.detach();
+        delete this.events;
+    };
+    return Draggable;
+}(React.Component));
+Draggable.defaultProps = {
+    preventDefault: true,
+    stopPropagation: false,
+};
+Draggable = tslib_1.__decorate([
+    PureRender
+], Draggable);
+exports.Draggable = Draggable;
+
+//# sourceMappingURL=draggable.js.map
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// HACKHACK: workaround for https://github.com/palantir/tslint/issues/1768
+// tslint:disable adjacent-overload-signatures
+/**
+ * A simple object for storing the client bounds of HTMLElements. Since
+ * ClientRects are immutable, this object enables editing and some simple
+ * manipulation methods.
+ */
+var Rect = (function () {
+    function Rect(left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+    }
+    /**
+     * Returns the smallest Rect that entirely contains the supplied rects
+     */
+    Rect.union = function (anyRect0, anyRect1) {
+        var rect0 = Rect.wrap(anyRect0);
+        var rect1 = Rect.wrap(anyRect1);
+        var top = Math.min(rect0.top, rect1.top);
+        var left = Math.min(rect0.left, rect1.left);
+        var bottom = Math.max(rect0.top + rect0.height, rect1.top + rect1.height);
+        var right = Math.max(rect0.left + rect0.width, rect1.left + rect1.width);
+        var height = bottom - top;
+        var width = right - left;
+        return new Rect(left, top, width, height);
+    };
+    /**
+     * Returns a new Rect that subtracts the origin of the second argument
+     * from the first.
+     */
+    Rect.subtractOrigin = function (anyRect0, anyRect1) {
+        var rect0 = Rect.wrap(anyRect0);
+        var rect1 = Rect.wrap(anyRect1);
+        return new Rect(rect0.left - rect1.left, rect0.top - rect1.top, rect0.width, rect0.height);
+    };
+    /**
+     * Returns the CSS properties representing the absolute positioning of
+     * this Rect.
+     */
+    Rect.style = function (rect) {
+        return {
+            height: rect.height + "px",
+            left: rect.left + "px",
+            position: "absolute",
+            top: rect.top + "px",
+            width: rect.width + "px",
+        };
+    };
+    /**
+     * Given a ClientRect or Rect object, returns a Rect object.
+     */
+    Rect.wrap = function (rect) {
+        if (rect instanceof Rect) {
+            return rect;
+        }
+        else {
+            return new Rect(rect.left, rect.top, rect.width, rect.height);
+        }
+    };
+    Rect.prototype.subtractOrigin = function (anyRect) {
+        return Rect.subtractOrigin(this, anyRect);
+    };
+    Rect.prototype.union = function (anyRect) {
+        return Rect.union(this, anyRect);
+    };
+    Rect.prototype.style = function () {
+        return Rect.style(this);
+    };
+    Rect.prototype.sizeStyle = function () {
+        return {
+            height: this.height + "px",
+            width: this.width + "px",
+        };
+    };
+    Rect.prototype.containsX = function (clientX) {
+        return clientX >= this.left && clientX <= this.left + this.width;
+    };
+    Rect.prototype.containsY = function (clientY) {
+        return clientY >= this.top && clientY <= this.top + this.height;
+    };
+    return Rect;
+}());
+Rect.ORIGIN = new Rect(0, 0, 0, 0);
+exports.Rect = Rect;
+
+//# sourceMappingURL=rect.js.map
+
+
+/***/ }),
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4861,10 +6268,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = canDefineProperty;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 39 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4887,10 +6294,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = emptyObject;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 40 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4907,9 +6314,9 @@ module.exports = emptyObject;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Injectable ordering of event plugins.
@@ -5146,10 +6553,10 @@ var EventPluginRegistry = {
 };
 
 module.exports = EventPluginRegistry;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 41 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5166,9 +6573,9 @@ module.exports = EventPluginRegistry;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var OBSERVED_ERROR = {};
 
@@ -5380,10 +6787,10 @@ var TransactionImpl = {
 };
 
 module.exports = TransactionImpl;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 42 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5399,10 +6806,10 @@ module.exports = TransactionImpl;
 
 
 
-var SyntheticUIEvent = __webpack_require__(36);
-var ViewportMetrics = __webpack_require__(87);
+var SyntheticUIEvent = __webpack_require__(40);
+var ViewportMetrics = __webpack_require__(100);
 
-var getEventModifierState = __webpack_require__(57);
+var getEventModifierState = __webpack_require__(65);
 
 /**
  * @interface MouseEvent
@@ -5460,7 +6867,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 module.exports = SyntheticMouseEvent;
 
 /***/ }),
-/* 43 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5476,13 +6883,13 @@ module.exports = SyntheticMouseEvent;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
-var DOMNamespaces = __webpack_require__(59);
+var ExecutionEnvironment = __webpack_require__(13);
+var DOMNamespaces = __webpack_require__(67);
 
 var WHITESPACE_TEST = /^[ \r\n\t\f]/;
 var NONVISIBLE_TEST = /<(!--|link|noscript|meta|script|style)[ \r\n\t\f\/>]/;
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(60);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(68);
 
 // SVG temp container for IE lacking innerHTML
 var reusableSVGContainer;
@@ -5563,7 +6970,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = setInnerHTML;
 
 /***/ }),
-/* 44 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5690,7 +7097,7 @@ function escapeTextContentForBrowser(text) {
 module.exports = escapeTextContentForBrowser;
 
 /***/ }),
-/* 45 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5706,14 +7113,14 @@ module.exports = escapeTextContentForBrowser;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var EventPluginRegistry = __webpack_require__(40);
-var ReactEventEmitterMixin = __webpack_require__(176);
-var ViewportMetrics = __webpack_require__(87);
+var EventPluginRegistry = __webpack_require__(46);
+var ReactEventEmitterMixin = __webpack_require__(199);
+var ViewportMetrics = __webpack_require__(100);
 
-var getVendorPrefixedEventName = __webpack_require__(177);
-var isEventSupported = __webpack_require__(56);
+var getVendorPrefixedEventName = __webpack_require__(200);
+var isEventSupported = __webpack_require__(64);
 
 /**
  * Summary of `ReactBrowserEventEmitter` event handling:
@@ -6019,7 +7426,7 @@ var ReactBrowserEventEmitter = _assign({}, ReactEventEmitterMixin, {
 module.exports = ReactBrowserEventEmitter;
 
 /***/ }),
-/* 46 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6092,7 +7499,7 @@ function shallowEqual(objA, objB) {
 module.exports = shallowEqual;
 
 /***/ }),
-/* 47 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6105,14 +7512,14 @@ module.exports = shallowEqual;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var CSSTransitionGroup = __webpack_require__(235);
-var Classes = __webpack_require__(5);
-var Keys = __webpack_require__(24);
-var utils_1 = __webpack_require__(8);
-var portal_1 = __webpack_require__(110);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var CSSTransitionGroup = __webpack_require__(257);
+var Classes = __webpack_require__(6);
+var Keys = __webpack_require__(28);
+var utils_1 = __webpack_require__(9);
+var portal_1 = __webpack_require__(123);
 var Overlay = Overlay_1 = (function (_super) {
     tslib_1.__extends(Overlay, _super);
     function Overlay(props, context) {
@@ -6320,7 +7727,7 @@ var Overlay_1;
 
 
 /***/ }),
-/* 48 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
@@ -6347,17 +7754,17 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(78)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(91)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(237)();
+  module.exports = __webpack_require__(259)();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 49 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6372,9 +7779,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
 // HACKHACK: these components should go in separate files
 // tslint:disable max-classes-per-file
-var React = __webpack_require__(1);
-var props_1 = __webpack_require__(32);
-var abstractButton_1 = __webpack_require__(250);
+var React = __webpack_require__(0);
+var props_1 = __webpack_require__(36);
+var abstractButton_1 = __webpack_require__(272);
 var Button = (function (_super) {
     tslib_1.__extends(Button, _super);
     function Button() {
@@ -6408,7 +7815,7 @@ exports.AnchorButtonFactory = React.createFactory(AnchorButton);
 
 
 /***/ }),
-/* 50 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6421,9 +7828,9 @@ exports.AnchorButtonFactory = React.createFactory(AnchorButton);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var common_1 = __webpack_require__(27);
-var keyCombo_1 = __webpack_require__(117);
+var React = __webpack_require__(0);
+var common_1 = __webpack_require__(31);
+var keyCombo_1 = __webpack_require__(130);
 var Hotkey = (function (_super) {
     tslib_1.__extends(Hotkey, _super);
     function Hotkey() {
@@ -6458,7 +7865,161 @@ exports.Hotkey = Hotkey;
 
 
 /***/ }),
-/* 51 */
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+var core_1 = __webpack_require__(14);
+var loadableContent_1 = __webpack_require__(80);
+exports.emptyCellRenderer = function () { return React.createElement(Cell, null); };
+var Cell = (function (_super) {
+    tslib_1.__extends(Cell, _super);
+    function Cell() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Cell.prototype.shouldComponentUpdate = function (nextProps) {
+        // deeply compare "style," because a new but identical object might have been provided.
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
+            || !utils_1.Utils.deepCompareKeys(this.props.style, nextProps.style);
+    };
+    Cell.prototype.render = function () {
+        var _a = this.props, style = _a.style, intent = _a.intent, interactive = _a.interactive, loading = _a.loading, tooltip = _a.tooltip, truncated = _a.truncated, className = _a.className, wrapText = _a.wrapText;
+        var classes = classNames(Classes.TABLE_CELL, core_1.Classes.intentClass(intent), (_b = {},
+            _b[Classes.TABLE_CELL_INTERACTIVE] = interactive,
+            _b[core_1.Classes.LOADING] = loading,
+            _b[Classes.TABLE_TRUNCATED_CELL] = truncated,
+            _b), className);
+        var textClasses = classNames((_c = {},
+            _c[Classes.TABLE_TRUNCATED_TEXT] = truncated,
+            _c[Classes.TABLE_NO_WRAP_TEXT] = !wrapText,
+            _c));
+        var content = React.createElement("div", { className: textClasses }, this.props.children);
+        return (React.createElement("div", { className: classes, style: style, title: tooltip },
+            React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, content)));
+        var _b, _c;
+    };
+    return Cell;
+}(React.Component));
+Cell.defaultProps = {
+    truncated: true,
+    wrapText: false,
+};
+exports.Cell = Cell;
+
+//# sourceMappingURL=cell.js.map
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var draggable_1 = __webpack_require__(42);
+var Orientation;
+(function (Orientation) {
+    Orientation[Orientation["HORIZONTAL"] = 1] = "HORIZONTAL";
+    Orientation[Orientation["VERTICAL"] = 0] = "VERTICAL";
+})(Orientation = exports.Orientation || (exports.Orientation = {}));
+var ResizeHandle = (function (_super) {
+    tslib_1.__extends(ResizeHandle, _super);
+    function ResizeHandle() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isDragging: false,
+        };
+        _this.handleActivate = function (event) {
+            _this.setState({ isDragging: true });
+            _this.props.onLayoutLock(true);
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            return true;
+        };
+        _this.handleDragMove = function (_event, coords) {
+            var orientationIndex = _this.props.orientation;
+            if (_this.props.onResizeMove != null) {
+                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
+            }
+        };
+        _this.handleDragEnd = function (_event, coords) {
+            var orientationIndex = _this.props.orientation;
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+            if (_this.props.onResizeMove != null) {
+                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
+            }
+            if (_this.props.onResizeEnd != null) {
+                _this.props.onResizeEnd(coords.offset[orientationIndex]);
+            }
+        };
+        _this.handleClick = function (_event) {
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+        };
+        _this.handleDoubleClick = function (_event) {
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+            if (_this.props.onDoubleClick != null) {
+                _this.props.onDoubleClick();
+            }
+        };
+        return _this;
+    }
+    ResizeHandle.prototype.render = function () {
+        var _a = this.props, onResizeMove = _a.onResizeMove, onResizeEnd = _a.onResizeEnd, onDoubleClick = _a.onDoubleClick, orientation = _a.orientation;
+        if (onResizeMove == null && onResizeEnd == null && onDoubleClick == null) {
+            return undefined;
+        }
+        var targetClasses = classNames(Classes.TABLE_RESIZE_HANDLE_TARGET, (_b = {},
+            _b[Classes.TABLE_DRAGGING] = this.state.isDragging,
+            _b[Classes.TABLE_RESIZE_HORIZONTAL] = orientation === Orientation.HORIZONTAL,
+            _b[Classes.TABLE_RESIZE_VERTICAL] = orientation === Orientation.VERTICAL,
+            _b));
+        var handleClasses = classNames(Classes.TABLE_RESIZE_HANDLE, (_c = {},
+            _c[Classes.TABLE_DRAGGING] = this.state.isDragging,
+            _c));
+        return (React.createElement(draggable_1.Draggable, { onActivate: this.handleActivate, onClick: this.handleClick, onDoubleClick: this.handleDoubleClick, onDragEnd: this.handleDragEnd, onDragMove: this.handleDragMove },
+            React.createElement("div", { className: targetClasses },
+                React.createElement("div", { className: handleClasses }))));
+        var _b, _c;
+    };
+    return ResizeHandle;
+}(React.Component));
+ResizeHandle = tslib_1.__decorate([
+    PureRender
+], ResizeHandle);
+exports.ResizeHandle = ResizeHandle;
+
+//# sourceMappingURL=resizeHandle.js.map
+
+
+/***/ }),
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6526,10 +8087,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = lowPriorityWarning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 52 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6550,7 +8111,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 53 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6566,12 +8127,12 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactErrorUtils = __webpack_require__(54);
+var ReactErrorUtils = __webpack_require__(62);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 /**
  * Injected dependencies:
@@ -6779,10 +8340,10 @@ var EventPluginUtils = {
 };
 
 module.exports = EventPluginUtils;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 54 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6861,10 +8422,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = ReactErrorUtils;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 55 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6904,7 +8465,7 @@ function getEventTarget(nativeEvent) {
 module.exports = getEventTarget;
 
 /***/ }),
-/* 56 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6920,7 +8481,7 @@ module.exports = getEventTarget;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
 var useHasFeature;
 if (ExecutionEnvironment.canUseDOM) {
@@ -6969,7 +8530,7 @@ function isEventSupported(eventNameSuffix, capture) {
 module.exports = isEventSupported;
 
 /***/ }),
-/* 57 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7017,7 +8578,7 @@ function getEventModifierState(nativeEvent) {
 module.exports = getEventModifierState;
 
 /***/ }),
-/* 58 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7033,14 +8594,14 @@ module.exports = getEventModifierState;
 
 
 
-var DOMLazyTree = __webpack_require__(31);
-var Danger = __webpack_require__(161);
+var DOMLazyTree = __webpack_require__(35);
+var Danger = __webpack_require__(184);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactInstrumentation = __webpack_require__(17);
+var ReactInstrumentation = __webpack_require__(20);
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(60);
-var setInnerHTML = __webpack_require__(43);
-var setTextContent = __webpack_require__(88);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(68);
+var setInnerHTML = __webpack_require__(49);
+var setTextContent = __webpack_require__(101);
 
 function getNodeAfter(parentNode, node) {
   // Special case for text components, which return [open, close] comments
@@ -7246,10 +8807,10 @@ var DOMChildrenOperations = {
 };
 
 module.exports = DOMChildrenOperations;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 59 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7274,7 +8835,7 @@ var DOMNamespaces = {
 module.exports = DOMNamespaces;
 
 /***/ }),
-/* 60 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7311,7 +8872,7 @@ var createMicrosoftUnsafeLocalFunction = function (func) {
 module.exports = createMicrosoftUnsafeLocalFunction;
 
 /***/ }),
-/* 61 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7327,16 +8888,16 @@ module.exports = createMicrosoftUnsafeLocalFunction;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactPropTypesSecret = __webpack_require__(92);
-var propTypesFactory = __webpack_require__(77);
+var ReactPropTypesSecret = __webpack_require__(105);
+var propTypesFactory = __webpack_require__(90);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(32);
 var PropTypes = propTypesFactory(React.isValidElement);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var hasReadOnlyValue = {
   button: true,
@@ -7452,10 +9013,10 @@ var LinkedValueUtils = {
 };
 
 module.exports = LinkedValueUtils;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 62 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7472,9 +9033,9 @@ module.exports = LinkedValueUtils;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var injected = false;
 
@@ -7502,10 +9063,10 @@ var ReactComponentEnvironment = {
 };
 
 module.exports = ReactComponentEnvironment;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 63 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7552,7 +9113,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 /***/ }),
-/* 64 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7616,7 +9177,7 @@ var KeyEscapeUtils = {
 module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 65 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7632,15 +9193,15 @@ module.exports = KeyEscapeUtils;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactCurrentOwner = __webpack_require__(18);
-var ReactInstanceMap = __webpack_require__(37);
-var ReactInstrumentation = __webpack_require__(17);
-var ReactUpdates = __webpack_require__(19);
+var ReactCurrentOwner = __webpack_require__(23);
+var ReactInstanceMap = __webpack_require__(41);
+var ReactInstrumentation = __webpack_require__(20);
+var ReactUpdates = __webpack_require__(24);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 function enqueueUpdate(internalInstance) {
   ReactUpdates.enqueueUpdate(internalInstance);
@@ -7853,10 +9414,10 @@ var ReactUpdateQueue = {
 };
 
 module.exports = ReactUpdateQueue;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 66 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7872,10 +9433,10 @@ module.exports = ReactUpdateQueue;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var emptyFunction = __webpack_require__(16);
-var warning = __webpack_require__(4);
+var emptyFunction = __webpack_require__(19);
+var warning = __webpack_require__(5);
 
 var validateDOMNesting = emptyFunction;
 
@@ -8230,10 +9791,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = validateDOMNesting;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 67 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8288,7 +9849,7 @@ function getEventCharCode(nativeEvent) {
 module.exports = getEventCharCode;
 
 /***/ }),
-/* 68 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8301,12 +9862,12 @@ module.exports = getEventCharCode;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var position_1 = __webpack_require__(22);
-var popover_1 = __webpack_require__(33);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var position_1 = __webpack_require__(26);
+var popover_1 = __webpack_require__(37);
 var Tooltip = (function (_super) {
     tslib_1.__extends(Tooltip, _super);
     function Tooltip() {
@@ -8341,7 +9902,7 @@ exports.TooltipFactory = React.createFactory(Tooltip);
 
 
 /***/ }),
-/* 69 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8354,11 +9915,11 @@ exports.TooltipFactory = React.createFactory(Tooltip);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
 // see http://stackoverflow.com/a/18473154/3124288 for calculating arc path
 var SPINNER_TRACK = "M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89";
 // unitless total length of SVG path, to which stroke-dash* properties are relative.
@@ -8410,7 +9971,7 @@ exports.SpinnerFactory = React.createFactory(Spinner);
 
 
 /***/ }),
-/* 70 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8423,9 +9984,9 @@ exports.SpinnerFactory = React.createFactory(Spinner);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var Menu = (function (_super) {
     tslib_1.__extends(Menu, _super);
     function Menu() {
@@ -8444,7 +10005,7 @@ exports.MenuFactory = React.createFactory(Menu);
 
 
 /***/ }),
-/* 71 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8719,7 +10280,581 @@ exports.normalizeKeyCombo = function (combo) {
 
 
 /***/ }),
-/* 72 */
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(14);
+// This class expects a single, non-string child.
+var LoadableContent = (function (_super) {
+    tslib_1.__extends(LoadableContent, _super);
+    function LoadableContent(props) {
+        var _this = _super.call(this, props) || this;
+        _this.style = _this.calculateStyle(props.variableLength);
+        return _this;
+    }
+    LoadableContent.prototype.componentWillReceiveProps = function (nextProps) {
+        if (!this.props.loading && nextProps.loading || this.props.variableLength !== nextProps.variableLength) {
+            this.style = this.calculateStyle(nextProps.variableLength);
+        }
+    };
+    LoadableContent.prototype.render = function () {
+        if (this.props.loading) {
+            return React.createElement("div", { className: core_1.Classes.SKELETON, style: this.style });
+        }
+        return React.Children.only(this.props.children);
+    };
+    LoadableContent.prototype.calculateStyle = function (variableLength) {
+        var skeletonLength = variableLength ? 75 - Math.floor(Math.random() * 11) * 5 : 100;
+        return { width: skeletonLength + "%" };
+    };
+    return LoadableContent;
+}(React.Component));
+LoadableContent = tslib_1.__decorate([
+    PureRender
+], LoadableContent);
+exports.LoadableContent = LoadableContent;
+
+//# sourceMappingURL=loadableContent.js.map
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var clipboard_1 = __webpack_require__(82);
+exports.Clipboard = clipboard_1.Clipboard;
+var grid_1 = __webpack_require__(143);
+exports.Grid = grid_1.Grid;
+var rect_1 = __webpack_require__(43);
+exports.Rect = rect_1.Rect;
+var roundSize_1 = __webpack_require__(306);
+exports.RoundSize = roundSize_1.RoundSize;
+var utils_1 = __webpack_require__(17);
+exports.Utils = utils_1.Utils;
+// NOTE: Errors is not exported in public API
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* istanbul ignore next */
+exports.Clipboard = {
+    /**
+     * Overrides the inherited CSS of the element to make sure it is
+     * selectable. This method also makes the element pseudo-invisible.
+     */
+    applySelectableStyles: function (elem) {
+        elem.style.overflow = "hidden";
+        elem.style.height = "0px";
+        elem.style.setProperty("-webkit-user-select", "all");
+        elem.style.setProperty("-moz-user-select", "all");
+        elem.style.setProperty("-ms-user-select", "all");
+        elem.style.setProperty("user-select", "all");
+        return elem;
+    },
+    /**
+     * Copies table cells to the clipboard. The parameter is a row-major
+     * 2-dimensional `Array` of strings and can contain nulls. We assume all
+     * rows are the same length. If not, the cells will still be copied, but
+     * the columns may not align. Returns a boolean indicating whether the
+     * copy succeeded.
+     *
+     * See `Clipboard.copy`
+     */
+    copyCells: function (cells) {
+        var table = document.createElement("table");
+        exports.Clipboard.applySelectableStyles(table);
+        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
+            var row = cells_1[_i];
+            var tr = table.appendChild(document.createElement("tr"));
+            for (var _a = 0, row_1 = row; _a < row_1.length; _a++) {
+                var cell = row_1[_a];
+                var td = tr.appendChild(document.createElement("td"));
+                td.textContent = cell;
+            }
+        }
+        var tsv = cells.map(function (row) { return row.join("\t"); }).join("\n");
+        return exports.Clipboard.copyElement(table, tsv);
+    },
+    /**
+     * Copies the text to the clipboard. Returns a boolean
+     * indicating whether the copy succeeded.
+     *
+     * See `Clipboard.copy`
+     */
+    copyString: function (value) {
+        var text = document.createElement("textarea");
+        exports.Clipboard.applySelectableStyles(text);
+        text.value = value;
+        return exports.Clipboard.copyElement(text, value);
+    },
+    /**
+     * Copies the element and its children to the clipboard. Returns a boolean
+     * indicating whether the copy succeeded.
+     *
+     * If a plaintext argument is supplied, we add both the text/html and
+     * text/plain mime types to the clipboard. This preserves the built in
+     * semantics of copying elements to the clipboard while allowing custom
+     * plaintext output for programs that can't cope with HTML data in the
+     * clipboard.
+     *
+     * Verified on Firefox 47, Chrome 51.
+     *
+     * Note: Sometimes the copy does not succeed. Presumably, in order to
+     * prevent memory issues, browsers will limit the total amount of data you
+     * can copy to the clipboard. Based on ad hoc testing, we found an
+     * inconsistent limit at about 300KB or 40,000 cells. Depending on the on
+     * the content of cells, your limits may vary.
+     */
+    copyElement: function (elem, plaintext) {
+        if (!exports.Clipboard.isCopySupported()) {
+            return false;
+        }
+        // must be document.body instead of document.documentElement for firefox
+        document.body.appendChild(elem);
+        try {
+            window.getSelection().selectAllChildren(elem);
+            if (plaintext != null) {
+                // add plaintext fallback
+                // http://stackoverflow.com/questions/23211018/copy-to-clipboard-with-jquery-js-in-chrome
+                elem.addEventListener("copy", function (e) {
+                    e.preventDefault();
+                    var clipboardData = e.clipboardData || window.clipboardData;
+                    if (clipboardData != null) {
+                        clipboardData.setData("text/html", elem.outerHTML);
+                        clipboardData.setData("text/plain", plaintext);
+                    }
+                });
+            }
+            return document.execCommand("copy");
+        }
+        catch (err) {
+            return false;
+        }
+        finally {
+            document.body.removeChild(elem);
+        }
+    },
+    /**
+     * Returns a boolean indicating whether the current browser nominally
+     * supports the `copy` operation using the `execCommand` API.
+     */
+    isCopySupported: function () {
+        return document.queryCommandSupported != null && document.queryCommandSupported("copy");
+    },
+};
+
+//# sourceMappingURL=clipboard.js.map
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var core_1 = __webpack_require__(14);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(17);
+var dragEvents_1 = __webpack_require__(140);
+var draggable_1 = __webpack_require__(42);
+var regions_1 = __webpack_require__(21);
+var DragSelectable = (function (_super) {
+    tslib_1.__extends(DragSelectable, _super);
+    function DragSelectable() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.didExpandSelectionOnActivate = false;
+        _this.handleActivate = function (event) {
+            if (_this.shouldIgnoreMouseDown(event)) {
+                return false;
+            }
+            var region = _this.props.locateClick(event);
+            if (!regions_1.Regions.isValid(region)) {
+                return false;
+            }
+            var _a = _this.props, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
+            var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(region);
+            if (selectedRegionTransform != null) {
+                region = selectedRegionTransform(region, event);
+            }
+            var foundIndex = regions_1.Regions.findMatchingRegion(selectedRegions, region);
+            if (foundIndex !== -1) {
+                // If re-clicking on an existing region, we either carefully
+                // remove it if the meta key is used or otherwise we clear the
+                // selection entirely.
+                if (dragEvents_1.DragEvents.isAdditive(event)) {
+                    var newSelectedRegions = selectedRegions.slice();
+                    newSelectedRegions.splice(foundIndex, 1);
+                    onSelection(newSelectedRegions);
+                }
+                else {
+                    onSelection([]);
+                }
+                var fullFocusCellCoordinates_1 = {
+                    col: focusCellCoordinates.col,
+                    focusSelectionIndex: null,
+                    row: focusCellCoordinates.row,
+                };
+                _this.props.onFocus(fullFocusCellCoordinates_1);
+                return false;
+            }
+            var focusSelectionIndex = null;
+            if (event.shiftKey && selectedRegions.length > 0) {
+                _this.didExpandSelectionOnActivate = true;
+                onSelection(expandSelectedRegions(selectedRegions, region));
+                focusSelectionIndex = 0;
+            }
+            else if (dragEvents_1.DragEvents.isAdditive(event) && _this.props.allowMultipleSelection) {
+                onSelection(regions_1.Regions.add(selectedRegions, region));
+                // the focus should be in the newly created region,
+                // which is at index of the current list of regions plus one,
+                // which is the length of the current list of regions
+                focusSelectionIndex = selectedRegions.length;
+            }
+            else {
+                onSelection([region]);
+                focusSelectionIndex = 0;
+            }
+            var fullFocusCellCoordinates = {
+                col: focusCellCoordinates.col,
+                focusSelectionIndex: focusSelectionIndex,
+                row: focusCellCoordinates.row,
+            };
+            _this.props.onFocus(fullFocusCellCoordinates);
+            return true;
+        };
+        _this.handleDragMove = function (event, coords) {
+            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
+            if (nextSelectedRegions == null) {
+                return;
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            if (!_this.props.allowMultipleSelection) {
+                // have the focused cell follow the selected region
+                var mostRecentRegion = nextSelectedRegions[nextSelectedRegions.length - 1];
+                var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(mostRecentRegion);
+                var fullFocusCellCoordinates = {
+                    col: focusCellCoordinates.col,
+                    focusSelectionIndex: nextSelectedRegions.length - 1,
+                    row: focusCellCoordinates.row,
+                };
+                _this.props.onFocus(fullFocusCellCoordinates);
+            }
+        };
+        _this.handleDragEnd = function (event, coords) {
+            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
+            if (nextSelectedRegions == null) {
+                return;
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
+            _this.finishInteraction();
+        };
+        _this.handleClick = function (event) {
+            if (_this.shouldIgnoreMouseDown(event)) {
+                return false;
+            }
+            var region = _this.props.locateClick(event);
+            var selectedRegions = _this.props.selectedRegions;
+            if (!regions_1.Regions.isValid(region)) {
+                _this.maybeInvokeSelectionCallback([]);
+                core_1.Utils.safeInvoke(_this.props.onSelectionEnd, []);
+                return false;
+            }
+            if (_this.props.selectedRegionTransform != null) {
+                region = _this.props.selectedRegionTransform(region, event);
+            }
+            var nextSelectedRegions;
+            if (_this.didExpandSelectionOnActivate) {
+                // we already expanded the selection in handleActivate,
+                // so we don't want to overwrite it here
+                nextSelectedRegions = selectedRegions;
+            }
+            else if (selectedRegions.length > 0) {
+                nextSelectedRegions = regions_1.Regions.update(selectedRegions, region);
+            }
+            else {
+                nextSelectedRegions = [region];
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
+            _this.finishInteraction();
+            return false;
+        };
+        _this.finishInteraction = function () {
+            _this.didExpandSelectionOnActivate = false;
+        };
+        return _this;
+    }
+    DragSelectable.prototype.render = function () {
+        var draggableProps = this.getDraggableProps();
+        return (React.createElement(draggable_1.Draggable, tslib_1.__assign({}, draggableProps, { preventDefault: false }), this.props.children));
+    };
+    DragSelectable.prototype.getDraggableProps = function () {
+        return this.props.onSelection == null ? {} : {
+            onActivate: this.handleActivate,
+            onClick: this.handleClick,
+            onDragEnd: this.handleDragEnd,
+            onDragMove: this.handleDragMove,
+        };
+    };
+    DragSelectable.prototype.shouldIgnoreMouseDown = function (event) {
+        var _a = this.props.ignoredSelectors, ignoredSelectors = _a === void 0 ? [] : _a;
+        var element = event.target;
+        return !utils_1.Utils.isLeftClick(event)
+            || this.props.disabled
+            || ignoredSelectors.some(function (selector) { return element.closest(selector) != null; });
+    };
+    DragSelectable.prototype.getDragSelectedRegions = function (event, coords) {
+        var _a = this.props, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
+        var region = this.props.allowMultipleSelection
+            ? this.props.locateDrag(event, coords)
+            : this.props.locateClick(event);
+        if (!regions_1.Regions.isValid(region)) {
+            return undefined;
+        }
+        if (selectedRegionTransform != null) {
+            region = selectedRegionTransform(region, event, coords);
+        }
+        return this.didExpandSelectionOnActivate
+            ? expandSelectedRegions(selectedRegions, region)
+            : regions_1.Regions.update(selectedRegions, region);
+    };
+    DragSelectable.prototype.maybeInvokeSelectionCallback = function (nextSelectedRegions) {
+        var selectedRegions = this.props.selectedRegions;
+        // invoke only if the selection changed
+        if (!utils_1.Utils.deepCompareKeys(selectedRegions, nextSelectedRegions)) {
+            this.props.onSelection(nextSelectedRegions);
+        }
+    };
+    return DragSelectable;
+}(React.Component));
+DragSelectable = tslib_1.__decorate([
+    PureRender
+], DragSelectable);
+exports.DragSelectable = DragSelectable;
+function expandSelectedRegions(regions, region) {
+    if (regions.length === 0) {
+        return [region];
+    }
+    var lastRegion = regions[regions.length - 1];
+    var lastRegionCardinality = regions_1.Regions.getRegionCardinality(lastRegion);
+    var regionCardinality = regions_1.Regions.getRegionCardinality(region);
+    if (regionCardinality !== lastRegionCardinality) {
+        // TODO: add proper handling for expanding regions from one cardinality to another depending
+        // on the focused cell (see: https://github.com/palantir/blueprint/issues/823). for now,
+        // just return the new region by itself.
+        return [region];
+    }
+    // simplified algorithm: expand the most recently selected region, and clear all others.
+    // TODO: pass the current focused cell into DragSelectable via props, then update this logic
+    // to leverage the focus cell's coordinates appropriately.
+    // (see: https://github.com/palantir/blueprint/issues/823)
+    if (regionCardinality === regions_1.RegionCardinality.FULL_ROWS) {
+        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
+        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
+        return [regions_1.Regions.row(rowStart, rowEnd)];
+    }
+    else if (regionCardinality === regions_1.RegionCardinality.FULL_COLUMNS) {
+        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
+        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
+        return [regions_1.Regions.column(colStart, colEnd)];
+    }
+    else if (regionCardinality === regions_1.RegionCardinality.CELLS) {
+        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
+        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
+        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
+        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
+        return [regions_1.Regions.cell(rowStart, colStart, rowEnd, colEnd)];
+    }
+    else {
+        // if we've selected the FULL_TABLE, no need to expand it further.
+        return [region];
+    }
+}
+
+//# sourceMappingURL=selectable.js.map
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(14);
+var Classes = __webpack_require__(12);
+var Errors = __webpack_require__(145);
+var loadableContent_1 = __webpack_require__(80);
+var headerCell_1 = __webpack_require__(146);
+function HorizontalCellDivider() {
+    return React.createElement("div", { className: Classes.TABLE_HORIZONTAL_CELL_DIVIDER });
+}
+exports.HorizontalCellDivider = HorizontalCellDivider;
+var ColumnHeaderCell = (function (_super) {
+    tslib_1.__extends(ColumnHeaderCell, _super);
+    function ColumnHeaderCell() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isActive: false,
+        };
+        _this.handlePopoverDidOpen = function () {
+            _this.setState({ isActive: true });
+        };
+        _this.handlePopoverWillClose = function () {
+            _this.setState({ isActive: false });
+        };
+        return _this;
+    }
+    /**
+     * This method determines if a `MouseEvent` was triggered on a target that
+     * should be used as the header click/drag target. This enables users of
+     * this component to render fully interactive components in their header
+     * cells without worry of selection or resize operations from capturing
+     * their mouse events.
+     */
+    ColumnHeaderCell.isHeaderMouseTarget = function (target) {
+        return target.classList.contains(Classes.TABLE_HEADER)
+            || target.classList.contains(Classes.TABLE_COLUMN_NAME)
+            || target.classList.contains(Classes.TABLE_INTERACTION_BAR)
+            || target.classList.contains(Classes.TABLE_HEADER_CONTENT);
+    };
+    ColumnHeaderCell.prototype.render = function () {
+        var _a = this.props, 
+        // from IColumnHeaderCellProps
+        isColumnReorderable = _a.isColumnReorderable, isColumnSelected = _a.isColumnSelected, menuIconName = _a.menuIconName, 
+        // from IColumnNameProps
+        name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["isColumnReorderable", "isColumnSelected", "menuIconName", "name", "renderName", "useInteractionBar"]);
+        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isColumnReorderable, isSelected: this.props.isColumnSelected }, spreadableProps),
+            this.renderName(),
+            this.maybeRenderContent(),
+            this.props.loading ? undefined : this.props.resizeHandle));
+    };
+    ColumnHeaderCell.prototype.validateProps = function (nextProps) {
+        if (nextProps.menu != null) {
+            // throw this warning from the publicly exported, higher-order *HeaderCell components
+            // rather than HeaderCell, so consumers know exactly which components are receiving the
+            // offending prop
+            console.warn(Errors.COLUMN_HEADER_CELL_MENU_DEPRECATED);
+        }
+    };
+    ColumnHeaderCell.prototype.renderName = function () {
+        var _a = this.props, index = _a.index, loading = _a.loading, name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar;
+        var dropdownMenu = this.maybeRenderDropdownMenu();
+        var defaultName = React.createElement("div", { className: Classes.TABLE_TRUNCATED_TEXT }, name);
+        var nameComponent = (React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, renderName == null ? defaultName : renderName(name, index)));
+        if (useInteractionBar) {
+            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
+                React.createElement("div", { className: Classes.TABLE_INTERACTION_BAR },
+                    this.props.reorderHandle,
+                    dropdownMenu),
+                React.createElement(HorizontalCellDivider, null),
+                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
+        }
+        else {
+            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
+                dropdownMenu,
+                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
+        }
+    };
+    ColumnHeaderCell.prototype.maybeRenderContent = function () {
+        if (this.props.children === null) {
+            return undefined;
+        }
+        return (React.createElement("div", { className: Classes.TABLE_HEADER_CONTENT }, this.props.children));
+    };
+    ColumnHeaderCell.prototype.maybeRenderDropdownMenu = function () {
+        var _a = this.props, index = _a.index, menu = _a.menu, menuIconName = _a.menuIconName, renderMenu = _a.renderMenu;
+        if (renderMenu == null && menu == null) {
+            return undefined;
+        }
+        var popoverTargetClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass(menuIconName));
+        var constraints = [{
+                attachment: "together",
+                pin: true,
+                to: "window",
+            }];
+        var classes = classNames(Classes.TABLE_TH_MENU_CONTAINER, (_b = {},
+            _b[Classes.TABLE_TH_MENU_OPEN] = this.state.isActive,
+            _b));
+        // prefer renderMenu if it's defined
+        var content = core_1.Utils.isFunction(renderMenu)
+            ? renderMenu(index)
+            : menu;
+        return (React.createElement("div", { className: classes },
+            React.createElement("div", { className: Classes.TABLE_TH_MENU_CONTAINER_BACKGROUND }),
+            React.createElement(core_1.Popover, { tetherOptions: { constraints: constraints }, content: content, position: core_1.Position.BOTTOM, className: Classes.TABLE_TH_MENU, popoverDidOpen: this.handlePopoverDidOpen, popoverWillClose: this.handlePopoverWillClose, useSmartArrowPositioning: true },
+                React.createElement("span", { className: popoverTargetClasses }))));
+        var _b;
+    };
+    return ColumnHeaderCell;
+}(core_1.AbstractComponent));
+ColumnHeaderCell.defaultProps = {
+    isActive: false,
+    menuIconName: "chevron-down",
+    useInteractionBar: false,
+};
+exports.ColumnHeaderCell = ColumnHeaderCell;
+
+//# sourceMappingURL=columnHeaderCell.js.map
+
+
+/***/ }),
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8735,15 +10870,15 @@ exports.normalizeKeyCombo = function (combo) {
 
 
 
-var _prodInvariant = __webpack_require__(29),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(33),
+    _assign = __webpack_require__(10);
 
-var ReactNoopUpdateQueue = __webpack_require__(73);
+var ReactNoopUpdateQueue = __webpack_require__(86);
 
-var canDefineProperty = __webpack_require__(38);
-var emptyObject = __webpack_require__(39);
-var invariant = __webpack_require__(3);
-var lowPriorityWarning = __webpack_require__(51);
+var canDefineProperty = __webpack_require__(44);
+var emptyObject = __webpack_require__(45);
+var invariant = __webpack_require__(4);
+var lowPriorityWarning = __webpack_require__(59);
 
 /**
  * Base class helpers for the updating state of a component.
@@ -8865,10 +11000,10 @@ module.exports = {
   Component: ReactComponent,
   PureComponent: ReactPureComponent
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 73 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8884,7 +11019,7 @@ module.exports = {
 
 
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 function warnNoop(publicInstance, callerName) {
   if (process.env.NODE_ENV !== 'production') {
@@ -8966,10 +11101,10 @@ var ReactNoopUpdateQueue = {
 };
 
 module.exports = ReactNoopUpdateQueue;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 74 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8994,7 +11129,7 @@ var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol
 module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 75 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9040,7 +11175,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 76 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9063,16 +11198,16 @@ module.exports = getIteratorFn;
 
 
 
-var ReactCurrentOwner = __webpack_require__(18);
-var ReactComponentTreeHook = __webpack_require__(15);
-var ReactElement = __webpack_require__(25);
+var ReactCurrentOwner = __webpack_require__(23);
+var ReactComponentTreeHook = __webpack_require__(18);
+var ReactElement = __webpack_require__(29);
 
-var checkReactTypeSpec = __webpack_require__(133);
+var checkReactTypeSpec = __webpack_require__(156);
 
-var canDefineProperty = __webpack_require__(38);
-var getIteratorFn = __webpack_require__(75);
-var warning = __webpack_require__(4);
-var lowPriorityWarning = __webpack_require__(51);
+var canDefineProperty = __webpack_require__(44);
+var getIteratorFn = __webpack_require__(88);
+var warning = __webpack_require__(5);
+var lowPriorityWarning = __webpack_require__(59);
 
 function getDeclarationErrorAddendum() {
   if (ReactCurrentOwner.current) {
@@ -9298,10 +11433,10 @@ var ReactElementValidator = {
 };
 
 module.exports = ReactElementValidator;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 77 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9320,7 +11455,7 @@ module.exports = ReactElementValidator;
 // Therefore we re-export development-only version with all the PropTypes checks here.
 // However if one is migrating to the `prop-types` npm library, they will go through the
 // `index.js` entry point, and it will branch depending on the environment.
-var factory = __webpack_require__(78);
+var factory = __webpack_require__(91);
 module.exports = function(isValidElement) {
   // It is still allowed in 15.5.
   var throwOnDirectAccess = false;
@@ -9329,7 +11464,7 @@ module.exports = function(isValidElement) {
 
 
 /***/ }),
-/* 78 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9344,12 +11479,12 @@ module.exports = function(isValidElement) {
 
 
 
-var emptyFunction = __webpack_require__(16);
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var emptyFunction = __webpack_require__(19);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
-var ReactPropTypesSecret = __webpack_require__(52);
-var checkPropTypes = __webpack_require__(137);
+var ReactPropTypesSecret = __webpack_require__(60);
+var checkPropTypes = __webpack_require__(160);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -9846,10 +11981,10 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 79 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9872,7 +12007,7 @@ var ReactDOMComponentFlags = {
 module.exports = ReactDOMComponentFlags;
 
 /***/ }),
-/* 80 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9889,9 +12024,9 @@ module.exports = ReactDOMComponentFlags;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Accumulates items that must not be null or undefined into the first one. This
@@ -9933,10 +12068,10 @@ function accumulateInto(current, next) {
 }
 
 module.exports = accumulateInto;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 81 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9972,7 +12107,7 @@ function forEachAccumulated(arr, cb, scope) {
 module.exports = forEachAccumulated;
 
 /***/ }),
-/* 82 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9988,7 +12123,7 @@ module.exports = forEachAccumulated;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
 var contentKey = null;
 
@@ -10010,7 +12145,7 @@ function getTextContentAccessor() {
 module.exports = getTextContentAccessor;
 
 /***/ }),
-/* 83 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10027,13 +12162,13 @@ module.exports = getTextContentAccessor;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PooledClass = __webpack_require__(26);
+var PooledClass = __webpack_require__(30);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * A specialized pseudo-event module to help keep track of components waiting to
@@ -10132,10 +12267,10 @@ var CallbackQueue = function () {
 }();
 
 module.exports = PooledClass.addPoolingTo(CallbackQueue);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 84 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10162,7 +12297,7 @@ var ReactFeatureFlags = {
 module.exports = ReactFeatureFlags;
 
 /***/ }),
-/* 85 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10290,7 +12425,7 @@ var inputValueTracking = {
 module.exports = inputValueTracking;
 
 /***/ }),
-/* 86 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10346,7 +12481,7 @@ function isTextInputElement(elem) {
 module.exports = isTextInputElement;
 
 /***/ }),
-/* 87 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10376,7 +12511,7 @@ var ViewportMetrics = {
 module.exports = ViewportMetrics;
 
 /***/ }),
-/* 88 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10392,9 +12527,9 @@ module.exports = ViewportMetrics;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
-var escapeTextContentForBrowser = __webpack_require__(44);
-var setInnerHTML = __webpack_require__(43);
+var ExecutionEnvironment = __webpack_require__(13);
+var escapeTextContentForBrowser = __webpack_require__(50);
+var setInnerHTML = __webpack_require__(49);
 
 /**
  * Set the textContent property of a node, ensuring that whitespace is preserved
@@ -10433,7 +12568,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = setTextContent;
 
 /***/ }),
-/* 89 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10465,7 +12600,7 @@ function focusNode(node) {
 module.exports = focusNode;
 
 /***/ }),
-/* 90 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10624,7 +12759,7 @@ var CSSProperty = {
 module.exports = CSSProperty;
 
 /***/ }),
-/* 91 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10640,12 +12775,12 @@ module.exports = CSSProperty;
 
 
 
-var DOMProperty = __webpack_require__(23);
+var DOMProperty = __webpack_require__(27);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactInstrumentation = __webpack_require__(17);
+var ReactInstrumentation = __webpack_require__(20);
 
-var quoteAttributeValueForBrowser = __webpack_require__(175);
-var warning = __webpack_require__(4);
+var quoteAttributeValueForBrowser = __webpack_require__(198);
+var warning = __webpack_require__(5);
 
 var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + DOMProperty.ATTRIBUTE_NAME_START_CHAR + '][' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
 var illegalAttributeNameCache = {};
@@ -10862,10 +12997,10 @@ var DOMPropertyOperations = {
 };
 
 module.exports = DOMPropertyOperations;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 92 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10887,7 +13022,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 93 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10903,13 +13038,13 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var LinkedValueUtils = __webpack_require__(61);
+var LinkedValueUtils = __webpack_require__(69);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactUpdates = __webpack_require__(19);
+var ReactUpdates = __webpack_require__(24);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var didWarnValueLink = false;
 var didWarnValueDefaultValue = false;
@@ -11090,10 +13225,10 @@ function _handleChange(event) {
 }
 
 module.exports = ReactDOMSelect;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 94 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11109,16 +13244,16 @@ module.exports = ReactDOMSelect;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var ReactCompositeComponent = __webpack_require__(183);
-var ReactEmptyComponent = __webpack_require__(96);
-var ReactHostComponent = __webpack_require__(97);
+var ReactCompositeComponent = __webpack_require__(206);
+var ReactEmptyComponent = __webpack_require__(109);
+var ReactHostComponent = __webpack_require__(110);
 
-var getNextDebugID = __webpack_require__(186);
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var getNextDebugID = __webpack_require__(209);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 // To avoid a cyclic dependency, we create the final class in this module
 var ReactCompositeComponentWrapper = function (element) {
@@ -11225,10 +13360,10 @@ _assign(ReactCompositeComponentWrapper.prototype, ReactCompositeComponent, {
 });
 
 module.exports = instantiateReactComponent;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 95 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11245,11 +13380,11 @@ module.exports = instantiateReactComponent;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(32);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var ReactNodeTypes = {
   HOST: 0,
@@ -11271,10 +13406,10 @@ var ReactNodeTypes = {
 };
 
 module.exports = ReactNodeTypes;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 96 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11309,7 +13444,7 @@ ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 module.exports = ReactEmptyComponent;
 
 /***/ }),
-/* 97 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11325,9 +13460,9 @@ module.exports = ReactEmptyComponent;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 var genericComponentClass = null;
 var textComponentClass = null;
@@ -11380,10 +13515,10 @@ var ReactHostComponent = {
 };
 
 module.exports = ReactHostComponent;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 98 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11399,15 +13534,15 @@ module.exports = ReactHostComponent;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactCurrentOwner = __webpack_require__(18);
-var REACT_ELEMENT_TYPE = __webpack_require__(187);
+var ReactCurrentOwner = __webpack_require__(23);
+var REACT_ELEMENT_TYPE = __webpack_require__(210);
 
-var getIteratorFn = __webpack_require__(188);
-var invariant = __webpack_require__(3);
-var KeyEscapeUtils = __webpack_require__(64);
-var warning = __webpack_require__(4);
+var getIteratorFn = __webpack_require__(211);
+var invariant = __webpack_require__(4);
+var KeyEscapeUtils = __webpack_require__(72);
+var warning = __webpack_require__(5);
 
 var SEPARATOR = '.';
 var SUBSEPARATOR = ':';
@@ -11562,10 +13697,10 @@ function traverseAllChildren(children, callback, traverseContext) {
 }
 
 module.exports = traverseAllChildren;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 99 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11582,7 +13717,7 @@ module.exports = traverseAllChildren;
  * @typechecks
  */
 
-var emptyFunction = __webpack_require__(16);
+var emptyFunction = __webpack_require__(19);
 
 /**
  * Upstream version of event listener. Does not take into account specific
@@ -11645,10 +13780,10 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 100 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11664,11 +13799,11 @@ module.exports = EventListener;
 
 
 
-var ReactDOMSelection = __webpack_require__(200);
+var ReactDOMSelection = __webpack_require__(223);
 
-var containsNode = __webpack_require__(202);
-var focusNode = __webpack_require__(89);
-var getActiveElement = __webpack_require__(101);
+var containsNode = __webpack_require__(225);
+var focusNode = __webpack_require__(102);
+var getActiveElement = __webpack_require__(114);
 
 function isInDocument(node) {
   return containsNode(document.documentElement, node);
@@ -11776,7 +13911,7 @@ var ReactInputSelection = {
 module.exports = ReactInputSelection;
 
 /***/ }),
-/* 101 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11820,7 +13955,7 @@ function getActiveElement(doc) /*?DOMElement*/{
 module.exports = getActiveElement;
 
 /***/ }),
-/* 102 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11836,30 +13971,30 @@ module.exports = getActiveElement;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var DOMLazyTree = __webpack_require__(31);
-var DOMProperty = __webpack_require__(23);
-var React = __webpack_require__(28);
-var ReactBrowserEventEmitter = __webpack_require__(45);
-var ReactCurrentOwner = __webpack_require__(18);
+var DOMLazyTree = __webpack_require__(35);
+var DOMProperty = __webpack_require__(27);
+var React = __webpack_require__(32);
+var ReactBrowserEventEmitter = __webpack_require__(51);
+var ReactCurrentOwner = __webpack_require__(23);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactDOMContainerInfo = __webpack_require__(217);
-var ReactDOMFeatureFlags = __webpack_require__(218);
-var ReactFeatureFlags = __webpack_require__(84);
-var ReactInstanceMap = __webpack_require__(37);
-var ReactInstrumentation = __webpack_require__(17);
-var ReactMarkupChecksum = __webpack_require__(219);
-var ReactReconciler = __webpack_require__(30);
-var ReactUpdateQueue = __webpack_require__(65);
-var ReactUpdates = __webpack_require__(19);
+var ReactDOMContainerInfo = __webpack_require__(240);
+var ReactDOMFeatureFlags = __webpack_require__(241);
+var ReactFeatureFlags = __webpack_require__(97);
+var ReactInstanceMap = __webpack_require__(41);
+var ReactInstrumentation = __webpack_require__(20);
+var ReactMarkupChecksum = __webpack_require__(242);
+var ReactReconciler = __webpack_require__(34);
+var ReactUpdateQueue = __webpack_require__(73);
+var ReactUpdates = __webpack_require__(24);
 
-var emptyObject = __webpack_require__(39);
-var instantiateReactComponent = __webpack_require__(94);
-var invariant = __webpack_require__(3);
-var setInnerHTML = __webpack_require__(43);
-var shouldUpdateReactComponent = __webpack_require__(63);
-var warning = __webpack_require__(4);
+var emptyObject = __webpack_require__(45);
+var instantiateReactComponent = __webpack_require__(107);
+var invariant = __webpack_require__(4);
+var setInnerHTML = __webpack_require__(49);
+var shouldUpdateReactComponent = __webpack_require__(71);
+var warning = __webpack_require__(5);
 
 var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
 var ROOT_ATTR_NAME = DOMProperty.ROOT_ATTRIBUTE_NAME;
@@ -12361,10 +14496,10 @@ var ReactMount = {
 };
 
 module.exports = ReactMount;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 103 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12380,7 +14515,7 @@ module.exports = ReactMount;
 
 
 
-var ReactNodeTypes = __webpack_require__(95);
+var ReactNodeTypes = __webpack_require__(108);
 
 function getHostComponentFromComposite(inst) {
   var type;
@@ -12399,7 +14534,7 @@ function getHostComponentFromComposite(inst) {
 module.exports = getHostComponentFromComposite;
 
 /***/ }),
-/* 104 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12427,7 +14562,7 @@ var Intent;
 
 
 /***/ }),
-/* 105 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12440,7 +14575,7 @@ var Intent;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var position_1 = __webpack_require__(22);
+var position_1 = __webpack_require__(26);
 // per https://github.com/HubSpot/tether/pull/204, Tether now exposes a `bodyElement` option that,
 // when present, gets the tethered element injected into *it* instead of into the document body.
 // but both approaches still cause React to freak out, because it loses its handle on the DOM
@@ -12512,7 +14647,7 @@ function expandAttachmentClasses(attachments, prefix) {
 
 
 /***/ }),
-/* 106 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12529,57 +14664,57 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 if (typeof window !== "undefined" && typeof document !== "undefined") {
     // tslint:disable-next-line:no-var-requires
-    __webpack_require__(233); // only import actual dom4 if we're in the browser (not server-compatible)
+    __webpack_require__(255); // only import actual dom4 if we're in the browser (not server-compatible)
     // we'll still need dom4 types for the TypeScript to compile, these are included in package.json
 }
-var contextMenu = __webpack_require__(107);
+var contextMenu = __webpack_require__(120);
 exports.ContextMenu = contextMenu;
-__export(__webpack_require__(249));
-__export(__webpack_require__(251));
-__export(__webpack_require__(49));
-__export(__webpack_require__(112));
-__export(__webpack_require__(252));
-__export(__webpack_require__(253));
-__export(__webpack_require__(111));
-__export(__webpack_require__(254));
-__export(__webpack_require__(114));
-__export(__webpack_require__(115));
-__export(__webpack_require__(257));
-__export(__webpack_require__(258));
-__export(__webpack_require__(116));
-__export(__webpack_require__(70));
-__export(__webpack_require__(261));
-__export(__webpack_require__(113));
-__export(__webpack_require__(262));
-__export(__webpack_require__(47));
-__export(__webpack_require__(263));
-__export(__webpack_require__(33));
-__export(__webpack_require__(264));
-__export(__webpack_require__(110));
-__export(__webpack_require__(265));
-__export(__webpack_require__(266));
-__export(__webpack_require__(267));
-__export(__webpack_require__(268));
-__export(__webpack_require__(69));
-__export(__webpack_require__(269));
-__export(__webpack_require__(121));
-__export(__webpack_require__(270));
-__export(__webpack_require__(122));
-__export(__webpack_require__(123));
-__export(__webpack_require__(124));
 __export(__webpack_require__(271));
 __export(__webpack_require__(273));
+__export(__webpack_require__(55));
 __export(__webpack_require__(125));
 __export(__webpack_require__(274));
-__export(__webpack_require__(68));
 __export(__webpack_require__(275));
+__export(__webpack_require__(124));
+__export(__webpack_require__(276));
+__export(__webpack_require__(127));
+__export(__webpack_require__(128));
+__export(__webpack_require__(279));
+__export(__webpack_require__(280));
+__export(__webpack_require__(129));
+__export(__webpack_require__(78));
+__export(__webpack_require__(283));
 __export(__webpack_require__(126));
+__export(__webpack_require__(284));
+__export(__webpack_require__(53));
+__export(__webpack_require__(285));
+__export(__webpack_require__(37));
+__export(__webpack_require__(286));
+__export(__webpack_require__(123));
+__export(__webpack_require__(287));
+__export(__webpack_require__(288));
+__export(__webpack_require__(289));
+__export(__webpack_require__(290));
+__export(__webpack_require__(77));
+__export(__webpack_require__(291));
+__export(__webpack_require__(134));
+__export(__webpack_require__(292));
+__export(__webpack_require__(135));
+__export(__webpack_require__(136));
+__export(__webpack_require__(137));
+__export(__webpack_require__(293));
+__export(__webpack_require__(295));
+__export(__webpack_require__(138));
+__export(__webpack_require__(296));
+__export(__webpack_require__(76));
+__export(__webpack_require__(297));
+__export(__webpack_require__(139));
 
 //# sourceMappingURL=index.js.map
 
 
 /***/ }),
-/* 107 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12592,13 +14727,13 @@ __export(__webpack_require__(126));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var position_1 = __webpack_require__(22);
-var utils_1 = __webpack_require__(8);
-var popover_1 = __webpack_require__(33);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var position_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(9);
+var popover_1 = __webpack_require__(37);
 var TETHER_OPTIONS = {
     constraints: [
         { attachment: "together", pin: true, to: "window" },
@@ -12683,7 +14818,7 @@ exports.isOpen = isOpen;
 
 
 /***/ }),
-/* 108 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12696,7 +14831,7 @@ exports.default = !!(typeof window !== 'undefined' && window.document && window.
 module.exports = exports['default'];
 
 /***/ }),
-/* 109 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12706,11 +14841,11 @@ exports.__esModule = true;
 exports.nameShape = undefined;
 exports.transitionTimeout = transitionTimeout;
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(48);
+var _propTypes = __webpack_require__(54);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
@@ -12751,7 +14886,7 @@ var nameShape = exports.nameShape = _propTypes2.default.oneOfType([_propTypes2.d
 })]);
 
 /***/ }),
-/* 110 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12764,12 +14899,12 @@ var nameShape = exports.nameShape = _propTypes2.default.oneOfType([_propTypes2.d
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var props_1 = __webpack_require__(32);
-var utils_1 = __webpack_require__(8);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var props_1 = __webpack_require__(36);
+var utils_1 = __webpack_require__(9);
 var REACT_CONTEXT_TYPES = {
     blueprintPortalClassName: function (obj, key) {
         if (obj[key] != null && typeof obj[key] !== "string") {
@@ -12821,7 +14956,7 @@ exports.Portal = Portal;
 
 
 /***/ }),
-/* 111 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12834,12 +14969,12 @@ exports.Portal = Portal;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var overlay_1 = __webpack_require__(47);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var overlay_1 = __webpack_require__(53);
 var Dialog = (function (_super) {
     tslib_1.__extends(Dialog, _super);
     function Dialog() {
@@ -12899,7 +15034,7 @@ exports.DialogFactory = React.createFactory(Dialog);
 
 
 /***/ }),
-/* 112 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12912,10 +15047,10 @@ exports.DialogFactory = React.createFactory(Dialog);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
 var AnimationStates;
 (function (AnimationStates) {
     AnimationStates[AnimationStates["CLOSED"] = 0] = "CLOSED";
@@ -13059,7 +15194,7 @@ exports.Collapse = Collapse;
 
 
 /***/ }),
-/* 113 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13072,15 +15207,15 @@ exports.Collapse = Collapse;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var position_1 = __webpack_require__(22);
-var popover_1 = __webpack_require__(33);
-var menu_1 = __webpack_require__(70);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var position_1 = __webpack_require__(26);
+var popover_1 = __webpack_require__(37);
+var menu_1 = __webpack_require__(78);
 var REACT_CONTEXT_TYPES = {
     alignLeft: function (obj, key) {
         if (obj[key] != null && typeof obj[key] !== "boolean") {
@@ -13233,7 +15368,7 @@ exports.MenuItemFactory = React.createFactory(MenuItem);
 
 
 /***/ }),
-/* 114 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13250,11 +15385,11 @@ var tslib_1 = __webpack_require__(2);
 // tslint:disable max-classes-per-file
 // we need some empty interfaces to show up in docs
 // tslint:disable no-empty-interface
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var props_1 = __webpack_require__(32);
-var utils_1 = __webpack_require__(8);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var props_1 = __webpack_require__(36);
+var utils_1 = __webpack_require__(9);
 var INVALID_PROPS = [
     // we spread props to `<input>` but render `children` as its sibling
     "children",
@@ -13348,7 +15483,7 @@ exports.RadioFactory = React.createFactory(Radio);
 
 
 /***/ }),
-/* 115 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13361,11 +15496,11 @@ exports.RadioFactory = React.createFactory(Radio);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var props_1 = __webpack_require__(32);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var props_1 = __webpack_require__(36);
 var InputGroup = (function (_super) {
     tslib_1.__extends(InputGroup, _super);
     function InputGroup() {
@@ -13436,7 +15571,7 @@ exports.InputGroupFactory = React.createFactory(InputGroup);
 
 
 /***/ }),
-/* 116 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13449,25 +15584,25 @@ exports.InputGroupFactory = React.createFactory(InputGroup);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var react_1 = __webpack_require__(1);
-var React = __webpack_require__(1);
-var common_1 = __webpack_require__(27);
-var hotkey_1 = __webpack_require__(50);
-var hotkey_2 = __webpack_require__(50);
+var react_1 = __webpack_require__(0);
+var React = __webpack_require__(0);
+var common_1 = __webpack_require__(31);
+var hotkey_1 = __webpack_require__(56);
+var hotkey_2 = __webpack_require__(56);
 exports.Hotkey = hotkey_2.Hotkey;
-var keyCombo_1 = __webpack_require__(117);
+var keyCombo_1 = __webpack_require__(130);
 exports.KeyCombo = keyCombo_1.KeyCombo;
-var hotkeysTarget_1 = __webpack_require__(259);
+var hotkeysTarget_1 = __webpack_require__(281);
 exports.HotkeysTarget = hotkeysTarget_1.HotkeysTarget;
-var hotkeyParser_1 = __webpack_require__(71);
+var hotkeyParser_1 = __webpack_require__(79);
 exports.comboMatches = hotkeyParser_1.comboMatches;
 exports.getKeyCombo = hotkeyParser_1.getKeyCombo;
 exports.getKeyComboString = hotkeyParser_1.getKeyComboString;
 exports.parseKeyCombo = hotkeyParser_1.parseKeyCombo;
-var hotkeysDialog_1 = __webpack_require__(118);
+var hotkeysDialog_1 = __webpack_require__(131);
 exports.hideHotkeysDialog = hotkeysDialog_1.hideHotkeysDialog;
 exports.setHotkeysDialogProps = hotkeysDialog_1.setHotkeysDialogProps;
-var errors_1 = __webpack_require__(14);
+var errors_1 = __webpack_require__(16);
 var Hotkeys = (function (_super) {
     tslib_1.__extends(Hotkeys, _super);
     function Hotkeys() {
@@ -13516,7 +15651,7 @@ exports.Hotkeys = Hotkeys;
 
 
 /***/ }),
-/* 117 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13529,8 +15664,8 @@ exports.Hotkeys = Hotkeys;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var hotkeyParser_1 = __webpack_require__(71);
+var React = __webpack_require__(0);
+var hotkeyParser_1 = __webpack_require__(79);
 var KeyIcons = {
     alt: "pt-icon-key-option",
     ctrl: "pt-icon-key-control",
@@ -13576,7 +15711,7 @@ exports.KeyCombo = KeyCombo;
 
 
 /***/ }),
-/* 118 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13589,13 +15724,13 @@ exports.KeyCombo = KeyCombo;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var common_1 = __webpack_require__(27);
-var components_1 = __webpack_require__(106);
-var hotkey_1 = __webpack_require__(50);
-var hotkeys_1 = __webpack_require__(116);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var common_1 = __webpack_require__(31);
+var components_1 = __webpack_require__(119);
+var hotkey_1 = __webpack_require__(56);
+var hotkeys_1 = __webpack_require__(129);
 /**
  * The delay before showing or hiding the dialog. Should be long enough to
  * allow all registered hotkey listeners to execute first.
@@ -13718,7 +15853,7 @@ exports.hideHotkeysDialogAfterDelay = hideHotkeysDialogAfterDelay;
 
 
 /***/ }),
-/* 119 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13731,13 +15866,13 @@ exports.hideHotkeysDialogAfterDelay = hideHotkeysDialogAfterDelay;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var utils_1 = __webpack_require__(8);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var utils_1 = __webpack_require__(9);
 var CoreSlider = (function (_super) {
     tslib_1.__extends(CoreSlider, _super);
     function CoreSlider(props) {
@@ -13853,7 +15988,7 @@ exports.CoreSlider = CoreSlider;
 
 
 /***/ }),
-/* 120 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13866,13 +16001,13 @@ exports.CoreSlider = CoreSlider;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Keys = __webpack_require__(24);
-var utils_1 = __webpack_require__(8);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Keys = __webpack_require__(28);
+var utils_1 = __webpack_require__(9);
 // props that require number values, for validation
 var NUMBER_PROPS = ["max", "min", "stepSize", "tickSize", "value"];
 var Handle = (function (_super) {
@@ -14009,7 +16144,7 @@ exports.Handle = Handle;
 
 
 /***/ }),
-/* 121 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14022,10 +16157,10 @@ exports.Handle = Handle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var Tab = (function (_super) {
     tslib_1.__extends(Tab, _super);
     function Tab() {
@@ -14051,7 +16186,7 @@ exports.TabFactory = React.createFactory(Tab);
 
 
 /***/ }),
-/* 122 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14064,11 +16199,11 @@ exports.TabFactory = React.createFactory(Tab);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
 var TabList = (function (_super) {
     tslib_1.__extends(TabList, _super);
     function TabList() {
@@ -14103,7 +16238,7 @@ exports.TabListFactory = React.createFactory(TabList);
 
 
 /***/ }),
-/* 123 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14116,10 +16251,10 @@ exports.TabListFactory = React.createFactory(TabList);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var TabPanel = (function (_super) {
     tslib_1.__extends(TabPanel, _super);
     function TabPanel() {
@@ -14141,7 +16276,7 @@ exports.TabPanelFactory = React.createFactory(TabPanel);
 
 
 /***/ }),
-/* 124 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14154,10 +16289,10 @@ exports.TabPanelFactory = React.createFactory(TabPanel);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var Tab2 = (function (_super) {
     tslib_1.__extends(Tab2, _super);
     function Tab2() {
@@ -14186,7 +16321,7 @@ exports.Tab2Factory = React.createFactory(Tab2);
 
 
 /***/ }),
-/* 125 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14199,13 +16334,13 @@ exports.Tab2Factory = React.createFactory(Tab2);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
-var buttons_1 = __webpack_require__(49);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
+var buttons_1 = __webpack_require__(55);
 var Toast = (function (_super) {
     tslib_1.__extends(Toast, _super);
     function Toast() {
@@ -14285,7 +16420,7 @@ exports.ToastFactory = React.createFactory(Toast);
 
 
 /***/ }),
-/* 126 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14298,11 +16433,11 @@ exports.ToastFactory = React.createFactory(Toast);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
-var collapse_1 = __webpack_require__(112);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
+var collapse_1 = __webpack_require__(125);
 var TreeNode = (function (_super) {
     tslib_1.__extends(TreeNode, _super);
     function TreeNode() {
@@ -14374,15 +16509,1274 @@ exports.TreeNode = TreeNode;
 
 
 /***/ }),
-/* 127 */
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var DragEvents = (function () {
+    function DragEvents() {
+        var _this = this;
+        this.handleMouseDown = function (event) {
+            _this.initCoordinateData(event);
+            if (_this.handler != null && _this.handler.onActivate != null) {
+                var exitCode = _this.handler.onActivate(event);
+                if (exitCode === false) {
+                    return;
+                }
+            }
+            _this.isActivated = true;
+            _this.maybeAlterEventChain(event);
+            // It is possible that the mouseup would not be called after the initial
+            // mousedown (for example if the mouse is moved out of the window). So,
+            // we preemptively detach to avoid duplicate listeners.
+            _this.detachDocumentEventListeners();
+            _this.attachDocumentEventListeners();
+        };
+        this.handleMouseMove = function (event) {
+            _this.maybeAlterEventChain(event);
+            if (_this.isActivated) {
+                _this.isDragging = true;
+            }
+            if (_this.isDragging) {
+                var coords = _this.updateCoordinateData(event);
+                if (_this.handler != null && _this.handler.onDragMove != null) {
+                    _this.handler.onDragMove(event, coords);
+                }
+            }
+        };
+        this.handleMouseUp = function (event) {
+            _this.maybeAlterEventChain(event);
+            if (_this.handler != null) {
+                if (_this.isDragging) {
+                    var coords = _this.updateCoordinateData(event);
+                    if (_this.handler.onDragMove != null) {
+                        _this.handler.onDragMove(event, coords);
+                    }
+                    if (_this.handler.onDragEnd != null) {
+                        _this.handler.onDragEnd(event, coords);
+                    }
+                }
+                else if (_this.isActivated) {
+                    if (_this.handler.onDoubleClick != null) {
+                        if (_this.doubleClickTimeoutToken == null) {
+                            // if this the first click of a possible double-click,
+                            // we delay the firing of the click event by the
+                            // timeout.
+                            _this.doubleClickTimeoutToken = setTimeout(function () {
+                                delete _this.doubleClickTimeoutToken;
+                                if (_this.handler.onClick != null) {
+                                    _this.handler.onClick(event);
+                                }
+                            }, DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC);
+                        }
+                        else {
+                            // otherwise, this is the second click in the double-
+                            // click so we cancel the single-click timeout and
+                            // fire the double-click event.
+                            clearTimeout(_this.doubleClickTimeoutToken);
+                            delete _this.doubleClickTimeoutToken;
+                            _this.handler.onDoubleClick(event);
+                        }
+                    }
+                    else if (_this.handler.onClick != null) {
+                        _this.handler.onClick(event);
+                    }
+                }
+            }
+            _this.isActivated = false;
+            _this.isDragging = false;
+            _this.detachDocumentEventListeners();
+        };
+    }
+    /**
+     * Returns true if the event includes a modifier key that often adds the result of the drag
+     * event to any existing state. For example, holding CTRL before dragging may select another
+     * region in addition to an existing one, while the absence of a modifier key may clear the
+     * existing selection first.
+     * @param event the mouse event for the drag interaction
+     */
+    DragEvents.isAdditive = function (event) {
+        return event.ctrlKey || event.metaKey;
+    };
+    DragEvents.prototype.attach = function (element, handler) {
+        this.detach();
+        this.handler = handler;
+        this.element = element;
+        if (this.isValidDragHandler(handler)) {
+            this.element.addEventListener("mousedown", this.handleMouseDown);
+        }
+        return this;
+    };
+    DragEvents.prototype.detach = function () {
+        if (this.element != null) {
+            this.element.removeEventListener("mousedown", this.handleMouseDown);
+            this.detachDocumentEventListeners();
+        }
+    };
+    DragEvents.prototype.isValidDragHandler = function (handler) {
+        return handler != null && (handler.onActivate != null
+            || handler.onDragMove != null
+            || handler.onDragEnd != null
+            || handler.onClick != null
+            || handler.onDoubleClick != null);
+    };
+    DragEvents.prototype.attachDocumentEventListeners = function () {
+        document.addEventListener("mousemove", this.handleMouseMove);
+        document.addEventListener("mouseup", this.handleMouseUp);
+    };
+    DragEvents.prototype.detachDocumentEventListeners = function () {
+        document.removeEventListener("mousemove", this.handleMouseMove);
+        document.removeEventListener("mouseup", this.handleMouseUp);
+    };
+    DragEvents.prototype.initCoordinateData = function (event) {
+        this.activationCoordinates = [event.clientX, event.clientY];
+        this.lastCoordinates = this.activationCoordinates;
+    };
+    DragEvents.prototype.updateCoordinateData = function (event) {
+        var currentCoordinates = [event.clientX, event.clientY];
+        var deltaCoordinates = [
+            currentCoordinates[0] - this.lastCoordinates[0],
+            currentCoordinates[1] - this.lastCoordinates[1],
+        ];
+        var offsetCoordinates = [
+            currentCoordinates[0] - this.activationCoordinates[0],
+            currentCoordinates[1] - this.activationCoordinates[1],
+        ];
+        var data = {
+            activation: this.activationCoordinates,
+            current: currentCoordinates,
+            delta: deltaCoordinates,
+            last: this.lastCoordinates,
+            offset: offsetCoordinates,
+        };
+        this.lastCoordinates = [event.clientX, event.clientY];
+        return data;
+    };
+    DragEvents.prototype.maybeAlterEventChain = function (event) {
+        if (this.handler.preventDefault) {
+            event.preventDefault();
+        }
+        if (this.handler.stopPropagation) {
+            event.stopPropagation();
+        }
+    };
+    return DragEvents;
+}());
+DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC = 500;
+exports.DragEvents = DragEvents;
+
+//# sourceMappingURL=dragEvents.js.map
+
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var core_1 = __webpack_require__(14);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+// amount in pixels that the content div width changes when truncated vs when
+// not truncated. Note: could be modified by styles
+var CONTENT_DIV_WIDTH_DELTA = 25;
+var TruncatedPopoverMode;
+(function (TruncatedPopoverMode) {
+    TruncatedPopoverMode[TruncatedPopoverMode["ALWAYS"] = 0] = "ALWAYS";
+    TruncatedPopoverMode[TruncatedPopoverMode["NEVER"] = 1] = "NEVER";
+    TruncatedPopoverMode[TruncatedPopoverMode["WHEN_TRUNCATED"] = 2] = "WHEN_TRUNCATED";
+})(TruncatedPopoverMode = exports.TruncatedPopoverMode || (exports.TruncatedPopoverMode = {}));
+var TruncatedFormat = (function (_super) {
+    tslib_1.__extends(TruncatedFormat, _super);
+    function TruncatedFormat() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { isTruncated: false };
+        _this.handleContentDivRef = function (ref) { return _this.contentDiv = ref; };
+        return _this;
+    }
+    TruncatedFormat.prototype.render = function () {
+        var _a = this.props, children = _a.children, detectTruncation = _a.detectTruncation, preformatted = _a.preformatted, truncateLength = _a.truncateLength, truncationSuffix = _a.truncationSuffix;
+        var content = "" + children;
+        var cellContent = content;
+        if (!detectTruncation && truncateLength > 0 && cellContent.length > truncateLength) {
+            cellContent = cellContent.substring(0, truncateLength) + truncationSuffix;
+        }
+        if (this.shouldShowPopover(content)) {
+            var popoverClasses = classNames(Classes.TABLE_TRUNCATED_POPOVER, preformatted ? Classes.TABLE_POPOVER_WHITESPACE_PRE : Classes.TABLE_POPOVER_WHITESPACE_NORMAL);
+            var popoverContent = React.createElement("div", { className: popoverClasses }, children);
+            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT);
+            var constraints = [{
+                    attachment: "together",
+                    to: "window",
+                }];
+            var iconClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass("more"));
+            return (React.createElement("div", { className: className },
+                React.createElement("div", { className: Classes.TABLE_TRUNCATED_VALUE, ref: this.handleContentDivRef }, cellContent),
+                React.createElement(core_1.Popover, { className: Classes.TABLE_TRUNCATED_POPOVER_TARGET, tetherOptions: { constraints: constraints }, content: popoverContent, position: core_1.Position.BOTTOM, useSmartArrowPositioning: true },
+                    React.createElement("span", { className: iconClasses }))));
+        }
+        else {
+            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT_TEXT);
+            return React.createElement("div", { className: className, ref: this.handleContentDivRef }, cellContent);
+        }
+    };
+    TruncatedFormat.prototype.componentDidMount = function () {
+        this.setTruncationState();
+    };
+    TruncatedFormat.prototype.componentDidUpdate = function () {
+        this.setTruncationState();
+    };
+    TruncatedFormat.prototype.shouldShowPopover = function (content) {
+        var _a = this.props, detectTruncation = _a.detectTruncation, showPopover = _a.showPopover, truncateLength = _a.truncateLength;
+        switch (showPopover) {
+            case TruncatedPopoverMode.ALWAYS:
+                return true;
+            case TruncatedPopoverMode.NEVER:
+                return false;
+            case TruncatedPopoverMode.WHEN_TRUNCATED:
+                return detectTruncation
+                    ? this.state.isTruncated
+                    : (truncateLength > 0 && content.length > truncateLength);
+            default:
+                return false;
+        }
+    };
+    TruncatedFormat.prototype.setTruncationState = function () {
+        if (!this.props.detectTruncation || this.props.showPopover !== TruncatedPopoverMode.WHEN_TRUNCATED) {
+            return;
+        }
+        // if the popover handle exists, take it into account
+        var popoverHandleAdjustmentFactor = this.state.isTruncated ? CONTENT_DIV_WIDTH_DELTA : 0;
+        // add a slight bit of buffer space where we don't show the popover, to deal with cases
+        // where everything isn't pixel perfect
+        popoverHandleAdjustmentFactor += .5;
+        var isTruncated = this.contentDiv !== undefined &&
+            (this.contentDiv.scrollWidth - popoverHandleAdjustmentFactor > this.contentDiv.clientWidth ||
+                this.contentDiv.scrollHeight > this.contentDiv.clientHeight);
+        if (this.state.isTruncated !== isTruncated) {
+            this.setState({ isTruncated: isTruncated });
+        }
+    };
+    return TruncatedFormat;
+}(React.Component));
+TruncatedFormat.defaultProps = {
+    detectTruncation: true,
+    preformatted: false,
+    showPopover: TruncatedPopoverMode.WHEN_TRUNCATED,
+    truncateLength: 80,
+    truncationSuffix: "...",
+};
+exports.TruncatedFormat = TruncatedFormat;
+
+//# sourceMappingURL=truncatedFormat.js.map
+
+
+/***/ }),
+/* 142 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var cell_1 = __webpack_require__(57);
+var Column = (function (_super) {
+    tslib_1.__extends(Column, _super);
+    function Column() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return Column;
+}(React.Component));
+Column.defaultProps = {
+    renderCell: cell_1.emptyCellRenderer,
+};
+Column = tslib_1.__decorate([
+    PureRender
+], Column);
+exports.Column = Column;
+
+//# sourceMappingURL=column.js.map
+
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var regions_1 = __webpack_require__(21);
+var Classes = __webpack_require__(12);
+var rect_1 = __webpack_require__(43);
+var utils_1 = __webpack_require__(17);
+/**
+ * This class manages the sizes of grid cells using arrays of individual row/column sizes.
+ */
+var Grid = (function () {
+    /**
+     * This constructor accumulates the heights and widths in `O(n)`, saving
+     * time in later calculations.
+     *
+     * @param bleed - The number of rows/cols that we expand beyond the
+     *     viewport (on all sides). This helps avoid displaying an empty
+     *     viewport when the user scrolls quickly.
+     */
+    function Grid(rowHeights, columnWidths, bleed, ghostHeight, ghostWidth) {
+        if (bleed === void 0) { bleed = Grid.DEFAULT_BLEED; }
+        if (ghostHeight === void 0) { ghostHeight = Grid.DEFAULT_GHOST_HEIGHT; }
+        if (ghostWidth === void 0) { ghostWidth = Grid.DEFAULT_GHOST_WIDTH; }
+        var _this = this;
+        this.getCumulativeWidthBefore = function (index) {
+            return (index === 0) ? 0 : _this.getCumulativeWidthAt(index - 1);
+        };
+        this.getCumulativeWidthAt = function (index) {
+            if (_this.numCols === 0) {
+                return _this.ghostWidth * index;
+            }
+            else if (index >= _this.numCols) {
+                return _this.cumulativeColumnWidths[_this.numCols - 1] + _this.ghostWidth * (index - _this.numCols + 1);
+            }
+            else {
+                return _this.cumulativeColumnWidths[index];
+            }
+        };
+        this.getCumulativeHeightBefore = function (index) {
+            return (index === 0) ? 0 : _this.getCumulativeHeightAt(index - 1);
+        };
+        this.getCumulativeHeightAt = function (index) {
+            if (_this.numRows === 0) {
+                return _this.ghostHeight * index;
+            }
+            else if (index >= _this.numRows) {
+                return _this.cumulativeRowHeights[_this.numRows - 1] + _this.ghostHeight * (index - _this.numRows + 1);
+            }
+            else {
+                return _this.cumulativeRowHeights[index];
+            }
+        };
+        this.columnWidths = columnWidths;
+        this.rowHeights = rowHeights;
+        this.cumulativeColumnWidths = utils_1.Utils.accumulate(columnWidths);
+        this.cumulativeRowHeights = utils_1.Utils.accumulate(rowHeights);
+        this.numCols = columnWidths.length;
+        this.numRows = rowHeights.length;
+        this.bleed = bleed;
+        this.ghostHeight = ghostHeight;
+        this.ghostWidth = ghostWidth;
+    }
+    /**
+     * Returns the `Rect` bounds of a cell in scrollpane client space.
+     *
+     * Scrollpane client coordinate space uses the origin of the scrollpane
+     * client (the inside part that you're moving around).
+     *
+     * For example, let's say you're scrolling around a block of 1000 x 1000
+     * cells. Regardless where you've scrolled, the first cell is always at
+     * 0,0 in scrollpane client space. the cell to the right of it is always
+     * at, e.g., 100,0.
+     */
+    Grid.prototype.getCellRect = function (rowIndex, columnIndex) {
+        var height = this.rowHeights[rowIndex];
+        var top = this.cumulativeRowHeights[rowIndex] - height;
+        var width = this.columnWidths[columnIndex];
+        var left = this.cumulativeColumnWidths[columnIndex] - width;
+        return new rect_1.Rect(left, top, width, height);
+    };
+    /**
+     * Returns the `Rect` bounds of a cell in scrollpane client space.
+     *
+     * If the cell is beyond the bounds of the user-defined table cells, it is
+     * considered a "ghost" cell. If a width/height is not defined for that
+     * row/column, we use the default width/height.
+     */
+    Grid.prototype.getGhostCellRect = function (rowIndex, columnIndex) {
+        var left = 0;
+        var top = 0;
+        var width = 0;
+        var height = 0;
+        if (rowIndex >= this.rowHeights.length) {
+            height = this.ghostHeight;
+            top = this.getHeight() + this.ghostHeight * (rowIndex - this.numRows);
+        }
+        else {
+            height = this.rowHeights[rowIndex];
+            top = this.cumulativeRowHeights[rowIndex] - height;
+        }
+        if (columnIndex >= this.columnWidths.length) {
+            width = this.ghostWidth;
+            left = this.getWidth() + this.ghostWidth * (columnIndex - this.numCols);
+        }
+        else {
+            width = this.columnWidths[columnIndex];
+            left = this.cumulativeColumnWidths[columnIndex] - width;
+        }
+        return new rect_1.Rect(left, top, width, height);
+    };
+    /**
+     * Returns the `Rect` with the base coordinate and height of the specified row.
+     */
+    Grid.prototype.getRowRect = function (rowIndex) {
+        var height = this.rowHeights[rowIndex];
+        var top = this.cumulativeRowHeights[rowIndex] - height;
+        return new rect_1.Rect(0, top, this.getWidth(), height);
+    };
+    /**
+     * Returns the `Rect` with the base coordinate and width of the specified column.
+     */
+    Grid.prototype.getColumnRect = function (columnIndex) {
+        var width = this.columnWidths[columnIndex];
+        var left = this.cumulativeColumnWidths[columnIndex] - width;
+        return new rect_1.Rect(left, 0, width, this.getHeight());
+    };
+    /**
+     * Returns the total width of the entire grid
+     */
+    Grid.prototype.getWidth = function () {
+        return this.numCols === 0 ? 0 : this.cumulativeColumnWidths[this.numCols - 1];
+    };
+    /**
+     * Returns the total width of the entire grid
+     */
+    Grid.prototype.getHeight = function () {
+        return this.numRows === 0 ? 0 : this.cumulativeRowHeights[this.numRows - 1];
+    };
+    /**
+     * Returns the `Rect` bounds of entire grid
+     */
+    Grid.prototype.getRect = function () {
+        return new rect_1.Rect(0, 0, this.getWidth(), this.getHeight());
+    };
+    /**
+     * Maps each cell that intersects with the given `Rect` argument. The
+     * indices of iteration are extended in both directions by the integer
+     * `bleed` class property, then are clamped between 0 and the number of
+     * rows/columns.
+     *
+     * Uses a binary search for each of the 4 edges of the bounds, resulting
+     * in a runtime of `O(log(rows) + log(cols))` plus the `O(irows * icols)`
+     * iteration of intersecting cells.
+     */
+    Grid.prototype.mapCellsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
+        var _b = this.getColumnIndicesInRect(rect), columnIndexStart = _b.columnIndexStart, columnIndexEnd = _b.columnIndexEnd;
+        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
+            for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
+                results.push(callback(rowIndex, columnIndex));
+            }
+        }
+        return results;
+    };
+    /**
+     * Maps each row that intersects with the given `Rect` argument.
+     *
+     * See Grid.mapCellsInRect for more details.
+     */
+    Grid.prototype.mapRowsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
+        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
+            results.push(callback(rowIndex));
+        }
+        return results;
+    };
+    /**
+     * Maps each column that intersects with the given `Rect` argument.
+     *
+     * See Grid.mapCellsInRect for more details.
+     */
+    Grid.prototype.mapColumnsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getColumnIndicesInRect(rect), columnIndexStart = _a.columnIndexStart, columnIndexEnd = _a.columnIndexEnd;
+        for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
+            results.push(callback(columnIndex));
+        }
+        return results;
+    };
+    /**
+     * Returns the start and end indices of rows that intersect with the given
+     * `Rect` argument.
+     */
+    Grid.prototype.getRowIndicesInRect = function (rect, includeGhostCells, limit) {
+        if (includeGhostCells === void 0) { includeGhostCells = false; }
+        if (limit === void 0) { limit = Grid.DEFAULT_MAX_ROWS; }
+        if (rect == null) {
+            return { rowIndexEnd: 0, rowIndexStart: 0 };
+        }
+        var searchEnd = includeGhostCells ? Math.max(this.numRows, Grid.DEFAULT_MAX_ROWS) : this.numRows;
+        var _a = this.getIndicesInInterval(rect.top, rect.top + rect.height, searchEnd, !includeGhostCells, this.getCumulativeHeightAt), start = _a.start, end = _a.end;
+        var rowIndexEnd = (limit > 0 && end - start > limit)
+            ? start + limit
+            : end;
+        return {
+            rowIndexEnd: rowIndexEnd,
+            rowIndexStart: start,
+        };
+    };
+    /**
+     * Returns the start and end indices of columns that intersect with the
+     * given `Rect` argument.
+     */
+    Grid.prototype.getColumnIndicesInRect = function (rect, includeGhostCells, limit) {
+        if (includeGhostCells === void 0) { includeGhostCells = false; }
+        if (limit === void 0) { limit = Grid.DEFAULT_MAX_COLUMNS; }
+        if (rect == null) {
+            return { columnIndexEnd: 0, columnIndexStart: 0 };
+        }
+        var searchEnd = includeGhostCells ? Math.max(this.numCols, Grid.DEFAULT_MAX_COLUMNS) : this.numCols;
+        var _a = this.getIndicesInInterval(rect.left, rect.left + rect.width, searchEnd, !includeGhostCells, this.getCumulativeWidthAt), start = _a.start, end = _a.end;
+        var columnIndexEnd = (limit > 0 && end - start > limit)
+            ? start + limit
+            : end;
+        return {
+            columnIndexEnd: columnIndexEnd,
+            columnIndexStart: start,
+        };
+    };
+    Grid.prototype.isGhostIndex = function (rowIndex, columnIndex) {
+        return (rowIndex >= this.numRows || columnIndex >= this.numCols);
+    };
+    Grid.prototype.getExtremaClasses = function (rowIndex, columnIndex, rowEnd, columnEnd) {
+        if (rowIndex === rowEnd && columnIndex === columnEnd) {
+            return [Classes.TABLE_LAST_IN_COLUMN, Classes.TABLE_LAST_IN_ROW];
+        }
+        if (rowIndex === rowEnd) {
+            return [Classes.TABLE_LAST_IN_COLUMN];
+        }
+        if (columnIndex === columnEnd) {
+            return [Classes.TABLE_LAST_IN_ROW];
+        }
+        return [];
+    };
+    Grid.prototype.getRegionStyle = function (region) {
+        var cardinality = regions_1.Regions.getRegionCardinality(region);
+        switch (cardinality) {
+            case regions_1.RegionCardinality.CELLS: {
+                var _a = region.rows, rowStart = _a[0], rowEnd = _a[1];
+                var _b = region.cols, colStart = _b[0], colEnd = _b[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(rowStart, colStart) || this.isGhostIndex(rowEnd, colEnd)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(rowStart, colStart);
+                var cellRect1 = this.getCellRect(rowEnd, colEnd);
+                var offsetLeft = colStart === 0 ? 0 : 1;
+                var offsetTop = rowStart === 0 ? 0 : 1;
+                var rect = cellRect0.union(cellRect1);
+                rect.height += offsetTop;
+                rect.left -= offsetLeft;
+                rect.width += offsetLeft;
+                rect.top -= offsetTop;
+                return tslib_1.__assign({}, rect.style(), { display: "block" });
+            }
+            case regions_1.RegionCardinality.FULL_COLUMNS: {
+                var _c = region.cols, colStart = _c[0], colEnd = _c[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(0, colStart) || this.isGhostIndex(0, colEnd)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(0, colStart);
+                var cellRect1 = this.getCellRect(0, colEnd);
+                var rect = cellRect0.union(cellRect1);
+                var offsetLeft = colStart === 0 ? 0 : 1;
+                return {
+                    bottom: 0,
+                    display: "block",
+                    left: rect.left - offsetLeft,
+                    top: 0,
+                    width: rect.width + offsetLeft,
+                };
+            }
+            case regions_1.RegionCardinality.FULL_ROWS: {
+                var _d = region.rows, rowStart = _d[0], rowEnd = _d[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(rowStart, 0) || this.isGhostIndex(rowEnd, 0)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(rowStart, 0);
+                var cellRect1 = this.getCellRect(rowEnd, 0);
+                var rect = cellRect0.union(cellRect1);
+                var offsetTop = rowStart === 0 ? 0 : 1;
+                return {
+                    display: "block",
+                    height: rect.height + offsetTop,
+                    left: 0,
+                    right: 0,
+                    top: rect.top - offsetTop,
+                };
+            }
+            case regions_1.RegionCardinality.FULL_TABLE:
+                return {
+                    bottom: 0,
+                    display: "block",
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                };
+            default: return { display: "none" };
+        }
+    };
+    Grid.prototype.getIndicesInInterval = function (min, max, count, useEndBleed, lookup) {
+        var start = utils_1.Utils.binarySearch(min, count - 1, lookup);
+        var end = utils_1.Utils.binarySearch(max, count - 1, lookup);
+        // correct exact pixel alignment
+        if (start >= 0 && min === lookup(start)) {
+            start += 1;
+        }
+        // apply bounded bleeds
+        start = Math.max(0, start - this.bleed);
+        if (useEndBleed) {
+            end = Math.min(count - 1, end + this.bleed);
+        }
+        else {
+            end = Math.min(count - 1, end);
+        }
+        return { start: start, end: end };
+    };
+    return Grid;
+}());
+Grid.DEFAULT_BLEED = 3;
+Grid.DEFAULT_MAX_COLUMNS = 50;
+Grid.DEFAULT_MAX_ROWS = 200;
+Grid.DEFAULT_GHOST_HEIGHT = 20;
+Grid.DEFAULT_GHOST_WIDTH = 150;
+exports.Grid = Grid;
+
+//# sourceMappingURL=grid.js.map
+
+
+/***/ }),
+/* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(307));
+__export(__webpack_require__(308));
+
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ns = "[Blueprint Table]";
+var deprec = ns + " DEPRECATION:";
+exports.COLUMN_HEADER_CELL_MENU_DEPRECATED = deprec + " <ColumnHeaderCell> menu is deprecated. Use renderMenu instead.";
+exports.ROW_HEADER_CELL_MENU_DEPRECATED = deprec + " <RowHeaderCell> menu is deprecated. Use renderMenu instead.";
+
+//# sourceMappingURL=errors.js.map
+
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(14);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+var HeaderCell = (function (_super) {
+    tslib_1.__extends(HeaderCell, _super);
+    function HeaderCell() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isActive: false,
+        };
+        return _this;
+    }
+    HeaderCell.prototype.shouldComponentUpdate = function (nextProps) {
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
+            || !utils_1.Utils.deepCompareKeys(this.props, nextProps, ["style"]);
+    };
+    HeaderCell.prototype.renderContextMenu = function (_event) {
+        var renderMenu = this.props.renderMenu;
+        if (core_1.Utils.isFunction(renderMenu)) {
+            // the preferred way (a consistent function instance that won't cause as many re-renders)
+            return renderMenu(this.props.index);
+        }
+        else {
+            // the deprecated way (leads to lots of unnecessary re-renders because of menu-item
+            // callbacks needing access to the index of the right-clicked cell, which demands that
+            // new callback functions and JSX elements be recreated on each render of the parent)
+            return this.props.menu;
+        }
+    };
+    HeaderCell.prototype.render = function () {
+        var classes = classNames(Classes.TABLE_HEADER, (_a = {},
+            _a[Classes.TABLE_HEADER_ACTIVE] = this.props.isActive || this.state.isActive,
+            _a[Classes.TABLE_HEADER_SELECTED] = this.props.isSelected,
+            _a[core_1.Classes.LOADING] = this.props.loading,
+            _a), this.props.className);
+        return (React.createElement("div", { className: classes, style: this.props.style }, this.props.children));
+        var _a;
+    };
+    return HeaderCell;
+}(React.Component));
+HeaderCell = tslib_1.__decorate([
+    core_1.ContextMenuTarget
+], HeaderCell);
+exports.HeaderCell = HeaderCell;
+
+//# sourceMappingURL=headerCell.js.map
+
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(14);
+var Classes = __webpack_require__(12);
+var Errors = __webpack_require__(145);
+var loadableContent_1 = __webpack_require__(80);
+var headerCell_1 = __webpack_require__(146);
+var RowHeaderCell = (function (_super) {
+    tslib_1.__extends(RowHeaderCell, _super);
+    function RowHeaderCell() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    RowHeaderCell.prototype.render = function () {
+        var loadableContentDivClasses = classNames(Classes.TABLE_ROW_NAME_TEXT, Classes.TABLE_TRUNCATED_TEXT);
+        var _a = this.props, 
+        // from IRowHeaderCellProps
+        isRowReorderable = _a.isRowReorderable, isRowSelected = _a.isRowSelected, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["isRowReorderable", "isRowSelected"]);
+        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isRowReorderable, isSelected: this.props.isRowSelected }, spreadableProps),
+            React.createElement("div", { className: Classes.TABLE_ROW_NAME },
+                React.createElement(loadableContent_1.LoadableContent, { loading: spreadableProps.loading },
+                    React.createElement("div", { className: loadableContentDivClasses }, spreadableProps.name))),
+            this.props.children,
+            spreadableProps.loading ? undefined : spreadableProps.resizeHandle));
+    };
+    RowHeaderCell.prototype.validateProps = function (nextProps) {
+        if (nextProps.menu != null) {
+            // throw this warning from the publicly exported, higher-order *HeaderCell components
+            // rather than HeaderCell, so consumers know exactly which components are receiving the
+            // offending prop
+            console.warn(Errors.ROW_HEADER_CELL_MENU_DEPRECATED);
+        }
+    };
+    return RowHeaderCell;
+}(core_1.AbstractComponent));
+exports.RowHeaderCell = RowHeaderCell;
+
+//# sourceMappingURL=rowHeaderCell.js.map
+
+
+/***/ }),
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(2);
+var core_1 = __webpack_require__(14);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var batcher_1 = __webpack_require__(149);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+var reorderable_1 = __webpack_require__(313);
+var resizable_1 = __webpack_require__(314);
+var selectable_1 = __webpack_require__(83);
+var regions_1 = __webpack_require__(21);
+var RESET_CELL_KEYS_BLACKLIST = [
+    "endIndex",
+    "startIndex",
+    "viewportRect",
+];
+var Header = (function (_super) {
+    tslib_1.__extends(Header, _super);
+    function Header(props, context) {
+        var _this = _super.call(this, props, context) || this;
+        _this.state = {
+            hasSelectionEnded: false,
+        };
+        _this.batcher = new batcher_1.Batcher();
+        _this.locateClick = function (event) {
+            var coord = _this.props.getMouseCoordinate(event);
+            _this.activationIndex = _this.props.convertPointToIndex(coord);
+            return _this.props.toRegion(_this.activationIndex);
+        };
+        _this.locateDragForSelection = function (_event, coords) {
+            var coord = _this.props.getDragCoordinate(coords.current);
+            var startIndex = _this.activationIndex;
+            var endIndex = _this.props.convertPointToIndex(coord);
+            return _this.props.toRegion(startIndex, endIndex);
+        };
+        _this.locateDragForReordering = function (_event, coords) {
+            var coord = _this.props.getDragCoordinate(coords.current);
+            var guideIndex = _this.props.convertPointToIndex(coord, true);
+            return (guideIndex < 0) ? undefined : guideIndex;
+        };
+        _this.renderCells = function () {
+            var startIndex = _this.props.startIndex;
+            var endIndex = _this.props.endIndex;
+            _this.batcher.startNewBatch();
+            for (var index = startIndex; index <= endIndex; index++) {
+                _this.batcher.addArgsToBatch(index);
+            }
+            _this.batcher.removeOldAddNew(_this.renderNewCell);
+            if (!_this.batcher.isDone()) {
+                _this.batcher.idleCallback(function () { return _this.forceUpdate(); });
+            }
+            return _this.batcher.getList();
+        };
+        _this.renderNewCell = function (index) {
+            var extremaClasses = _this.props.getCellExtremaClasses(index, _this.props.endIndex);
+            var renderer = _this.props.isGhostIndex(index)
+                ? _this.props.renderGhostCell
+                : _this.renderCell;
+            return renderer(index, extremaClasses);
+        };
+        _this.renderCell = function (index, extremaClasses) {
+            var _a = _this.props, getIndexClass = _a.getIndexClass, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions;
+            var cell = _this.props.renderHeaderCell(index);
+            var isLoading = cell.props.loading != null ? cell.props.loading : _this.props.loading;
+            var isSelected = _this.props.isCellSelected(index);
+            var isEntireCellTargetReorderable = _this.isEntireCellTargetReorderable(cell, isSelected);
+            var className = classNames(extremaClasses, (_b = {},
+                _b[Classes.TABLE_DRAGGABLE] = onSelection != null,
+                _b[Classes.TABLE_HEADER_REORDERABLE] = isEntireCellTargetReorderable,
+                _b), _this.props.getCellIndexClass(index), cell.props.className);
+            var cellProps = (_c = {
+                    className: className,
+                    index: index
+                },
+                _c[_this.props.headerCellIsSelectedPropName] = isSelected,
+                _c[_this.props.headerCellIsReorderablePropName] = isEntireCellTargetReorderable,
+                _c.loading = isLoading,
+                _c.reorderHandle = _this.maybeRenderReorderHandle(cell, index),
+                _c);
+            var modifiedHandleSizeChanged = function (size) { return _this.props.handleSizeChanged(index, size); };
+            var modifiedHandleResizeEnd = function (size) { return _this.props.handleResizeEnd(index, size); };
+            var modifiedHandleResizeHandleDoubleClick = function () { return _this.props.handleResizeDoubleClick(index); };
+            var baseChildren = (React.createElement(selectable_1.DragSelectable, { allowMultipleSelection: _this.props.allowMultipleSelection, disabled: isEntireCellTargetReorderable, ignoredSelectors: ["." + Classes.TABLE_REORDER_HANDLE], key: getIndexClass(index), locateClick: _this.locateClick, locateDrag: _this.locateDragForSelection, onFocus: _this.props.onFocus, onSelection: _this.handleDragSelectableSelection, onSelectionEnd: _this.handleDragSelectableSelectionEnd, selectedRegions: selectedRegions, selectedRegionTransform: _this.props.selectedRegionTransform },
+                React.createElement(resizable_1.Resizable, { isResizable: _this.props.isResizable, maxSize: _this.props.maxSize, minSize: _this.props.minSize, onDoubleClick: modifiedHandleResizeHandleDoubleClick, onLayoutLock: _this.props.onLayoutLock, onResizeEnd: modifiedHandleResizeEnd, onSizeChanged: modifiedHandleSizeChanged, orientation: _this.props.resizeOrientation, size: _this.props.getCellSize(index) }, React.cloneElement(cell, cellProps))));
+            return _this.isReorderHandleEnabled(cell)
+                ? baseChildren // reordering will be handled by interacting with the reorder handle
+                : _this.wrapInDragReorderable(index, baseChildren, !isEntireCellTargetReorderable);
+            var _b, _c;
+        };
+        _this.handleDragSelectableSelection = function (selectedRegions) {
+            _this.props.onSelection(selectedRegions);
+            _this.setState({ hasSelectionEnded: false });
+        };
+        _this.handleDragSelectableSelectionEnd = function () {
+            _this.activationIndex = null; // not strictly required, but good practice
+            _this.setState({ hasSelectionEnded: true });
+        };
+        _this.isEntireCellTargetReorderable = function (cell, isSelected) {
+            var selectedRegions = _this.props.selectedRegions;
+            // although reordering may be generally enabled for this row/column (via props.isReorderable), the
+            // row/column shouldn't actually become reorderable from a user perspective until a few other
+            // conditions are true:
+            return _this.props.isReorderable
+                && isSelected
+                && _this.state.hasSelectionEnded
+                && regions_1.Regions.getRegionCardinality(selectedRegions[0]) === _this.props.fullRegionCardinality
+                && selectedRegions.length === 1
+                && !_this.isReorderHandleEnabled(cell);
+        };
+        return _this;
+    }
+    Header.prototype.componentDidMount = function () {
+        if (this.props.selectedRegions != null && this.props.selectedRegions.length > 0) {
+            // we already have a selection defined, so we'll want to enable reordering interactions
+            // right away if other criteria are satisfied too.
+            this.setState({ hasSelectionEnded: true });
+        }
+    };
+    Header.prototype.componentWillUnmount = function () {
+        this.batcher.cancelOutstandingCallback();
+    };
+    Header.prototype.componentWillReceiveProps = function (nextProps) {
+        if (nextProps.selectedRegions != null && nextProps.selectedRegions.length > 0) {
+            this.setState({ hasSelectionEnded: true });
+        }
+        else {
+            this.setState({ hasSelectionEnded: false });
+        }
+    };
+    Header.prototype.componentWillUpdate = function (nextProps, nextState) {
+        var resetKeysBlacklist = { exclude: RESET_CELL_KEYS_BLACKLIST };
+        var shouldResetBatcher = !utils_1.Utils.shallowCompareKeys(this.props, nextProps, resetKeysBlacklist);
+        shouldResetBatcher = shouldResetBatcher || !utils_1.Utils.shallowCompareKeys(this.state, nextState);
+        if (shouldResetBatcher) {
+            this.batcher.reset();
+        }
+    };
+    Header.prototype.render = function () {
+        return this.props.wrapCells(this.renderCells());
+    };
+    Header.prototype.isReorderHandleEnabled = function (cell) {
+        // the reorder handle can only appear in the column interaction bar
+        return this.isColumnHeader() && cell.props.useInteractionBar && this.props.isReorderable;
+    };
+    Header.prototype.maybeRenderReorderHandle = function (cell, index) {
+        return !this.isReorderHandleEnabled(cell)
+            ? undefined
+            : this.wrapInDragReorderable(index, React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE_TARGET },
+                React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE },
+                    React.createElement("span", { className: classNames(core_1.Classes.ICON_STANDARD, core_1.IconClasses.DRAG_HANDLE_VERTICAL) }))));
+    };
+    Header.prototype.isColumnHeader = function () {
+        return this.props.fullRegionCardinality === regions_1.RegionCardinality.FULL_COLUMNS;
+    };
+    Header.prototype.wrapInDragReorderable = function (index, children, disabled) {
+        return (React.createElement(reorderable_1.DragReorderable, { disabled: disabled, key: this.props.getIndexClass(index), locateClick: this.locateClick, locateDrag: this.locateDragForReordering, onReordered: this.props.onReordered, onReordering: this.props.onReordering, onSelection: this.props.onSelection, selectedRegions: this.props.selectedRegions, toRegion: this.props.toRegion }, children));
+    };
+    return Header;
+}(React.Component));
+exports.Header = Header;
+/**
+ * In the current architecture, ColumnHeaderCell and RowHeaderCell each need to include this same
+ * shouldComponentUpdate code at their level. To avoid writing the same code in two places, we
+ * expose this utility for each higher-level component to leverage in their own respective
+ * shouldComponentUpdate functions.
+ *
+ * (See: https://github.com/palantir/blueprint/issues/1214)
+ *
+ * @param props - the current props
+ * @param nextProps - the next props
+ */
+function shouldHeaderComponentUpdate(props, nextProps, isSelectedRegionRelevant) {
+    if (!utils_1.Utils.shallowCompareKeys(props, nextProps, { exclude: ["selectedRegions"] })) {
+        return true;
+    }
+    var relevantSelectedRegions = props.selectedRegions.filter(isSelectedRegionRelevant);
+    var nextRelevantSelectedRegions = nextProps.selectedRegions.filter(isSelectedRegionRelevant);
+    // ignore selection changes that didn't involve any relevant selected regions (FULL_COLUMNS
+    // for column headers, or FULL_ROWS for row headers)
+    if (relevantSelectedRegions.length > 0 || nextRelevantSelectedRegions.length > 0) {
+        return !utils_1.Utils.deepCompareKeys(relevantSelectedRegions, nextRelevantSelectedRegions);
+    }
+    return false;
+}
+exports.shouldHeaderComponentUpdate = shouldHeaderComponentUpdate;
+
+//# sourceMappingURL=header.js.map
+
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(14);
+var requestIdleCallback_1 = __webpack_require__(312);
+/**
+ * This class helps batch updates to large lists.
+ *
+ * For example, if your React component has many children, updating them all at
+ * once may cause jank when reconciling the DOM. This class helps you update
+ * only a few children per frame.
+ *
+ * A typical usage would be:
+ *
+ * ```tsx
+ * public renderChildren = (allChildrenKeys: string[]) => {
+ *
+ *     batcher.startNewBatch();
+ *
+ *     allChildrenKeys.forEach((prop1: string, index: number) => {
+ *         batcher.addArgsToBatch(prop1, "prop2", index);
+ *     });
+ *
+ *     batcher.removeOldAddNew((prop1: string, prop2: string, other: number) => {
+ *         return <Child prop1={prop1} prop2={prop2} other={other} />;
+ *     });
+ *
+ *     if (!batcher.isDone()) {
+ *         batcher.idleCallback(this.forceUpdate());
+ *     }
+ *
+ *     const currentChildren = batcher.getList();
+ *     return currentChildren;
+ * }
+ *
+ * ```
+ */
+var Batcher = (function () {
+    function Batcher() {
+        var _this = this;
+        this.currentObjects = {};
+        this.oldObjects = {};
+        this.batchArgs = {};
+        this.done = true;
+        this.handleIdleCallback = function () {
+            var callback = _this.callback;
+            delete _this.callback;
+            core_1.Utils.safeInvoke(callback);
+        };
+        this.mapCurrentObjectKey = function (key) {
+            return _this.currentObjects[key];
+        };
+    }
+    /**
+     * Resets the "batch" and "current" sets. This essentially clears the cache
+     * and prevents accidental re-use of "current" objects.
+     */
+    Batcher.prototype.reset = function () {
+        this.batchArgs = {};
+        this.oldObjects = this.currentObjects;
+        this.currentObjects = {};
+    };
+    /**
+     * Starts a new "batch" argument set
+     */
+    Batcher.prototype.startNewBatch = function () {
+        this.batchArgs = {};
+    };
+    /**
+     * Stores the variadic arguments to be later batched together.
+     *
+     * The arguments must be simple stringifyable objects.
+     */
+    Batcher.prototype.addArgsToBatch = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.batchArgs[args.join(Batcher.ARG_DELIMITER)] = args;
+    };
+    /**
+     * Compares the set of "batch" arguments to the "current" set. Creates any
+     * new objects using the callback as a factory. Removes old objects.
+     *
+     * Arguments that are in the "current" set but were not part of the last
+     * "batch" set are considered candidates for removal. Similarly, Arguments
+     * that are part of the "batch" set but not the "current" set are candidates
+     * for addition.
+     *
+     * The number of objects added and removed may be limited with the
+     * `...Limit` parameters.
+     *
+     * Finally, the batcher determines if the batching is complete if the
+     * "current" arguments match the "batch" arguments.
+     */
+    Batcher.prototype.removeOldAddNew = function (callback, addNewLimit, removeOldLimit, updateLimit) {
+        var _this = this;
+        if (addNewLimit === void 0) { addNewLimit = Batcher.DEFAULT_ADD_LIMIT; }
+        if (removeOldLimit === void 0) { removeOldLimit = Batcher.DEFAULT_REMOVE_LIMIT; }
+        if (updateLimit === void 0) { updateLimit = Batcher.DEFAULT_UPDATE_LIMIT; }
+        // remove old
+        var keysToRemove = this.setKeysDifference(this.currentObjects, this.batchArgs, removeOldLimit);
+        keysToRemove.forEach(function (key) { return delete _this.currentObjects[key]; });
+        // remove ALL old objects not in batch
+        var keysToRemoveOld = this.setKeysDifference(this.oldObjects, this.batchArgs, -1);
+        keysToRemoveOld.forEach(function (key) { return delete _this.oldObjects[key]; });
+        // copy ALL old objects into current objects if not defined
+        var keysToShallowCopy = Object.keys(this.oldObjects);
+        keysToShallowCopy.forEach(function (key) {
+            if (_this.currentObjects[key] == null) {
+                _this.currentObjects[key] = _this.oldObjects[key];
+            }
+        });
+        // update old objects with factory
+        var keysToUpdate = this.setKeysIntersection(this.oldObjects, this.currentObjects, updateLimit);
+        keysToUpdate.forEach(function (key) {
+            delete _this.oldObjects[key];
+            _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]);
+        });
+        // add new objects with factory
+        var keysToAdd = this.setKeysDifference(this.batchArgs, this.currentObjects, addNewLimit);
+        keysToAdd.forEach(function (key) { return _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]); });
+        // set `done` to true of sets match exactly after add/remove and there
+        // are no "old objects" remaining
+        this.done = this.setHasSameKeys(this.batchArgs, this.currentObjects)
+            && Object.keys(this.oldObjects).length === 0;
+    };
+    /**
+     * Returns true of the "current" set matches the "batch" set.
+     */
+    Batcher.prototype.isDone = function () {
+        return this.done;
+    };
+    /**
+     * Returns all the objects in the "current" set.
+     */
+    Batcher.prototype.getList = function () {
+        return Object.keys(this.currentObjects).map(this.mapCurrentObjectKey);
+    };
+    /**
+     * Registers a callback to be invoked on the next idle frame. If a callback
+     * has already been registered, we do not register a new one.
+     */
+    Batcher.prototype.idleCallback = function (callback) {
+        if (!this.callback) {
+            this.callback = callback;
+            requestIdleCallback_1.requestIdleCallback(this.handleIdleCallback);
+        }
+    };
+    Batcher.prototype.cancelOutstandingCallback = function () {
+        delete this.callback;
+    };
+    Batcher.prototype.setKeysDifference = function (a, b, limit) {
+        return this.setKeysOperation(a, b, "difference", limit);
+    };
+    Batcher.prototype.setKeysIntersection = function (a, b, limit) {
+        return this.setKeysOperation(a, b, "intersect", limit);
+    };
+    /**
+     * Compares the keys of A from B -- and performs an "intersection" or
+     * "difference" operation on the keys.
+     *
+     * Note that the order of operands A and B matters for the "difference"
+     * operation.
+     *
+     * Returns an array of at most `limit` keys.
+     */
+    Batcher.prototype.setKeysOperation = function (a, b, operation, limit) {
+        var result = [];
+        var aKeys = Object.keys(a);
+        for (var i = 0; i < aKeys.length && (limit < 0 || result.length < limit); i++) {
+            var key = aKeys[i];
+            if ((operation === "difference" && a[key] && !b[key]) ||
+                (operation === "intersect" && a[key] && b[key])) {
+                result.push(key);
+            }
+        }
+        return result;
+    };
+    /**
+     * Returns true of objects `a` and `b` have exactly the same keys.
+     */
+    Batcher.prototype.setHasSameKeys = function (a, b) {
+        var aKeys = Object.keys(a);
+        var bKeys = Object.keys(b);
+        if (aKeys.length !== bKeys.length) {
+            return false;
+        }
+        for (var _i = 0, aKeys_1 = aKeys; _i < aKeys_1.length; _i++) {
+            var aKey = aKeys_1[_i];
+            if (b[aKey] === undefined) {
+                return false;
+            }
+        }
+        return true;
+    };
+    return Batcher;
+}());
+Batcher.DEFAULT_ADD_LIMIT = 20;
+Batcher.DEFAULT_UPDATE_LIMIT = 20;
+Batcher.DEFAULT_REMOVE_LIMIT = 20;
+Batcher.ARG_DELIMITER = "|";
+exports.Batcher = Batcher;
+
+//# sourceMappingURL=batcher.js.map
+
+
+/***/ }),
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var Hello_1 = __webpack_require__(227);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var Hello_1 = __webpack_require__(250);
 var table_1 = __webpack_require__(300);
 ReactDOM.render(React.createElement("div", null,
     React.createElement(Hello_1.Hello, { compiler: "TypeScript", framework: "React" }),
@@ -14390,7 +17784,7 @@ ReactDOM.render(React.createElement("div", null,
 
 
 /***/ }),
-/* 128 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14406,11 +17800,11 @@ ReactDOM.render(React.createElement("div", null,
 
 
 
-var PooledClass = __webpack_require__(129);
-var ReactElement = __webpack_require__(25);
+var PooledClass = __webpack_require__(152);
+var ReactElement = __webpack_require__(29);
 
-var emptyFunction = __webpack_require__(16);
-var traverseAllChildren = __webpack_require__(130);
+var emptyFunction = __webpack_require__(19);
+var traverseAllChildren = __webpack_require__(153);
 
 var twoArgumentPooler = PooledClass.twoArgumentPooler;
 var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -14586,7 +17980,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 /***/ }),
-/* 129 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14603,9 +17997,9 @@ module.exports = ReactChildren;
 
 
 
-var _prodInvariant = __webpack_require__(29);
+var _prodInvariant = __webpack_require__(33);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Static poolers. Several custom versions for each potential number of
@@ -14701,10 +18095,10 @@ var PooledClass = {
 };
 
 module.exports = PooledClass;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 130 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14720,15 +18114,15 @@ module.exports = PooledClass;
 
 
 
-var _prodInvariant = __webpack_require__(29);
+var _prodInvariant = __webpack_require__(33);
 
-var ReactCurrentOwner = __webpack_require__(18);
-var REACT_ELEMENT_TYPE = __webpack_require__(74);
+var ReactCurrentOwner = __webpack_require__(23);
+var REACT_ELEMENT_TYPE = __webpack_require__(87);
 
-var getIteratorFn = __webpack_require__(75);
-var invariant = __webpack_require__(3);
-var KeyEscapeUtils = __webpack_require__(131);
-var warning = __webpack_require__(4);
+var getIteratorFn = __webpack_require__(88);
+var invariant = __webpack_require__(4);
+var KeyEscapeUtils = __webpack_require__(154);
+var warning = __webpack_require__(5);
 
 var SEPARATOR = '.';
 var SUBSEPARATOR = ':';
@@ -14883,10 +18277,10 @@ function traverseAllChildren(children, callback, traverseContext) {
 }
 
 module.exports = traverseAllChildren;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 131 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14950,7 +18344,7 @@ var KeyEscapeUtils = {
 module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 132 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14966,7 +18360,7 @@ module.exports = KeyEscapeUtils;
 
 
 
-var ReactElement = __webpack_require__(25);
+var ReactElement = __webpack_require__(29);
 
 /**
  * Create a factory that creates HTML tag elements.
@@ -14975,7 +18369,7 @@ var ReactElement = __webpack_require__(25);
  */
 var createDOMFactory = ReactElement.createFactory;
 if (process.env.NODE_ENV !== 'production') {
-  var ReactElementValidator = __webpack_require__(76);
+  var ReactElementValidator = __webpack_require__(89);
   createDOMFactory = ReactElementValidator.createFactory;
 }
 
@@ -15122,10 +18516,10 @@ var ReactDOMFactories = {
 };
 
 module.exports = ReactDOMFactories;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 133 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15141,13 +18535,13 @@ module.exports = ReactDOMFactories;
 
 
 
-var _prodInvariant = __webpack_require__(29);
+var _prodInvariant = __webpack_require__(33);
 
-var ReactPropTypeLocationNames = __webpack_require__(134);
-var ReactPropTypesSecret = __webpack_require__(135);
+var ReactPropTypeLocationNames = __webpack_require__(157);
+var ReactPropTypesSecret = __webpack_require__(158);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var ReactComponentTreeHook;
 
@@ -15157,7 +18551,7 @@ if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 't
   // https://github.com/facebook/react/issues/7240
   // Remove the inline requires when we don't need them anymore:
   // https://github.com/facebook/react/pull/7178
-  ReactComponentTreeHook = __webpack_require__(15);
+  ReactComponentTreeHook = __webpack_require__(18);
 }
 
 var loggedTypeFailures = {};
@@ -15199,7 +18593,7 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 
         if (process.env.NODE_ENV !== 'production') {
           if (!ReactComponentTreeHook) {
-            ReactComponentTreeHook = __webpack_require__(15);
+            ReactComponentTreeHook = __webpack_require__(18);
           }
           if (debugID !== null) {
             componentStackInfo = ReactComponentTreeHook.getStackAddendumByID(debugID);
@@ -15215,10 +18609,10 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 }
 
 module.exports = checkReactTypeSpec;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 134 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15246,10 +18640,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = ReactPropTypeLocationNames;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 135 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15271,7 +18665,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 136 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15287,15 +18681,15 @@ module.exports = ReactPropTypesSecret;
 
 
 
-var _require = __webpack_require__(25),
+var _require = __webpack_require__(29),
     isValidElement = _require.isValidElement;
 
-var factory = __webpack_require__(77);
+var factory = __webpack_require__(90);
 
 module.exports = factory(isValidElement);
 
 /***/ }),
-/* 137 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15311,9 +18705,9 @@ module.exports = factory(isValidElement);
 
 
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = __webpack_require__(3);
-  var warning = __webpack_require__(4);
-  var ReactPropTypesSecret = __webpack_require__(52);
+  var invariant = __webpack_require__(4);
+  var warning = __webpack_require__(5);
+  var ReactPropTypesSecret = __webpack_require__(60);
   var loggedTypeFailures = {};
 }
 
@@ -15361,10 +18755,10 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 138 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15383,7 +18777,7 @@ module.exports = checkPropTypes;
 module.exports = '15.6.1';
 
 /***/ }),
-/* 139 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15399,19 +18793,19 @@ module.exports = '15.6.1';
 
 
 
-var _require = __webpack_require__(72),
+var _require = __webpack_require__(85),
     Component = _require.Component;
 
-var _require2 = __webpack_require__(25),
+var _require2 = __webpack_require__(29),
     isValidElement = _require2.isValidElement;
 
-var ReactNoopUpdateQueue = __webpack_require__(73);
-var factory = __webpack_require__(140);
+var ReactNoopUpdateQueue = __webpack_require__(86);
+var factory = __webpack_require__(163);
 
 module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 /***/ }),
-/* 140 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15427,13 +18821,13 @@ module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var emptyObject = __webpack_require__(39);
-var _invariant = __webpack_require__(3);
+var emptyObject = __webpack_require__(45);
+var _invariant = __webpack_require__(4);
 
 if (process.env.NODE_ENV !== 'production') {
-  var warning = __webpack_require__(4);
+  var warning = __webpack_require__(5);
 }
 
 var MIXINS_KEY = 'mixins';
@@ -16288,10 +19682,10 @@ function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
 
 module.exports = factory;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 141 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16306,11 +19700,11 @@ module.exports = factory;
  */
 
 
-var _prodInvariant = __webpack_require__(29);
+var _prodInvariant = __webpack_require__(33);
 
-var ReactElement = __webpack_require__(25);
+var ReactElement = __webpack_require__(29);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Returns the first child in a collection of children and verifies that there
@@ -16332,10 +19726,10 @@ function onlyChild(children) {
 }
 
 module.exports = onlyChild;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 142 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16354,16 +19748,16 @@ module.exports = onlyChild;
 
 
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactDefaultInjection = __webpack_require__(143);
-var ReactMount = __webpack_require__(102);
-var ReactReconciler = __webpack_require__(30);
-var ReactUpdates = __webpack_require__(19);
-var ReactVersion = __webpack_require__(221);
+var ReactDefaultInjection = __webpack_require__(166);
+var ReactMount = __webpack_require__(115);
+var ReactReconciler = __webpack_require__(34);
+var ReactUpdates = __webpack_require__(24);
+var ReactVersion = __webpack_require__(244);
 
-var findDOMNode = __webpack_require__(222);
-var getHostComponentFromComposite = __webpack_require__(103);
-var renderSubtreeIntoContainer = __webpack_require__(223);
-var warning = __webpack_require__(4);
+var findDOMNode = __webpack_require__(245);
+var getHostComponentFromComposite = __webpack_require__(116);
+var renderSubtreeIntoContainer = __webpack_require__(246);
+var warning = __webpack_require__(5);
 
 ReactDefaultInjection.inject();
 
@@ -16403,7 +19797,7 @@ if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' && typeof __REACT_DEVT
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  var ExecutionEnvironment = __webpack_require__(12);
+  var ExecutionEnvironment = __webpack_require__(13);
   if (ExecutionEnvironment.canUseDOM && window.top === window.self) {
     // First check if devtools is not installed
     if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
@@ -16438,10 +19832,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactInstrumentation = __webpack_require__(17);
-  var ReactDOMUnknownPropertyHook = __webpack_require__(224);
-  var ReactDOMNullInputValuePropHook = __webpack_require__(225);
-  var ReactDOMInvalidARIAHook = __webpack_require__(226);
+  var ReactInstrumentation = __webpack_require__(20);
+  var ReactDOMUnknownPropertyHook = __webpack_require__(247);
+  var ReactDOMNullInputValuePropHook = __webpack_require__(248);
+  var ReactDOMInvalidARIAHook = __webpack_require__(249);
 
   ReactInstrumentation.debugTool.addHook(ReactDOMUnknownPropertyHook);
   ReactInstrumentation.debugTool.addHook(ReactDOMNullInputValuePropHook);
@@ -16449,10 +19843,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = ReactDOM;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 143 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16468,25 +19862,25 @@ module.exports = ReactDOM;
 
 
 
-var ARIADOMPropertyConfig = __webpack_require__(144);
-var BeforeInputEventPlugin = __webpack_require__(145);
-var ChangeEventPlugin = __webpack_require__(149);
-var DefaultEventPluginOrder = __webpack_require__(157);
-var EnterLeaveEventPlugin = __webpack_require__(158);
-var HTMLDOMPropertyConfig = __webpack_require__(159);
-var ReactComponentBrowserEnvironment = __webpack_require__(160);
-var ReactDOMComponent = __webpack_require__(166);
+var ARIADOMPropertyConfig = __webpack_require__(167);
+var BeforeInputEventPlugin = __webpack_require__(168);
+var ChangeEventPlugin = __webpack_require__(172);
+var DefaultEventPluginOrder = __webpack_require__(180);
+var EnterLeaveEventPlugin = __webpack_require__(181);
+var HTMLDOMPropertyConfig = __webpack_require__(182);
+var ReactComponentBrowserEnvironment = __webpack_require__(183);
+var ReactDOMComponent = __webpack_require__(189);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactDOMEmptyComponent = __webpack_require__(192);
-var ReactDOMTreeTraversal = __webpack_require__(193);
-var ReactDOMTextComponent = __webpack_require__(194);
-var ReactDefaultBatchingStrategy = __webpack_require__(195);
-var ReactEventListener = __webpack_require__(196);
-var ReactInjection = __webpack_require__(198);
-var ReactReconcileTransaction = __webpack_require__(199);
-var SVGDOMPropertyConfig = __webpack_require__(205);
-var SelectEventPlugin = __webpack_require__(206);
-var SimpleEventPlugin = __webpack_require__(207);
+var ReactDOMEmptyComponent = __webpack_require__(215);
+var ReactDOMTreeTraversal = __webpack_require__(216);
+var ReactDOMTextComponent = __webpack_require__(217);
+var ReactDefaultBatchingStrategy = __webpack_require__(218);
+var ReactEventListener = __webpack_require__(219);
+var ReactInjection = __webpack_require__(221);
+var ReactReconcileTransaction = __webpack_require__(222);
+var SVGDOMPropertyConfig = __webpack_require__(228);
+var SelectEventPlugin = __webpack_require__(229);
+var SimpleEventPlugin = __webpack_require__(230);
 
 var alreadyInjected = false;
 
@@ -16543,7 +19937,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 144 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16622,7 +20016,7 @@ var ARIADOMPropertyConfig = {
 module.exports = ARIADOMPropertyConfig;
 
 /***/ }),
-/* 145 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16638,11 +20032,11 @@ module.exports = ARIADOMPropertyConfig;
 
 
 
-var EventPropagators = __webpack_require__(34);
-var ExecutionEnvironment = __webpack_require__(12);
-var FallbackCompositionState = __webpack_require__(146);
-var SyntheticCompositionEvent = __webpack_require__(147);
-var SyntheticInputEvent = __webpack_require__(148);
+var EventPropagators = __webpack_require__(38);
+var ExecutionEnvironment = __webpack_require__(13);
+var FallbackCompositionState = __webpack_require__(169);
+var SyntheticCompositionEvent = __webpack_require__(170);
+var SyntheticInputEvent = __webpack_require__(171);
 
 var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 var START_KEYCODE = 229;
@@ -17011,7 +20405,7 @@ var BeforeInputEventPlugin = {
 module.exports = BeforeInputEventPlugin;
 
 /***/ }),
-/* 146 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17027,11 +20421,11 @@ module.exports = BeforeInputEventPlugin;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var PooledClass = __webpack_require__(26);
+var PooledClass = __webpack_require__(30);
 
-var getTextContentAccessor = __webpack_require__(82);
+var getTextContentAccessor = __webpack_require__(95);
 
 /**
  * This helper class stores information about text content of a target node,
@@ -17111,7 +20505,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 module.exports = FallbackCompositionState;
 
 /***/ }),
-/* 147 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17127,7 +20521,7 @@ module.exports = FallbackCompositionState;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
 /**
  * @interface Event
@@ -17152,7 +20546,7 @@ SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface
 module.exports = SyntheticCompositionEvent;
 
 /***/ }),
-/* 148 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17168,7 +20562,7 @@ module.exports = SyntheticCompositionEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
 /**
  * @interface Event
@@ -17194,7 +20588,7 @@ SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 module.exports = SyntheticInputEvent;
 
 /***/ }),
-/* 149 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17210,17 +20604,17 @@ module.exports = SyntheticInputEvent;
 
 
 
-var EventPluginHub = __webpack_require__(35);
-var EventPropagators = __webpack_require__(34);
-var ExecutionEnvironment = __webpack_require__(12);
+var EventPluginHub = __webpack_require__(39);
+var EventPropagators = __webpack_require__(38);
+var ExecutionEnvironment = __webpack_require__(13);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactUpdates = __webpack_require__(19);
-var SyntheticEvent = __webpack_require__(21);
+var ReactUpdates = __webpack_require__(24);
+var SyntheticEvent = __webpack_require__(25);
 
-var inputValueTracking = __webpack_require__(85);
-var getEventTarget = __webpack_require__(55);
-var isEventSupported = __webpack_require__(56);
-var isTextInputElement = __webpack_require__(86);
+var inputValueTracking = __webpack_require__(98);
+var getEventTarget = __webpack_require__(63);
+var isEventSupported = __webpack_require__(64);
+var isTextInputElement = __webpack_require__(99);
 
 var eventTypes = {
   change: {
@@ -17511,7 +20905,7 @@ var ChangeEventPlugin = {
 module.exports = ChangeEventPlugin;
 
 /***/ }),
-/* 150 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17528,7 +20922,7 @@ module.exports = ChangeEventPlugin;
 
 
 
-var ReactOwner = __webpack_require__(151);
+var ReactOwner = __webpack_require__(174);
 
 var ReactRef = {};
 
@@ -17605,7 +20999,7 @@ ReactRef.detachRefs = function (instance, element) {
 module.exports = ReactRef;
 
 /***/ }),
-/* 151 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17622,9 +21016,9 @@ module.exports = ReactRef;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * @param {?object} object
@@ -17701,10 +21095,10 @@ var ReactOwner = {
 };
 
 module.exports = ReactOwner;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 152 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17721,13 +21115,13 @@ module.exports = ReactOwner;
 
 
 
-var ReactInvalidSetStateWarningHook = __webpack_require__(153);
-var ReactHostOperationHistoryHook = __webpack_require__(154);
-var ReactComponentTreeHook = __webpack_require__(15);
-var ExecutionEnvironment = __webpack_require__(12);
+var ReactInvalidSetStateWarningHook = __webpack_require__(176);
+var ReactHostOperationHistoryHook = __webpack_require__(177);
+var ReactComponentTreeHook = __webpack_require__(18);
+var ExecutionEnvironment = __webpack_require__(13);
 
-var performanceNow = __webpack_require__(155);
-var warning = __webpack_require__(4);
+var performanceNow = __webpack_require__(178);
+var warning = __webpack_require__(5);
 
 var hooks = [];
 var didHookThrowForEvent = {};
@@ -18068,10 +21462,10 @@ if (/[?&]react_perf\b/.test(url)) {
 }
 
 module.exports = ReactDebugTool;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 153 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18088,7 +21482,7 @@ module.exports = ReactDebugTool;
 
 
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 if (process.env.NODE_ENV !== 'production') {
   var processingChildContext = false;
@@ -18111,10 +21505,10 @@ var ReactInvalidSetStateWarningHook = {
 };
 
 module.exports = ReactInvalidSetStateWarningHook;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 154 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18153,7 +21547,7 @@ var ReactHostOperationHistoryHook = {
 module.exports = ReactHostOperationHistoryHook;
 
 /***/ }),
-/* 155 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18170,7 +21564,7 @@ module.exports = ReactHostOperationHistoryHook;
  * @typechecks
  */
 
-var performance = __webpack_require__(156);
+var performance = __webpack_require__(179);
 
 var performanceNow;
 
@@ -18192,7 +21586,7 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 156 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18209,7 +21603,7 @@ module.exports = performanceNow;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
 var performance;
 
@@ -18220,7 +21614,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = performance || {};
 
 /***/ }),
-/* 157 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18251,7 +21645,7 @@ var DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'Tap
 module.exports = DefaultEventPluginOrder;
 
 /***/ }),
-/* 158 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18267,9 +21661,9 @@ module.exports = DefaultEventPluginOrder;
 
 
 
-var EventPropagators = __webpack_require__(34);
+var EventPropagators = __webpack_require__(38);
 var ReactDOMComponentTree = __webpack_require__(11);
-var SyntheticMouseEvent = __webpack_require__(42);
+var SyntheticMouseEvent = __webpack_require__(48);
 
 var eventTypes = {
   mouseEnter: {
@@ -18354,7 +21748,7 @@ var EnterLeaveEventPlugin = {
 module.exports = EnterLeaveEventPlugin;
 
 /***/ }),
-/* 159 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18370,7 +21764,7 @@ module.exports = EnterLeaveEventPlugin;
 
 
 
-var DOMProperty = __webpack_require__(23);
+var DOMProperty = __webpack_require__(27);
 
 var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
 var HAS_BOOLEAN_VALUE = DOMProperty.injection.HAS_BOOLEAN_VALUE;
@@ -18595,7 +21989,7 @@ var HTMLDOMPropertyConfig = {
 module.exports = HTMLDOMPropertyConfig;
 
 /***/ }),
-/* 160 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18611,8 +22005,8 @@ module.exports = HTMLDOMPropertyConfig;
 
 
 
-var DOMChildrenOperations = __webpack_require__(58);
-var ReactDOMIDOperations = __webpack_require__(165);
+var DOMChildrenOperations = __webpack_require__(66);
+var ReactDOMIDOperations = __webpack_require__(188);
 
 /**
  * Abstracts away all functionality of the reconciler that requires knowledge of
@@ -18628,7 +22022,7 @@ var ReactComponentBrowserEnvironment = {
 module.exports = ReactComponentBrowserEnvironment;
 
 /***/ }),
-/* 161 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18644,14 +22038,14 @@ module.exports = ReactComponentBrowserEnvironment;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var DOMLazyTree = __webpack_require__(31);
-var ExecutionEnvironment = __webpack_require__(12);
+var DOMLazyTree = __webpack_require__(35);
+var ExecutionEnvironment = __webpack_require__(13);
 
-var createNodesFromMarkup = __webpack_require__(162);
-var emptyFunction = __webpack_require__(16);
-var invariant = __webpack_require__(3);
+var createNodesFromMarkup = __webpack_require__(185);
+var emptyFunction = __webpack_require__(19);
+var invariant = __webpack_require__(4);
 
 var Danger = {
   /**
@@ -18677,10 +22071,10 @@ var Danger = {
 };
 
 module.exports = Danger;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 162 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18699,11 +22093,11 @@ module.exports = Danger;
 
 /*eslint-disable fb-www/unsafe-html*/
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
-var createArrayFromMixed = __webpack_require__(163);
-var getMarkupWrap = __webpack_require__(164);
-var invariant = __webpack_require__(3);
+var createArrayFromMixed = __webpack_require__(186);
+var getMarkupWrap = __webpack_require__(187);
+var invariant = __webpack_require__(4);
 
 /**
  * Dummy container used to render all markup.
@@ -18767,10 +22161,10 @@ function createNodesFromMarkup(markup, handleScript) {
 }
 
 module.exports = createNodesFromMarkup;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 163 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18787,7 +22181,7 @@ module.exports = createNodesFromMarkup;
  * @typechecks
  */
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Convert array-like objects to arrays.
@@ -18900,10 +22294,10 @@ function createArrayFromMixed(obj) {
 }
 
 module.exports = createArrayFromMixed;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 164 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18921,9 +22315,9 @@ module.exports = createArrayFromMixed;
 
 /*eslint-disable fb-www/unsafe-html */
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Dummy container used to detect which wraps are necessary.
@@ -19001,10 +22395,10 @@ function getMarkupWrap(nodeName) {
 }
 
 module.exports = getMarkupWrap;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 165 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19020,7 +22414,7 @@ module.exports = getMarkupWrap;
 
 
 
-var DOMChildrenOperations = __webpack_require__(58);
+var DOMChildrenOperations = __webpack_require__(66);
 var ReactDOMComponentTree = __webpack_require__(11);
 
 /**
@@ -19042,7 +22436,7 @@ var ReactDOMIDOperations = {
 module.exports = ReactDOMIDOperations;
 
 /***/ }),
-/* 166 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19060,36 +22454,36 @@ module.exports = ReactDOMIDOperations;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var AutoFocusUtils = __webpack_require__(167);
-var CSSPropertyOperations = __webpack_require__(168);
-var DOMLazyTree = __webpack_require__(31);
-var DOMNamespaces = __webpack_require__(59);
-var DOMProperty = __webpack_require__(23);
-var DOMPropertyOperations = __webpack_require__(91);
-var EventPluginHub = __webpack_require__(35);
-var EventPluginRegistry = __webpack_require__(40);
-var ReactBrowserEventEmitter = __webpack_require__(45);
-var ReactDOMComponentFlags = __webpack_require__(79);
+var AutoFocusUtils = __webpack_require__(190);
+var CSSPropertyOperations = __webpack_require__(191);
+var DOMLazyTree = __webpack_require__(35);
+var DOMNamespaces = __webpack_require__(67);
+var DOMProperty = __webpack_require__(27);
+var DOMPropertyOperations = __webpack_require__(104);
+var EventPluginHub = __webpack_require__(39);
+var EventPluginRegistry = __webpack_require__(46);
+var ReactBrowserEventEmitter = __webpack_require__(51);
+var ReactDOMComponentFlags = __webpack_require__(92);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactDOMInput = __webpack_require__(178);
-var ReactDOMOption = __webpack_require__(179);
-var ReactDOMSelect = __webpack_require__(93);
-var ReactDOMTextarea = __webpack_require__(180);
-var ReactInstrumentation = __webpack_require__(17);
-var ReactMultiChild = __webpack_require__(181);
-var ReactServerRenderingTransaction = __webpack_require__(190);
+var ReactDOMInput = __webpack_require__(201);
+var ReactDOMOption = __webpack_require__(202);
+var ReactDOMSelect = __webpack_require__(106);
+var ReactDOMTextarea = __webpack_require__(203);
+var ReactInstrumentation = __webpack_require__(20);
+var ReactMultiChild = __webpack_require__(204);
+var ReactServerRenderingTransaction = __webpack_require__(213);
 
-var emptyFunction = __webpack_require__(16);
-var escapeTextContentForBrowser = __webpack_require__(44);
-var invariant = __webpack_require__(3);
-var isEventSupported = __webpack_require__(56);
-var shallowEqual = __webpack_require__(46);
-var inputValueTracking = __webpack_require__(85);
-var validateDOMNesting = __webpack_require__(66);
-var warning = __webpack_require__(4);
+var emptyFunction = __webpack_require__(19);
+var escapeTextContentForBrowser = __webpack_require__(50);
+var invariant = __webpack_require__(4);
+var isEventSupported = __webpack_require__(64);
+var shallowEqual = __webpack_require__(52);
+var inputValueTracking = __webpack_require__(98);
+var validateDOMNesting = __webpack_require__(74);
+var warning = __webpack_require__(5);
 
 var Flags = ReactDOMComponentFlags;
 var deleteListener = EventPluginHub.deleteListener;
@@ -20055,10 +23449,10 @@ ReactDOMComponent.Mixin = {
 _assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mixin);
 
 module.exports = ReactDOMComponent;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 167 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20076,7 +23470,7 @@ module.exports = ReactDOMComponent;
 
 var ReactDOMComponentTree = __webpack_require__(11);
 
-var focusNode = __webpack_require__(89);
+var focusNode = __webpack_require__(102);
 
 var AutoFocusUtils = {
   focusDOMComponent: function () {
@@ -20087,7 +23481,7 @@ var AutoFocusUtils = {
 module.exports = AutoFocusUtils;
 
 /***/ }),
-/* 168 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20103,15 +23497,15 @@ module.exports = AutoFocusUtils;
 
 
 
-var CSSProperty = __webpack_require__(90);
-var ExecutionEnvironment = __webpack_require__(12);
-var ReactInstrumentation = __webpack_require__(17);
+var CSSProperty = __webpack_require__(103);
+var ExecutionEnvironment = __webpack_require__(13);
+var ReactInstrumentation = __webpack_require__(20);
 
-var camelizeStyleName = __webpack_require__(169);
-var dangerousStyleValue = __webpack_require__(171);
-var hyphenateStyleName = __webpack_require__(172);
-var memoizeStringOnly = __webpack_require__(174);
-var warning = __webpack_require__(4);
+var camelizeStyleName = __webpack_require__(192);
+var dangerousStyleValue = __webpack_require__(194);
+var hyphenateStyleName = __webpack_require__(195);
+var memoizeStringOnly = __webpack_require__(197);
+var warning = __webpack_require__(5);
 
 var processStyleName = memoizeStringOnly(function (styleName) {
   return hyphenateStyleName(styleName);
@@ -20305,10 +23699,10 @@ var CSSPropertyOperations = {
 };
 
 module.exports = CSSPropertyOperations;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 169 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20325,7 +23719,7 @@ module.exports = CSSPropertyOperations;
 
 
 
-var camelize = __webpack_require__(170);
+var camelize = __webpack_require__(193);
 
 var msPattern = /^-ms-/;
 
@@ -20353,7 +23747,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 170 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20390,7 +23784,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 171 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20406,8 +23800,8 @@ module.exports = camelize;
 
 
 
-var CSSProperty = __webpack_require__(90);
-var warning = __webpack_require__(4);
+var CSSProperty = __webpack_require__(103);
+var warning = __webpack_require__(5);
 
 var isUnitlessNumber = CSSProperty.isUnitlessNumber;
 var styleWarnings = {};
@@ -20472,10 +23866,10 @@ function dangerousStyleValue(name, value, component, isCustomProperty) {
 }
 
 module.exports = dangerousStyleValue;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 172 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20492,7 +23886,7 @@ module.exports = dangerousStyleValue;
 
 
 
-var hyphenate = __webpack_require__(173);
+var hyphenate = __webpack_require__(196);
 
 var msPattern = /^ms-/;
 
@@ -20519,7 +23913,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 173 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20557,7 +23951,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 174 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20592,7 +23986,7 @@ function memoizeStringOnly(callback) {
 module.exports = memoizeStringOnly;
 
 /***/ }),
-/* 175 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20608,7 +24002,7 @@ module.exports = memoizeStringOnly;
 
 
 
-var escapeTextContentForBrowser = __webpack_require__(44);
+var escapeTextContentForBrowser = __webpack_require__(50);
 
 /**
  * Escapes attribute value to prevent scripting attacks.
@@ -20623,7 +24017,7 @@ function quoteAttributeValueForBrowser(value) {
 module.exports = quoteAttributeValueForBrowser;
 
 /***/ }),
-/* 176 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20639,7 +24033,7 @@ module.exports = quoteAttributeValueForBrowser;
 
 
 
-var EventPluginHub = __webpack_require__(35);
+var EventPluginHub = __webpack_require__(39);
 
 function runEventQueueInBatch(events) {
   EventPluginHub.enqueueEvents(events);
@@ -20660,7 +24054,7 @@ var ReactEventEmitterMixin = {
 module.exports = ReactEventEmitterMixin;
 
 /***/ }),
-/* 177 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20676,7 +24070,7 @@ module.exports = ReactEventEmitterMixin;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
 /**
  * Generate a mapping of standard vendor prefixes using the defined style property and event name.
@@ -20766,7 +24160,7 @@ function getVendorPrefixedEventName(eventName) {
 module.exports = getVendorPrefixedEventName;
 
 /***/ }),
-/* 178 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20782,16 +24176,16 @@ module.exports = getVendorPrefixedEventName;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var DOMPropertyOperations = __webpack_require__(91);
-var LinkedValueUtils = __webpack_require__(61);
+var DOMPropertyOperations = __webpack_require__(104);
+var LinkedValueUtils = __webpack_require__(69);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactUpdates = __webpack_require__(19);
+var ReactUpdates = __webpack_require__(24);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var didWarnValueLink = false;
 var didWarnCheckedLink = false;
@@ -21056,10 +24450,10 @@ function _handleChange(event) {
 }
 
 module.exports = ReactDOMInput;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 179 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21075,13 +24469,13 @@ module.exports = ReactDOMInput;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var React = __webpack_require__(28);
+var React = __webpack_require__(32);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactDOMSelect = __webpack_require__(93);
+var ReactDOMSelect = __webpack_require__(106);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 var didWarnInvalidOptionChildren = false;
 
 function flattenChildren(children) {
@@ -21184,10 +24578,10 @@ var ReactDOMOption = {
 };
 
 module.exports = ReactDOMOption;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 180 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21203,15 +24597,15 @@ module.exports = ReactDOMOption;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var LinkedValueUtils = __webpack_require__(61);
+var LinkedValueUtils = __webpack_require__(69);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactUpdates = __webpack_require__(19);
+var ReactUpdates = __webpack_require__(24);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var didWarnValueLink = false;
 var didWarnValDefaultVal = false;
@@ -21350,10 +24744,10 @@ function _handleChange(event) {
 }
 
 module.exports = ReactDOMTextarea;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 181 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21369,19 +24763,19 @@ module.exports = ReactDOMTextarea;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactComponentEnvironment = __webpack_require__(62);
-var ReactInstanceMap = __webpack_require__(37);
-var ReactInstrumentation = __webpack_require__(17);
+var ReactComponentEnvironment = __webpack_require__(70);
+var ReactInstanceMap = __webpack_require__(41);
+var ReactInstrumentation = __webpack_require__(20);
 
-var ReactCurrentOwner = __webpack_require__(18);
-var ReactReconciler = __webpack_require__(30);
-var ReactChildReconciler = __webpack_require__(182);
+var ReactCurrentOwner = __webpack_require__(23);
+var ReactReconciler = __webpack_require__(34);
+var ReactChildReconciler = __webpack_require__(205);
 
-var emptyFunction = __webpack_require__(16);
-var flattenChildren = __webpack_require__(189);
-var invariant = __webpack_require__(3);
+var emptyFunction = __webpack_require__(19);
+var flattenChildren = __webpack_require__(212);
+var invariant = __webpack_require__(4);
 
 /**
  * Make an update for markup to be rendered and inserted at a supplied index.
@@ -21802,10 +25196,10 @@ var ReactMultiChild = {
 };
 
 module.exports = ReactMultiChild;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 182 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21821,13 +25215,13 @@ module.exports = ReactMultiChild;
 
 
 
-var ReactReconciler = __webpack_require__(30);
+var ReactReconciler = __webpack_require__(34);
 
-var instantiateReactComponent = __webpack_require__(94);
-var KeyEscapeUtils = __webpack_require__(64);
-var shouldUpdateReactComponent = __webpack_require__(63);
-var traverseAllChildren = __webpack_require__(98);
-var warning = __webpack_require__(4);
+var instantiateReactComponent = __webpack_require__(107);
+var KeyEscapeUtils = __webpack_require__(72);
+var shouldUpdateReactComponent = __webpack_require__(71);
+var traverseAllChildren = __webpack_require__(111);
+var warning = __webpack_require__(5);
 
 var ReactComponentTreeHook;
 
@@ -21837,7 +25231,7 @@ if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 't
   // https://github.com/facebook/react/issues/7240
   // Remove the inline requires when we don't need them anymore:
   // https://github.com/facebook/react/pull/7178
-  ReactComponentTreeHook = __webpack_require__(15);
+  ReactComponentTreeHook = __webpack_require__(18);
 }
 
 function instantiateChild(childInstances, child, name, selfDebugID) {
@@ -21845,7 +25239,7 @@ function instantiateChild(childInstances, child, name, selfDebugID) {
   var keyUnique = childInstances[name] === undefined;
   if (process.env.NODE_ENV !== 'production') {
     if (!ReactComponentTreeHook) {
-      ReactComponentTreeHook = __webpack_require__(15);
+      ReactComponentTreeHook = __webpack_require__(18);
     }
     if (!keyUnique) {
       process.env.NODE_ENV !== 'production' ? warning(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeHook.getStackAddendumByID(selfDebugID)) : void 0;
@@ -21961,10 +25355,10 @@ var ReactChildReconciler = {
 };
 
 module.exports = ReactChildReconciler;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 183 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21980,27 +25374,27 @@ module.exports = ReactChildReconciler;
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var React = __webpack_require__(28);
-var ReactComponentEnvironment = __webpack_require__(62);
-var ReactCurrentOwner = __webpack_require__(18);
-var ReactErrorUtils = __webpack_require__(54);
-var ReactInstanceMap = __webpack_require__(37);
-var ReactInstrumentation = __webpack_require__(17);
-var ReactNodeTypes = __webpack_require__(95);
-var ReactReconciler = __webpack_require__(30);
+var React = __webpack_require__(32);
+var ReactComponentEnvironment = __webpack_require__(70);
+var ReactCurrentOwner = __webpack_require__(23);
+var ReactErrorUtils = __webpack_require__(62);
+var ReactInstanceMap = __webpack_require__(41);
+var ReactInstrumentation = __webpack_require__(20);
+var ReactNodeTypes = __webpack_require__(108);
+var ReactReconciler = __webpack_require__(34);
 
 if (process.env.NODE_ENV !== 'production') {
-  var checkReactTypeSpec = __webpack_require__(184);
+  var checkReactTypeSpec = __webpack_require__(207);
 }
 
-var emptyObject = __webpack_require__(39);
-var invariant = __webpack_require__(3);
-var shallowEqual = __webpack_require__(46);
-var shouldUpdateReactComponent = __webpack_require__(63);
-var warning = __webpack_require__(4);
+var emptyObject = __webpack_require__(45);
+var invariant = __webpack_require__(4);
+var shallowEqual = __webpack_require__(52);
+var shouldUpdateReactComponent = __webpack_require__(71);
+var warning = __webpack_require__(5);
 
 var CompositeTypes = {
   ImpureClass: 0,
@@ -22867,10 +26261,10 @@ var ReactCompositeComponent = {
 };
 
 module.exports = ReactCompositeComponent;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 184 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22886,13 +26280,13 @@ module.exports = ReactCompositeComponent;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactPropTypeLocationNames = __webpack_require__(185);
-var ReactPropTypesSecret = __webpack_require__(92);
+var ReactPropTypeLocationNames = __webpack_require__(208);
+var ReactPropTypesSecret = __webpack_require__(105);
 
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var ReactComponentTreeHook;
 
@@ -22902,7 +26296,7 @@ if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 't
   // https://github.com/facebook/react/issues/7240
   // Remove the inline requires when we don't need them anymore:
   // https://github.com/facebook/react/pull/7178
-  ReactComponentTreeHook = __webpack_require__(15);
+  ReactComponentTreeHook = __webpack_require__(18);
 }
 
 var loggedTypeFailures = {};
@@ -22944,7 +26338,7 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 
         if (process.env.NODE_ENV !== 'production') {
           if (!ReactComponentTreeHook) {
-            ReactComponentTreeHook = __webpack_require__(15);
+            ReactComponentTreeHook = __webpack_require__(18);
           }
           if (debugID !== null) {
             componentStackInfo = ReactComponentTreeHook.getStackAddendumByID(debugID);
@@ -22960,10 +26354,10 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 }
 
 module.exports = checkReactTypeSpec;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 185 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22991,10 +26385,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = ReactPropTypeLocationNames;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 186 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23020,7 +26414,7 @@ function getNextDebugID() {
 module.exports = getNextDebugID;
 
 /***/ }),
-/* 187 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23045,7 +26439,7 @@ var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol
 module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 188 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23091,7 +26485,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 189 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23108,9 +26502,9 @@ module.exports = getIteratorFn;
 
 
 
-var KeyEscapeUtils = __webpack_require__(64);
-var traverseAllChildren = __webpack_require__(98);
-var warning = __webpack_require__(4);
+var KeyEscapeUtils = __webpack_require__(72);
+var traverseAllChildren = __webpack_require__(111);
+var warning = __webpack_require__(5);
 
 var ReactComponentTreeHook;
 
@@ -23120,7 +26514,7 @@ if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 't
   // https://github.com/facebook/react/issues/7240
   // Remove the inline requires when we don't need them anymore:
   // https://github.com/facebook/react/pull/7178
-  ReactComponentTreeHook = __webpack_require__(15);
+  ReactComponentTreeHook = __webpack_require__(18);
 }
 
 /**
@@ -23136,7 +26530,7 @@ function flattenSingleChildIntoContext(traverseContext, child, name, selfDebugID
     var keyUnique = result[name] === undefined;
     if (process.env.NODE_ENV !== 'production') {
       if (!ReactComponentTreeHook) {
-        ReactComponentTreeHook = __webpack_require__(15);
+        ReactComponentTreeHook = __webpack_require__(18);
       }
       if (!keyUnique) {
         process.env.NODE_ENV !== 'production' ? warning(false, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeHook.getStackAddendumByID(selfDebugID)) : void 0;
@@ -23170,10 +26564,10 @@ function flattenChildren(children, selfDebugID) {
 }
 
 module.exports = flattenChildren;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 190 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23189,12 +26583,12 @@ module.exports = flattenChildren;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var PooledClass = __webpack_require__(26);
-var Transaction = __webpack_require__(41);
-var ReactInstrumentation = __webpack_require__(17);
-var ReactServerUpdateQueue = __webpack_require__(191);
+var PooledClass = __webpack_require__(30);
+var Transaction = __webpack_require__(47);
+var ReactInstrumentation = __webpack_require__(20);
+var ReactServerUpdateQueue = __webpack_require__(214);
 
 /**
  * Executed within the scope of the `Transaction` instance. Consider these as
@@ -23266,10 +26660,10 @@ _assign(ReactServerRenderingTransaction.prototype, Transaction, Mixin);
 PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 191 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23288,9 +26682,9 @@ module.exports = ReactServerRenderingTransaction;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ReactUpdateQueue = __webpack_require__(65);
+var ReactUpdateQueue = __webpack_require__(73);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 function warnNoop(publicInstance, callerName) {
   if (process.env.NODE_ENV !== 'production') {
@@ -23411,10 +26805,10 @@ var ReactServerUpdateQueue = function () {
 }();
 
 module.exports = ReactServerUpdateQueue;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 192 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23430,9 +26824,9 @@ module.exports = ReactServerUpdateQueue;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var DOMLazyTree = __webpack_require__(31);
+var DOMLazyTree = __webpack_require__(35);
 var ReactDOMComponentTree = __webpack_require__(11);
 
 var ReactDOMEmptyComponent = function (instantiate) {
@@ -23479,7 +26873,7 @@ _assign(ReactDOMEmptyComponent.prototype, {
 module.exports = ReactDOMEmptyComponent;
 
 /***/ }),
-/* 193 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23495,9 +26889,9 @@ module.exports = ReactDOMEmptyComponent;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var invariant = __webpack_require__(3);
+var invariant = __webpack_require__(4);
 
 /**
  * Return the lowest common ancestor of A and B, or null if they are in
@@ -23618,10 +27012,10 @@ module.exports = {
   traverseTwoPhase: traverseTwoPhase,
   traverseEnterLeave: traverseEnterLeave
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 194 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23637,16 +27031,16 @@ module.exports = {
 
 
 
-var _prodInvariant = __webpack_require__(7),
-    _assign = __webpack_require__(9);
+var _prodInvariant = __webpack_require__(8),
+    _assign = __webpack_require__(10);
 
-var DOMChildrenOperations = __webpack_require__(58);
-var DOMLazyTree = __webpack_require__(31);
+var DOMChildrenOperations = __webpack_require__(66);
+var DOMLazyTree = __webpack_require__(35);
 var ReactDOMComponentTree = __webpack_require__(11);
 
-var escapeTextContentForBrowser = __webpack_require__(44);
-var invariant = __webpack_require__(3);
-var validateDOMNesting = __webpack_require__(66);
+var escapeTextContentForBrowser = __webpack_require__(50);
+var invariant = __webpack_require__(4);
+var validateDOMNesting = __webpack_require__(74);
 
 /**
  * Text nodes violate a couple assumptions that React makes about components:
@@ -23786,10 +27180,10 @@ _assign(ReactDOMTextComponent.prototype, {
 });
 
 module.exports = ReactDOMTextComponent;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 195 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23805,12 +27199,12 @@ module.exports = ReactDOMTextComponent;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var ReactUpdates = __webpack_require__(19);
-var Transaction = __webpack_require__(41);
+var ReactUpdates = __webpack_require__(24);
+var Transaction = __webpack_require__(47);
 
-var emptyFunction = __webpack_require__(16);
+var emptyFunction = __webpack_require__(19);
 
 var RESET_BATCHED_UPDATES = {
   initialize: emptyFunction,
@@ -23862,7 +27256,7 @@ var ReactDefaultBatchingStrategy = {
 module.exports = ReactDefaultBatchingStrategy;
 
 /***/ }),
-/* 196 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23878,16 +27272,16 @@ module.exports = ReactDefaultBatchingStrategy;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var EventListener = __webpack_require__(99);
-var ExecutionEnvironment = __webpack_require__(12);
-var PooledClass = __webpack_require__(26);
+var EventListener = __webpack_require__(112);
+var ExecutionEnvironment = __webpack_require__(13);
+var PooledClass = __webpack_require__(30);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactUpdates = __webpack_require__(19);
+var ReactUpdates = __webpack_require__(24);
 
-var getEventTarget = __webpack_require__(55);
-var getUnboundedScrollPosition = __webpack_require__(197);
+var getEventTarget = __webpack_require__(63);
+var getUnboundedScrollPosition = __webpack_require__(220);
 
 /**
  * Find the deepest React component completely containing the root of the
@@ -24022,7 +27416,7 @@ var ReactEventListener = {
 module.exports = ReactEventListener;
 
 /***/ }),
-/* 197 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24066,7 +27460,7 @@ function getUnboundedScrollPosition(scrollable) {
 module.exports = getUnboundedScrollPosition;
 
 /***/ }),
-/* 198 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24082,14 +27476,14 @@ module.exports = getUnboundedScrollPosition;
 
 
 
-var DOMProperty = __webpack_require__(23);
-var EventPluginHub = __webpack_require__(35);
-var EventPluginUtils = __webpack_require__(53);
-var ReactComponentEnvironment = __webpack_require__(62);
-var ReactEmptyComponent = __webpack_require__(96);
-var ReactBrowserEventEmitter = __webpack_require__(45);
-var ReactHostComponent = __webpack_require__(97);
-var ReactUpdates = __webpack_require__(19);
+var DOMProperty = __webpack_require__(27);
+var EventPluginHub = __webpack_require__(39);
+var EventPluginUtils = __webpack_require__(61);
+var ReactComponentEnvironment = __webpack_require__(70);
+var ReactEmptyComponent = __webpack_require__(109);
+var ReactBrowserEventEmitter = __webpack_require__(51);
+var ReactHostComponent = __webpack_require__(110);
+var ReactUpdates = __webpack_require__(24);
 
 var ReactInjection = {
   Component: ReactComponentEnvironment.injection,
@@ -24105,7 +27499,7 @@ var ReactInjection = {
 module.exports = ReactInjection;
 
 /***/ }),
-/* 199 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24121,15 +27515,15 @@ module.exports = ReactInjection;
 
 
 
-var _assign = __webpack_require__(9);
+var _assign = __webpack_require__(10);
 
-var CallbackQueue = __webpack_require__(83);
-var PooledClass = __webpack_require__(26);
-var ReactBrowserEventEmitter = __webpack_require__(45);
-var ReactInputSelection = __webpack_require__(100);
-var ReactInstrumentation = __webpack_require__(17);
-var Transaction = __webpack_require__(41);
-var ReactUpdateQueue = __webpack_require__(65);
+var CallbackQueue = __webpack_require__(96);
+var PooledClass = __webpack_require__(30);
+var ReactBrowserEventEmitter = __webpack_require__(51);
+var ReactInputSelection = __webpack_require__(113);
+var ReactInstrumentation = __webpack_require__(20);
+var Transaction = __webpack_require__(47);
+var ReactUpdateQueue = __webpack_require__(73);
 
 /**
  * Ensures that, when possible, the selection range (currently selected text
@@ -24286,10 +27680,10 @@ _assign(ReactReconcileTransaction.prototype, Transaction, Mixin);
 PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 200 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24305,10 +27699,10 @@ module.exports = ReactReconcileTransaction;
 
 
 
-var ExecutionEnvironment = __webpack_require__(12);
+var ExecutionEnvironment = __webpack_require__(13);
 
-var getNodeForCharacterOffset = __webpack_require__(201);
-var getTextContentAccessor = __webpack_require__(82);
+var getNodeForCharacterOffset = __webpack_require__(224);
+var getTextContentAccessor = __webpack_require__(95);
 
 /**
  * While `isCollapsed` is available on the Selection object and `collapsed`
@@ -24506,7 +27900,7 @@ var ReactDOMSelection = {
 module.exports = ReactDOMSelection;
 
 /***/ }),
-/* 201 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24585,7 +27979,7 @@ function getNodeForCharacterOffset(root, offset) {
 module.exports = getNodeForCharacterOffset;
 
 /***/ }),
-/* 202 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24602,7 +27996,7 @@ module.exports = getNodeForCharacterOffset;
  * 
  */
 
-var isTextNode = __webpack_require__(203);
+var isTextNode = __webpack_require__(226);
 
 /*eslint-disable no-bitwise */
 
@@ -24630,7 +28024,7 @@ function containsNode(outerNode, innerNode) {
 module.exports = containsNode;
 
 /***/ }),
-/* 203 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24647,7 +28041,7 @@ module.exports = containsNode;
  * @typechecks
  */
 
-var isNode = __webpack_require__(204);
+var isNode = __webpack_require__(227);
 
 /**
  * @param {*} object The object to check.
@@ -24660,7 +28054,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 204 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24690,7 +28084,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 205 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24997,7 +28391,7 @@ Object.keys(ATTRS).forEach(function (key) {
 module.exports = SVGDOMPropertyConfig;
 
 /***/ }),
-/* 206 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25013,15 +28407,15 @@ module.exports = SVGDOMPropertyConfig;
 
 
 
-var EventPropagators = __webpack_require__(34);
-var ExecutionEnvironment = __webpack_require__(12);
+var EventPropagators = __webpack_require__(38);
+var ExecutionEnvironment = __webpack_require__(13);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactInputSelection = __webpack_require__(100);
-var SyntheticEvent = __webpack_require__(21);
+var ReactInputSelection = __webpack_require__(113);
+var SyntheticEvent = __webpack_require__(25);
 
-var getActiveElement = __webpack_require__(101);
-var isTextInputElement = __webpack_require__(86);
-var shallowEqual = __webpack_require__(46);
+var getActiveElement = __webpack_require__(114);
+var isTextInputElement = __webpack_require__(99);
+var shallowEqual = __webpack_require__(52);
 
 var skipSelectionChangeEvent = ExecutionEnvironment.canUseDOM && 'documentMode' in document && document.documentMode <= 11;
 
@@ -25190,7 +28584,7 @@ var SelectEventPlugin = {
 module.exports = SelectEventPlugin;
 
 /***/ }),
-/* 207 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25207,26 +28601,26 @@ module.exports = SelectEventPlugin;
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var EventListener = __webpack_require__(99);
-var EventPropagators = __webpack_require__(34);
+var EventListener = __webpack_require__(112);
+var EventPropagators = __webpack_require__(38);
 var ReactDOMComponentTree = __webpack_require__(11);
-var SyntheticAnimationEvent = __webpack_require__(208);
-var SyntheticClipboardEvent = __webpack_require__(209);
-var SyntheticEvent = __webpack_require__(21);
-var SyntheticFocusEvent = __webpack_require__(210);
-var SyntheticKeyboardEvent = __webpack_require__(211);
-var SyntheticMouseEvent = __webpack_require__(42);
-var SyntheticDragEvent = __webpack_require__(213);
-var SyntheticTouchEvent = __webpack_require__(214);
-var SyntheticTransitionEvent = __webpack_require__(215);
-var SyntheticUIEvent = __webpack_require__(36);
-var SyntheticWheelEvent = __webpack_require__(216);
+var SyntheticAnimationEvent = __webpack_require__(231);
+var SyntheticClipboardEvent = __webpack_require__(232);
+var SyntheticEvent = __webpack_require__(25);
+var SyntheticFocusEvent = __webpack_require__(233);
+var SyntheticKeyboardEvent = __webpack_require__(234);
+var SyntheticMouseEvent = __webpack_require__(48);
+var SyntheticDragEvent = __webpack_require__(236);
+var SyntheticTouchEvent = __webpack_require__(237);
+var SyntheticTransitionEvent = __webpack_require__(238);
+var SyntheticUIEvent = __webpack_require__(40);
+var SyntheticWheelEvent = __webpack_require__(239);
 
-var emptyFunction = __webpack_require__(16);
-var getEventCharCode = __webpack_require__(67);
-var invariant = __webpack_require__(3);
+var emptyFunction = __webpack_require__(19);
+var getEventCharCode = __webpack_require__(75);
+var invariant = __webpack_require__(4);
 
 /**
  * Turns
@@ -25419,10 +28813,10 @@ var SimpleEventPlugin = {
 };
 
 module.exports = SimpleEventPlugin;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 208 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25438,7 +28832,7 @@ module.exports = SimpleEventPlugin;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
 /**
  * @interface Event
@@ -25466,7 +28860,7 @@ SyntheticEvent.augmentClass(SyntheticAnimationEvent, AnimationEventInterface);
 module.exports = SyntheticAnimationEvent;
 
 /***/ }),
-/* 209 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25482,7 +28876,7 @@ module.exports = SyntheticAnimationEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
 /**
  * @interface Event
@@ -25509,7 +28903,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 module.exports = SyntheticClipboardEvent;
 
 /***/ }),
-/* 210 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25525,7 +28919,7 @@ module.exports = SyntheticClipboardEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(36);
+var SyntheticUIEvent = __webpack_require__(40);
 
 /**
  * @interface FocusEvent
@@ -25550,7 +28944,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 module.exports = SyntheticFocusEvent;
 
 /***/ }),
-/* 211 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25566,11 +28960,11 @@ module.exports = SyntheticFocusEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(36);
+var SyntheticUIEvent = __webpack_require__(40);
 
-var getEventCharCode = __webpack_require__(67);
-var getEventKey = __webpack_require__(212);
-var getEventModifierState = __webpack_require__(57);
+var getEventCharCode = __webpack_require__(75);
+var getEventKey = __webpack_require__(235);
+var getEventModifierState = __webpack_require__(65);
 
 /**
  * @interface KeyboardEvent
@@ -25639,7 +29033,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 module.exports = SyntheticKeyboardEvent;
 
 /***/ }),
-/* 212 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25655,7 +29049,7 @@ module.exports = SyntheticKeyboardEvent;
 
 
 
-var getEventCharCode = __webpack_require__(67);
+var getEventCharCode = __webpack_require__(75);
 
 /**
  * Normalization of deprecated HTML5 `key` values
@@ -25756,7 +29150,7 @@ function getEventKey(nativeEvent) {
 module.exports = getEventKey;
 
 /***/ }),
-/* 213 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25772,7 +29166,7 @@ module.exports = getEventKey;
 
 
 
-var SyntheticMouseEvent = __webpack_require__(42);
+var SyntheticMouseEvent = __webpack_require__(48);
 
 /**
  * @interface DragEvent
@@ -25797,7 +29191,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 module.exports = SyntheticDragEvent;
 
 /***/ }),
-/* 214 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25813,9 +29207,9 @@ module.exports = SyntheticDragEvent;
 
 
 
-var SyntheticUIEvent = __webpack_require__(36);
+var SyntheticUIEvent = __webpack_require__(40);
 
-var getEventModifierState = __webpack_require__(57);
+var getEventModifierState = __webpack_require__(65);
 
 /**
  * @interface TouchEvent
@@ -25847,7 +29241,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 module.exports = SyntheticTouchEvent;
 
 /***/ }),
-/* 215 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25863,7 +29257,7 @@ module.exports = SyntheticTouchEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(21);
+var SyntheticEvent = __webpack_require__(25);
 
 /**
  * @interface Event
@@ -25891,7 +29285,7 @@ SyntheticEvent.augmentClass(SyntheticTransitionEvent, TransitionEventInterface);
 module.exports = SyntheticTransitionEvent;
 
 /***/ }),
-/* 216 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25907,7 +29301,7 @@ module.exports = SyntheticTransitionEvent;
 
 
 
-var SyntheticMouseEvent = __webpack_require__(42);
+var SyntheticMouseEvent = __webpack_require__(48);
 
 /**
  * @interface WheelEvent
@@ -25947,7 +29341,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 module.exports = SyntheticWheelEvent;
 
 /***/ }),
-/* 217 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25963,7 +29357,7 @@ module.exports = SyntheticWheelEvent;
 
 
 
-var validateDOMNesting = __webpack_require__(66);
+var validateDOMNesting = __webpack_require__(74);
 
 var DOC_NODE_TYPE = 9;
 
@@ -25983,10 +29377,10 @@ function ReactDOMContainerInfo(topLevelWrapper, node) {
 }
 
 module.exports = ReactDOMContainerInfo;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 218 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26010,7 +29404,7 @@ var ReactDOMFeatureFlags = {
 module.exports = ReactDOMFeatureFlags;
 
 /***/ }),
-/* 219 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26026,7 +29420,7 @@ module.exports = ReactDOMFeatureFlags;
 
 
 
-var adler32 = __webpack_require__(220);
+var adler32 = __webpack_require__(243);
 
 var TAG_END = /\/?>/;
 var COMMENT_START = /^<\!\-\-/;
@@ -26065,7 +29459,7 @@ var ReactMarkupChecksum = {
 module.exports = ReactMarkupChecksum;
 
 /***/ }),
-/* 220 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26114,7 +29508,7 @@ function adler32(data) {
 module.exports = adler32;
 
 /***/ }),
-/* 221 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26133,7 +29527,7 @@ module.exports = adler32;
 module.exports = '15.6.1';
 
 /***/ }),
-/* 222 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26149,15 +29543,15 @@ module.exports = '15.6.1';
 
 
 
-var _prodInvariant = __webpack_require__(7);
+var _prodInvariant = __webpack_require__(8);
 
-var ReactCurrentOwner = __webpack_require__(18);
+var ReactCurrentOwner = __webpack_require__(23);
 var ReactDOMComponentTree = __webpack_require__(11);
-var ReactInstanceMap = __webpack_require__(37);
+var ReactInstanceMap = __webpack_require__(41);
 
-var getHostComponentFromComposite = __webpack_require__(103);
-var invariant = __webpack_require__(3);
-var warning = __webpack_require__(4);
+var getHostComponentFromComposite = __webpack_require__(116);
+var invariant = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 /**
  * Returns the DOM node rendered by this element.
@@ -26196,10 +29590,10 @@ function findDOMNode(componentOrElement) {
 }
 
 module.exports = findDOMNode;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 223 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26215,12 +29609,12 @@ module.exports = findDOMNode;
 
 
 
-var ReactMount = __webpack_require__(102);
+var ReactMount = __webpack_require__(115);
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ }),
-/* 224 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26236,11 +29630,11 @@ module.exports = ReactMount.renderSubtreeIntoContainer;
 
 
 
-var DOMProperty = __webpack_require__(23);
-var EventPluginRegistry = __webpack_require__(40);
-var ReactComponentTreeHook = __webpack_require__(15);
+var DOMProperty = __webpack_require__(27);
+var EventPluginRegistry = __webpack_require__(46);
+var ReactComponentTreeHook = __webpack_require__(18);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 if (process.env.NODE_ENV !== 'production') {
   var reactProps = {
@@ -26335,10 +29729,10 @@ var ReactDOMUnknownPropertyHook = {
 };
 
 module.exports = ReactDOMUnknownPropertyHook;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 225 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26354,9 +29748,9 @@ module.exports = ReactDOMUnknownPropertyHook;
 
 
 
-var ReactComponentTreeHook = __webpack_require__(15);
+var ReactComponentTreeHook = __webpack_require__(18);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var didWarnValueNull = false;
 
@@ -26384,10 +29778,10 @@ var ReactDOMNullInputValuePropHook = {
 };
 
 module.exports = ReactDOMNullInputValuePropHook;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 226 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26403,10 +29797,10 @@ module.exports = ReactDOMNullInputValuePropHook;
 
 
 
-var DOMProperty = __webpack_require__(23);
-var ReactComponentTreeHook = __webpack_require__(15);
+var DOMProperty = __webpack_require__(27);
+var ReactComponentTreeHook = __webpack_require__(18);
 
-var warning = __webpack_require__(4);
+var warning = __webpack_require__(5);
 
 var warnedProperties = {};
 var rARIA = new RegExp('^(aria)-[' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
@@ -26483,10 +29877,10 @@ var ReactDOMInvalidARIAHook = {
 };
 
 module.exports = ReactDOMInvalidARIAHook;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 227 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26502,8 +29896,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
-var core_1 = __webpack_require__(228);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(14);
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
 var Hello = (function (_super) {
@@ -26551,34 +29945,7 @@ var DialogExample = (function (_super) {
 
 
 /***/ }),
-/* 228 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(229));
-__export(__webpack_require__(27));
-__export(__webpack_require__(106));
-var iconClasses_1 = __webpack_require__(276);
-exports.IconClasses = iconClasses_1.IconClasses;
-var iconStrings_1 = __webpack_require__(277);
-exports.IconContents = iconStrings_1.IconContents;
-
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-/* 229 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26593,13 +29960,13 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(230));
+__export(__webpack_require__(252));
 
 //# sourceMappingURL=index.js.map
 
 
 /***/ }),
-/* 230 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26611,7 +29978,7 @@ __export(__webpack_require__(230));
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var interactionMode_1 = __webpack_require__(231);
+var interactionMode_1 = __webpack_require__(253);
 exports.FOCUS_DISABLED_CLASS = "pt-focus-disabled";
 /* istanbul ignore next */
 var fakeFocusEngine = {
@@ -26635,7 +30002,7 @@ exports.FocusStyleManager = {
 
 
 /***/ }),
-/* 231 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26700,7 +30067,7 @@ exports.InteractionModeEngine = InteractionModeEngine;
 
 
 /***/ }),
-/* 232 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26806,7 +30173,7 @@ exports.Colors = {
 
 
 /***/ }),
-/* 233 */
+/* 255 */
 /***/ (function(module, exports) {
 
 /*!
@@ -27794,7 +31161,7 @@ THE SOFTWARE.
 }(self));
 
 /***/ }),
-/* 234 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! tether 1.4.0 */
@@ -29615,7 +32982,7 @@ return Tether;
 
 
 /***/ }),
-/* 235 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29630,11 +32997,11 @@ return Tether;
 
 
 
-module.exports = __webpack_require__(236);
+module.exports = __webpack_require__(258);
 
 
 /***/ }),
-/* 236 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29644,23 +33011,23 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(48);
+var _propTypes = __webpack_require__(54);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _TransitionGroup = __webpack_require__(238);
+var _TransitionGroup = __webpack_require__(260);
 
 var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
 
-var _CSSTransitionGroupChild = __webpack_require__(242);
+var _CSSTransitionGroupChild = __webpack_require__(264);
 
 var _CSSTransitionGroupChild2 = _interopRequireDefault(_CSSTransitionGroupChild);
 
-var _PropTypes = __webpack_require__(109);
+var _PropTypes = __webpack_require__(122);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29732,10 +33099,10 @@ CSSTransitionGroup.defaultProps = defaultProps;
 
 exports.default = CSSTransitionGroup;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 237 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29750,9 +33117,9 @@ module.exports = exports['default'];
 
 
 
-var emptyFunction = __webpack_require__(16);
-var invariant = __webpack_require__(3);
-var ReactPropTypesSecret = __webpack_require__(52);
+var emptyFunction = __webpack_require__(19);
+var invariant = __webpack_require__(4);
+var ReactPropTypesSecret = __webpack_require__(60);
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -29801,7 +33168,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 238 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29811,23 +33178,23 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _chainFunction = __webpack_require__(239);
+var _chainFunction = __webpack_require__(261);
 
 var _chainFunction2 = _interopRequireDefault(_chainFunction);
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(48);
+var _propTypes = __webpack_require__(54);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _warning = __webpack_require__(240);
+var _warning = __webpack_require__(262);
 
 var _warning2 = _interopRequireDefault(_warning);
 
-var _ChildMapping = __webpack_require__(241);
+var _ChildMapping = __webpack_require__(263);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30074,10 +33441,10 @@ TransitionGroup.defaultProps = defaultProps;
 
 exports.default = TransitionGroup;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 239 */
+/* 261 */
 /***/ (function(module, exports) {
 
 
@@ -30103,7 +33470,7 @@ module.exports = function chain(){
 
 
 /***/ }),
-/* 240 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30168,10 +33535,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 241 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30181,7 +33548,7 @@ exports.__esModule = true;
 exports.getChildMapping = getChildMapping;
 exports.mergeChildMappings = mergeChildMappings;
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 /**
  * Given `this.props.children`, return an object mapping key to child.
@@ -30268,7 +33635,7 @@ function mergeChildMappings(prev, next) {
 }
 
 /***/ }),
-/* 242 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30278,31 +33645,31 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _addClass = __webpack_require__(243);
+var _addClass = __webpack_require__(265);
 
 var _addClass2 = _interopRequireDefault(_addClass);
 
-var _removeClass = __webpack_require__(245);
+var _removeClass = __webpack_require__(267);
 
 var _removeClass2 = _interopRequireDefault(_removeClass);
 
-var _requestAnimationFrame = __webpack_require__(246);
+var _requestAnimationFrame = __webpack_require__(268);
 
 var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
 
-var _properties = __webpack_require__(247);
+var _properties = __webpack_require__(269);
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(48);
+var _propTypes = __webpack_require__(54);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _reactDom = __webpack_require__(20);
+var _reactDom = __webpack_require__(22);
 
-var _PropTypes = __webpack_require__(109);
+var _PropTypes = __webpack_require__(122);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30501,10 +33868,10 @@ CSSTransitionGroupChild.propTypes = process.env.NODE_ENV !== "production" ? prop
 
 exports.default = CSSTransitionGroupChild;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 243 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30515,7 +33882,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = addClass;
 
-var _hasClass = __webpack_require__(244);
+var _hasClass = __webpack_require__(266);
 
 var _hasClass2 = _interopRequireDefault(_hasClass);
 
@@ -30527,7 +33894,7 @@ function addClass(element, className) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 244 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30543,7 +33910,7 @@ function hasClass(element, className) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 245 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30554,7 +33921,7 @@ module.exports = function removeClass(element, className) {
 };
 
 /***/ }),
-/* 246 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30564,7 +33931,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _inDOM = __webpack_require__(108);
+var _inDOM = __webpack_require__(121);
 
 var _inDOM2 = _interopRequireDefault(_inDOM);
 
@@ -30613,7 +33980,7 @@ exports.default = compatRaf;
 module.exports = exports['default'];
 
 /***/ }),
-/* 247 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30624,7 +33991,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.animationEnd = exports.animationDelay = exports.animationTiming = exports.animationDuration = exports.animationName = exports.transitionEnd = exports.transitionDuration = exports.transitionDelay = exports.transitionTiming = exports.transitionProperty = exports.transform = undefined;
 
-var _inDOM = __webpack_require__(108);
+var _inDOM = __webpack_require__(121);
 
 var _inDOM2 = _interopRequireDefault(_inDOM);
 
@@ -30729,13 +34096,13 @@ function getTransitionProperties() {
 }
 
 /***/ }),
-/* 248 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var position_1 = __webpack_require__(22);
+var position_1 = __webpack_require__(26);
 // this value causes popover and target edges to line up on 50px targets
 exports.MIN_ARROW_SPACING = 18;
 function computeArrowOffset(sideLength, arrowSize, minimum) {
@@ -30812,7 +34179,7 @@ exports.getArrowPositionStyles = getArrowPositionStyles;
 
 
 /***/ }),
-/* 249 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30825,12 +34192,12 @@ exports.getArrowPositionStyles = getArrowPositionStyles;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var common_1 = __webpack_require__(27);
-var errors_1 = __webpack_require__(14);
-var buttons_1 = __webpack_require__(49);
-var dialog_1 = __webpack_require__(111);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var common_1 = __webpack_require__(31);
+var errors_1 = __webpack_require__(16);
+var buttons_1 = __webpack_require__(55);
+var dialog_1 = __webpack_require__(124);
 var Alert = (function (_super) {
     tslib_1.__extends(Alert, _super);
     function Alert() {
@@ -30880,7 +34247,7 @@ exports.Alert = Alert;
 
 
 /***/ }),
-/* 250 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30893,12 +34260,12 @@ exports.Alert = Alert;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var Keys = __webpack_require__(24);
-var utils_1 = __webpack_require__(8);
-var spinner_1 = __webpack_require__(69);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var Keys = __webpack_require__(28);
+var utils_1 = __webpack_require__(9);
+var spinner_1 = __webpack_require__(77);
 var AbstractButton = (function (_super) {
     tslib_1.__extends(AbstractButton, _super);
     function AbstractButton() {
@@ -30982,7 +34349,7 @@ function isKeyboardClick(keyCode) {
 
 
 /***/ }),
-/* 251 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30994,9 +34361,9 @@ function isKeyboardClick(keyCode) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 exports.Breadcrumb = function (breadcrumbProps) {
     var classes = classNames(Classes.BREADCRUMB, (_a = {},
         _a[Classes.DISABLED] = breadcrumbProps.disabled,
@@ -31009,7 +34376,7 @@ exports.Breadcrumb = function (breadcrumbProps) {
 
 
 /***/ }),
-/* 252 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31022,14 +34389,14 @@ exports.Breadcrumb = function (breadcrumbProps) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var position_1 = __webpack_require__(22);
-var menu_1 = __webpack_require__(70);
-var menuItem_1 = __webpack_require__(113);
-var popover_1 = __webpack_require__(33);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var position_1 = __webpack_require__(26);
+var menu_1 = __webpack_require__(78);
+var menuItem_1 = __webpack_require__(126);
+var popover_1 = __webpack_require__(37);
 var CollapseFrom;
 (function (CollapseFrom) {
     CollapseFrom[CollapseFrom["START"] = 0] = "START";
@@ -31102,7 +34469,7 @@ exports.CollapsibleListFactory = React.createFactory(CollapsibleList);
 
 
 /***/ }),
-/* 253 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31114,10 +34481,10 @@ exports.CollapsibleListFactory = React.createFactory(CollapsibleList);
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
-var errors_1 = __webpack_require__(14);
-var utils_1 = __webpack_require__(8);
-var ContextMenu = __webpack_require__(107);
+var React = __webpack_require__(0);
+var errors_1 = __webpack_require__(16);
+var utils_1 = __webpack_require__(9);
+var ContextMenu = __webpack_require__(120);
 function ContextMenuTarget(constructor) {
     var _a = constructor.prototype, render = _a.render, renderContextMenu = _a.renderContextMenu, onContextMenuClose = _a.onContextMenuClose;
     if (!utils_1.isFunction(renderContextMenu)) {
@@ -31159,7 +34526,7 @@ exports.ContextMenuTarget = ContextMenuTarget;
 
 
 /***/ }),
-/* 254 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31172,14 +34539,14 @@ exports.ContextMenuTarget = ContextMenuTarget;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Keys = __webpack_require__(24);
-var utils_1 = __webpack_require__(8);
-var compatibility_1 = __webpack_require__(255);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Keys = __webpack_require__(28);
+var utils_1 = __webpack_require__(9);
+var compatibility_1 = __webpack_require__(277);
 var BUFFER_WIDTH_EDGE = 5;
 var BUFFER_WIDTH_IE = 30;
 var EditableText = (function (_super) {
@@ -31431,7 +34798,7 @@ exports.EditableTextFactory = React.createFactory(EditableText);
 
 
 /***/ }),
-/* 255 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31446,13 +34813,13 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(256));
+__export(__webpack_require__(278));
 
 //# sourceMappingURL=index.js.map
 
 
 /***/ }),
-/* 256 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31480,7 +34847,7 @@ exports.Browser = {
 
 
 /***/ }),
-/* 257 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31493,13 +34860,13 @@ exports.Browser = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var common_1 = __webpack_require__(27);
-var Errors = __webpack_require__(14);
-var buttons_1 = __webpack_require__(49);
-var inputGroup_1 = __webpack_require__(115);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var common_1 = __webpack_require__(31);
+var Errors = __webpack_require__(16);
+var buttons_1 = __webpack_require__(55);
+var inputGroup_1 = __webpack_require__(128);
 var IncrementDirection;
 (function (IncrementDirection) {
     IncrementDirection[IncrementDirection["DOWN"] = -1] = "DOWN";
@@ -31874,7 +35241,7 @@ var NumericInput_1;
 
 
 /***/ }),
-/* 258 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31887,11 +35254,11 @@ var NumericInput_1;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var controls_1 = __webpack_require__(114);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var controls_1 = __webpack_require__(127);
 var counter = 0;
 function nextName() { return RadioGroup.displayName + "-" + counter++; }
 var RadioGroup = (function (_super) {
@@ -31951,7 +35318,7 @@ function isRadio(child) {
 
 
 /***/ }),
-/* 259 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31963,9 +35330,9 @@ function isRadio(child) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
-var utils_1 = __webpack_require__(8);
-var hotkeysEvents_1 = __webpack_require__(260);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(9);
+var hotkeysEvents_1 = __webpack_require__(282);
 function HotkeysTarget(constructor) {
     var _a = constructor.prototype, componentWillMount = _a.componentWillMount, componentDidMount = _a.componentDidMount, componentWillUnmount = _a.componentWillUnmount, render = _a.render, renderHotkeys = _a.renderHotkeys;
     if (!utils_1.isFunction(renderHotkeys)) {
@@ -32031,7 +35398,7 @@ exports.HotkeysTarget = HotkeysTarget;
 
 
 /***/ }),
-/* 260 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32043,11 +35410,11 @@ exports.HotkeysTarget = HotkeysTarget;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = __webpack_require__(1);
-var utils_1 = __webpack_require__(8);
-var hotkey_1 = __webpack_require__(50);
-var hotkeyParser_1 = __webpack_require__(71);
-var hotkeysDialog_1 = __webpack_require__(118);
+var react_1 = __webpack_require__(0);
+var utils_1 = __webpack_require__(9);
+var hotkey_1 = __webpack_require__(56);
+var hotkeyParser_1 = __webpack_require__(79);
+var hotkeysDialog_1 = __webpack_require__(131);
 var SHOW_DIALOG_KEY = "?";
 var HotkeyScope;
 (function (HotkeyScope) {
@@ -32155,7 +35522,7 @@ exports.HotkeysEvents = HotkeysEvents;
 
 
 /***/ }),
-/* 261 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32168,9 +35535,9 @@ exports.HotkeysEvents = HotkeysEvents;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var MenuDivider = (function (_super) {
     tslib_1.__extends(MenuDivider, _super);
     function MenuDivider() {
@@ -32198,7 +35565,7 @@ exports.MenuDividerFactory = React.createFactory(MenuDivider);
 
 
 /***/ }),
-/* 262 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32211,10 +35578,10 @@ exports.MenuDividerFactory = React.createFactory(MenuDivider);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var NonIdealState = (function (_super) {
     tslib_1.__extends(NonIdealState, _super);
     function NonIdealState() {
@@ -32270,7 +35637,7 @@ exports.NonIdealStateFactory = React.createFactory(NonIdealState);
 
 
 /***/ }),
-/* 263 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32283,10 +35650,10 @@ exports.NonIdealStateFactory = React.createFactory(NonIdealState);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var Text = (function (_super) {
     tslib_1.__extends(Text, _super);
     function Text() {
@@ -32331,7 +35698,7 @@ exports.Text = Text;
 
 
 /***/ }),
-/* 264 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32344,8 +35711,8 @@ exports.Text = Text;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var popover_1 = __webpack_require__(33);
+var React = __webpack_require__(0);
+var popover_1 = __webpack_require__(37);
 var SVGPopover = (function (_super) {
     tslib_1.__extends(SVGPopover, _super);
     function SVGPopover() {
@@ -32363,7 +35730,7 @@ exports.SVGPopoverFactory = React.createFactory(SVGPopover);
 
 
 /***/ }),
-/* 265 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32376,11 +35743,11 @@ exports.SVGPopoverFactory = React.createFactory(SVGPopover);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
 var ProgressBar = (function (_super) {
     tslib_1.__extends(ProgressBar, _super);
     function ProgressBar() {
@@ -32407,7 +35774,7 @@ exports.ProgressBarFactory = React.createFactory(ProgressBar);
 
 
 /***/ }),
-/* 266 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32420,8 +35787,8 @@ exports.ProgressBarFactory = React.createFactory(ProgressBar);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var tooltip_1 = __webpack_require__(68);
+var React = __webpack_require__(0);
+var tooltip_1 = __webpack_require__(76);
 var SVGTooltip = (function (_super) {
     tslib_1.__extends(SVGTooltip, _super);
     function SVGTooltip() {
@@ -32439,7 +35806,7 @@ exports.SVGTooltipFactory = React.createFactory(SVGTooltip);
 
 
 /***/ }),
-/* 267 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32452,13 +35819,13 @@ exports.SVGTooltipFactory = React.createFactory(SVGTooltip);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var utils_1 = __webpack_require__(8);
-var coreSlider_1 = __webpack_require__(119);
-var handle_1 = __webpack_require__(120);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var utils_1 = __webpack_require__(9);
+var coreSlider_1 = __webpack_require__(132);
+var handle_1 = __webpack_require__(133);
 var RangeEnd;
 (function (RangeEnd) {
     RangeEnd[RangeEnd["LEFT"] = 0] = "LEFT";
@@ -32560,7 +35927,7 @@ exports.RangeSliderFactory = React.createFactory(RangeSlider);
 
 
 /***/ }),
-/* 268 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32573,11 +35940,11 @@ exports.RangeSliderFactory = React.createFactory(RangeSlider);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
-var coreSlider_1 = __webpack_require__(119);
-var handle_1 = __webpack_require__(120);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
+var coreSlider_1 = __webpack_require__(132);
+var handle_1 = __webpack_require__(133);
 var Slider = (function (_super) {
     tslib_1.__extends(Slider, _super);
     function Slider() {
@@ -32630,7 +35997,7 @@ exports.SliderFactory = React.createFactory(Slider);
 
 
 /***/ }),
-/* 269 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32643,11 +36010,11 @@ exports.SliderFactory = React.createFactory(Slider);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 // import * to avoid "cannot be named" error on factory
-var spinner = __webpack_require__(69);
+var spinner = __webpack_require__(77);
 var SVGSpinner = (function (_super) {
     tslib_1.__extends(SVGSpinner, _super);
     function SVGSpinner() {
@@ -32666,7 +36033,7 @@ exports.SVGSpinnerFactory = React.createFactory(SVGSpinner);
 
 
 /***/ }),
-/* 270 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32679,18 +36046,18 @@ exports.SVGSpinnerFactory = React.createFactory(SVGSpinner);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var react_dom_1 = __webpack_require__(20);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Errors = __webpack_require__(14);
-var Keys = __webpack_require__(24);
-var Utils = __webpack_require__(8);
-var tab_1 = __webpack_require__(121);
-var tabList_1 = __webpack_require__(122);
-var tabPanel_1 = __webpack_require__(123);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var react_dom_1 = __webpack_require__(22);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(16);
+var Keys = __webpack_require__(28);
+var Utils = __webpack_require__(9);
+var tab_1 = __webpack_require__(134);
+var tabList_1 = __webpack_require__(135);
+var tabPanel_1 = __webpack_require__(136);
 var TAB_CSS_SELECTOR = "li[role=tab]";
 var Tabs = (function (_super) {
     tslib_1.__extends(Tabs, _super);
@@ -32977,7 +36344,7 @@ exports.TabsFactory = React.createFactory(Tabs);
 
 
 /***/ }),
-/* 271 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32990,15 +36357,15 @@ exports.TabsFactory = React.createFactory(Tabs);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var Keys = __webpack_require__(24);
-var utils_1 = __webpack_require__(8);
-var tab2_1 = __webpack_require__(124);
-var tabTitle_1 = __webpack_require__(272);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var Keys = __webpack_require__(28);
+var utils_1 = __webpack_require__(9);
+var tab2_1 = __webpack_require__(137);
+var tabTitle_1 = __webpack_require__(294);
 exports.Expander = function () { return React.createElement("div", { className: "pt-flex-expander" }); };
 var TAB_SELECTOR = "." + Classes.TAB;
 var Tabs2 = (function (_super) {
@@ -33175,7 +36542,7 @@ function isTab(child) {
 
 
 /***/ }),
-/* 272 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33188,10 +36555,10 @@ function isTab(child) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
 var TabTitle = (function (_super) {
     tslib_1.__extends(TabTitle, _super);
     function TabTitle() {
@@ -33225,7 +36592,7 @@ exports.generateTabTitleId = generateTabTitleId;
 
 
 /***/ }),
-/* 273 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33238,12 +36605,12 @@ exports.generateTabTitleId = generateTabTitleId;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var common_1 = __webpack_require__(27);
-var props_1 = __webpack_require__(32);
-var Classes = __webpack_require__(5);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var common_1 = __webpack_require__(31);
+var props_1 = __webpack_require__(36);
+var Classes = __webpack_require__(6);
 var Tag = (function (_super) {
     tslib_1.__extends(Tag, _super);
     function Tag() {
@@ -33280,7 +36647,7 @@ exports.TagFactory = React.createFactory(Tag);
 
 
 /***/ }),
-/* 274 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33293,18 +36660,18 @@ exports.TagFactory = React.createFactory(Tag);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var abstractComponent_1 = __webpack_require__(13);
-var Classes = __webpack_require__(5);
-var errors_1 = __webpack_require__(14);
-var keys_1 = __webpack_require__(24);
-var position_1 = __webpack_require__(22);
-var utils_1 = __webpack_require__(8);
-var overlay_1 = __webpack_require__(47);
-var toast_1 = __webpack_require__(125);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var abstractComponent_1 = __webpack_require__(15);
+var Classes = __webpack_require__(6);
+var errors_1 = __webpack_require__(16);
+var keys_1 = __webpack_require__(28);
+var position_1 = __webpack_require__(26);
+var utils_1 = __webpack_require__(9);
+var overlay_1 = __webpack_require__(53);
+var toast_1 = __webpack_require__(138);
 var Toaster = Toaster_1 = (function (_super) {
     tslib_1.__extends(Toaster, _super);
     function Toaster() {
@@ -33414,7 +36781,7 @@ var Toaster_1;
 
 
 /***/ }),
-/* 275 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33427,11 +36794,11 @@ var Toaster_1;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(5);
-var utils_1 = __webpack_require__(8);
-var treeNode_1 = __webpack_require__(126);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(9);
+var treeNode_1 = __webpack_require__(139);
 var Tree = (function (_super) {
     tslib_1.__extends(Tree, _super);
     function Tree() {
@@ -33508,7 +36875,7 @@ exports.TreeFactory = React.createFactory(Tree);
 
 
 /***/ }),
-/* 276 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33934,7 +37301,7 @@ exports.IconClasses = {
 
 
 /***/ }),
-/* 277 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34360,3373 +37727,6 @@ exports.IconContents = {
 
 
 /***/ }),
-/* 278 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TABLE_BODY = "bp-table-body";
-exports.TABLE_BODY_SCROLL_CLIENT = "bp-table-body-scroll-client";
-exports.TABLE_BODY_VIRTUAL_CLIENT = "bp-table-body-virtual-client";
-exports.TABLE_BOTTOM_CONTAINER = "bp-table-bottom-container";
-exports.TABLE_CELL = "bp-table-cell";
-exports.TABLE_CELL_CLIENT = "bp-table-cell-client";
-exports.TABLE_CELL_GHOST = "bp-table-cell-ghost";
-exports.TABLE_CELL_INTERACTIVE = "bp-table-cell-interactive";
-exports.TABLE_CELL_LEDGER_EVEN = "bp-table-cell-ledger-even";
-exports.TABLE_CELL_LEDGER_ODD = "bp-table-cell-ledger-odd";
-exports.TABLE_COLUMN_HEADER_TR = "bp-table-column-header-tr";
-exports.TABLE_COLUMN_HEADERS = "bp-table-column-headers";
-exports.TABLE_COLUMN_NAME = "bp-table-column-name";
-exports.TABLE_COLUMN_NAME_TEXT = "bp-table-column-name-text";
-exports.TABLE_CONTAINER = "bp-table-container";
-exports.TABLE_DRAGGABLE = "bp-table-draggable";
-exports.TABLE_DRAGGING = "bp-table-dragging";
-exports.TABLE_EDITABLE_NAME = "bp-table-editable-name";
-exports.TABLE_FOCUS_REGION = "bp-table-focus-region";
-exports.TABLE_HEADER = "bp-table-header";
-exports.TABLE_HEADER_ACTIVE = "bp-table-header-active";
-exports.TABLE_HEADER_CONTENT = "bp-table-header-content";
-exports.TABLE_HEADER_REORDERABLE = "bp-table-header-reorderable";
-exports.TABLE_HEADER_SELECTED = "bp-table-header-selected";
-exports.TABLE_HORIZONTAL_CELL_DIVIDER = "bp-table-horizontal-cell-divider";
-exports.TABLE_HORIZONTAL_GUIDE = "bp-table-horizontal-guide";
-exports.TABLE_INTERACTION_BAR = "bp-table-interaction-bar";
-exports.TABLE_LAST_IN_COLUMN = "bp-table-last-in-column";
-exports.TABLE_LAST_IN_ROW = "bp-table-last-in-row";
-exports.TABLE_MENU = "bp-table-menu";
-exports.TABLE_NO_HORIZONTAL_SCROLL = "bp-table-no-horizontal-scroll";
-exports.TABLE_NO_LAYOUT = "bp-table-no-layout";
-exports.TABLE_NO_VERTICAL_SCROLL = "bp-table-no-vertical-scroll";
-exports.TABLE_NO_WRAP_TEXT = "bp-table-no-wrap-text";
-exports.TABLE_NULL = "bp-table-null";
-exports.TABLE_OVERLAY = "bp-table-overlay";
-exports.TABLE_OVERLAY_LAYER = "bp-table-overlay-layer";
-exports.TABLE_POPOVER_WHITESPACE_NORMAL = "bp-table-popover-whitespace-normal";
-exports.TABLE_POPOVER_WHITESPACE_PRE = "bp-table-popover-whitespace-pre";
-exports.TABLE_REGION = "bp-table-region";
-exports.TABLE_REORDER_HANDLE = "bp-table-reorder-handle";
-exports.TABLE_REORDER_HANDLE_TARGET = "bp-table-reorder-handle-target";
-exports.TABLE_REORDERING = "bp-table-reordering";
-exports.TABLE_RESIZE_GUIDES = "bp-table-resize-guides";
-exports.TABLE_RESIZE_HANDLE = "bp-table-resize-handle";
-exports.TABLE_RESIZE_HANDLE_TARGET = "bp-table-resize-handle-target";
-exports.TABLE_RESIZE_HORIZONTAL = "bp-table-resize-horizontal";
-exports.TABLE_RESIZE_SENSOR = "bp-table-resize-sensor";
-exports.TABLE_RESIZE_SENSOR_EXPAND = "bp-table-resize-sensor-expand";
-exports.TABLE_RESIZE_SENSOR_SHRINK = "bp-table-resize-sensor-shrink";
-exports.TABLE_RESIZE_VERTICAL = "bp-table-resize-vertical";
-exports.TABLE_ROUNDED_LAYOUT = "bp-table-rounded-layout";
-exports.TABLE_ROW_HEADERS = "bp-table-row-headers";
-exports.TABLE_ROW_NAME = "bp-table-row-name";
-exports.TABLE_ROW_NAME_TEXT = "bp-table-row-name-text";
-exports.TABLE_SELECTION_ENABLED = "bp-table-selection-enabled";
-exports.TABLE_SELECTION_REGION = "bp-table-selection-region";
-exports.TABLE_TH_MENU = "bp-table-th-menu";
-exports.TABLE_TH_MENU_CONTAINER = "bp-table-th-menu-container";
-exports.TABLE_TH_MENU_CONTAINER_BACKGROUND = "bp-table-th-menu-container-background";
-exports.TABLE_TH_MENU_OPEN = "bp-table-th-menu-open";
-exports.TABLE_THEAD = "bp-table-thead";
-exports.TABLE_TOP_CONTAINER = "bp-table-top-container";
-exports.TABLE_TRUNCATED_CELL = "bp-table-truncated-cell";
-exports.TABLE_TRUNCATED_FORMAT = "bp-table-truncated-format";
-exports.TABLE_TRUNCATED_FORMAT_TEXT = "bp-table-truncated-format-text";
-exports.TABLE_TRUNCATED_POPOVER = "bp-table-truncated-popover";
-exports.TABLE_TRUNCATED_POPOVER_TARGET = "bp-table-truncated-popover-target";
-exports.TABLE_TRUNCATED_TEXT = "bp-table-truncated-text";
-exports.TABLE_TRUNCATED_VALUE = "bp-table-truncated-value";
-exports.TABLE_VERTICAL_GUIDE = "bp-table-vertical-guide";
-/** Common code for row and column index class generator functions, since they're essentially the same. */
-function dimensionIndexClass(classPrefix, index) {
-    if (index == null) {
-        return undefined;
-    }
-    if (typeof index === "number") {
-        return "" + classPrefix + index;
-    }
-    return index.indexOf(classPrefix) === 0 ? index : "" + classPrefix + index;
-}
-/** Return CSS class for table colummn index, whether or not 'bp-table-col-' prefix is included. */
-function columnIndexClass(columnIndex) {
-    return dimensionIndexClass("bp-table-col-", columnIndex);
-}
-exports.columnIndexClass = columnIndexClass;
-/** Return CSS class for table row index, whether or not 'bp-table-row-' prefix is included. */
-function rowIndexClass(rowIndex) {
-    return dimensionIndexClass("bp-table-row-", rowIndex);
-}
-exports.rowIndexClass = rowIndexClass;
-/** Return CSS class for table colummn cell index, whether or not 'bp-table-cell-col-' prefix is included. */
-function columnCellIndexClass(columnIndex) {
-    return dimensionIndexClass("bp-table-cell-col-", columnIndex);
-}
-exports.columnCellIndexClass = columnCellIndexClass;
-/** Return CSS class for table row cell index, whether or not 'bp-table-cell-row-' prefix is included. */
-function rowCellIndexClass(rowIndex) {
-    return dimensionIndexClass("bp-table-cell-row-", rowIndex);
-}
-exports.rowCellIndexClass = rowCellIndexClass;
-
-//# sourceMappingURL=classes.js.map
-
-
-/***/ }),
-/* 279 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-;
-// tslint:enable
-/**
- * Since Firefox doesn't provide a computed "font" property, we manually
- * construct it using the ordered properties that can be specifed in CSS.
- */
-var CSS_FONT_PROPERTIES = [
-    "font-style",
-    "font-variant",
-    "font-weight",
-    "font-size",
-    "font-family",
-];
-exports.Utils = {
-    /**
-     * Returns a clone of the ReactElement with a className that includes the
-     * element's original className and any other classes passed in with variadic
-     * arguments matching the `classNames` api.
-     */
-    assignClasses: function (elem) {
-        var extendedClasses = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            extendedClasses[_i - 1] = arguments[_i];
-        }
-        var classes = classNames.apply(void 0, [elem.props.className].concat(extendedClasses));
-        return React.cloneElement(elem, { className: classes });
-    },
-    /**
-     * Invokes the callback `n` times, collecting the results in an array, which
-     * is the return value. Similar to _.times
-     */
-    times: function (n, callback) {
-        var result = Array(n);
-        for (var index = 0; index < n; index++) {
-            result[index] = callback(index);
-        }
-        return result;
-    },
-    /**
-     * Takes an array of numbers, returns an array of numbers of the same length in which each
-     * value is the sum of current and previous values in the input array.
-     *
-     * Example input:  [10, 20, 50]
-     *         output: [10, 30, 80]
-     */
-    accumulate: function (numbers) {
-        var result = [];
-        var sum = 0;
-        for (var _i = 0, numbers_1 = numbers; _i < numbers_1.length; _i++) {
-            var num = numbers_1[_i];
-            sum += num;
-            result.push(sum);
-        }
-        return result;
-    },
-    /**
-     * Returns traditional spreadsheet-style column names
-     * e.g. (A, B, ..., Z, AA, AB, ..., ZZ, AAA, AAB, ...).
-     *
-     * Note that this isn't technically mathematically equivalent to base 26 since
-     * there is no zero element.
-     */
-    toBase26Alpha: function (num) {
-        var str = "";
-        while (true) {
-            var letter = num % 26;
-            str = String.fromCharCode(65 + letter) + str;
-            num = num - letter;
-            if (num <= 0) {
-                return str;
-            }
-            num = (num / 26) - 1;
-        }
-    },
-    /**
-     * Performs the binary search algorithm to find the index of the `value`
-     * parameter in a sorted list of numbers. If `value` is not in the list, the
-     * index where `value` can be inserted to maintain the sort is returned.
-     *
-     * Unlike a typical binary search implementation, we use a `lookup`
-     * callback to access the sorted list of numbers instead of an array. This
-     * avoids additional storage overhead.
-     *
-     * We use this to, for example, find the index of a row/col given its client
-     * coordinate.
-     *
-     * Adapted from lodash https://github.com/lodash/lodash/blob/4.11.2/lodash.js#L3579
-     *
-     * @param value - the query value
-     * @param high - the length of the sorted list of numbers
-     * @param lookup - returns the number from the list at the supplied index
-     */
-    binarySearch: function (value, high, lookup) {
-        var low = 0;
-        while (low < high) {
-            var mid = Math.floor((low + high) / 2.0);
-            var computed = lookup(mid);
-            if (computed < value) {
-                low = mid + 1;
-            }
-            else {
-                high = mid;
-            }
-        }
-        return high;
-    },
-    /**
-     * Returns a copy of the array that will have a length of the supplied parameter.
-     * If the array is too long, it will be truncated. If it is too short, it will be
-     * filled with the suppleid `fillValue` argument.
-     *
-     * @param array - the `Array` to copy and adjust
-     * @param length - the target length of the array
-     * @param fillValue - the value to add to the array if it is too short
-     */
-    arrayOfLength: function (array, length, fillValue) {
-        if (array.length > length) {
-            return array.slice(0, length);
-        }
-        array = array.slice();
-        while (array.length < length) {
-            array.push(fillValue);
-        }
-        return array;
-    },
-    /**
-     * Takes in one full array of values and one sparse array of the same
-     * length and type. Returns a copy of the `defaults` array, where each
-     * value is replaced with the corresponding non-null value at the same
-     * index in `sparseOverrides`.
-     *
-     * @param defaults - the full array of default values
-     * @param sparseOverrides - the sparse array of override values
-     */
-    assignSparseValues: function (defaults, sparseOverrides) {
-        if (sparseOverrides == null || defaults.length !== sparseOverrides.length) {
-            return defaults;
-        }
-        defaults = defaults.slice();
-        for (var i = 0; i < defaults.length; i++) {
-            var override = sparseOverrides[i];
-            if (override != null) {
-                defaults[i] = override;
-            }
-        }
-        return defaults;
-    },
-    /**
-     * Measures the bounds of supplied element's textContent.
-     *
-     * We use the computed font from the supplied element and a non-DOM canvas
-     * context to measure the text.
-     *
-     * Returns a `TextMetrics` object.
-     */
-    measureElementTextContent: function (element) {
-        var context = document.createElement("canvas").getContext("2d");
-        var style = getComputedStyle(element, null);
-        context.font = CSS_FONT_PROPERTIES.map(function (prop) { return style.getPropertyValue(prop); }).join(" ");
-        return context.measureText(element.textContent);
-    },
-    /**
-     * Given a number, returns a value that is clamped within a
-     * minimum/maximum bounded range. The minimum and maximum are optional. If
-     * either is missing, that extrema limit is not applied.
-     *
-     * Assumes max >= min.
-     */
-    clamp: function (value, min, max) {
-        if (min != null && value < min) {
-            value = min;
-        }
-        if (max != null && value > max) {
-            value = max;
-        }
-        return value;
-    },
-    /**
-     * Shallow comparison between objects. If `keys` is provided, just that subset of keys will be
-     * compared; otherwise, all keys will be compared.
-     */
-    shallowCompareKeys: function (objA, objB, keys) {
-        // treat `null` and `undefined` as the same
-        if (objA == null && objB == null) {
-            return true;
-        }
-        else if (objA == null || objB == null) {
-            return false;
-        }
-        else if (Array.isArray(objA) || Array.isArray(objB)) {
-            return false;
-        }
-        else if (keys != null) {
-            return _shallowCompareKeys(objA, objB, keys);
-        }
-        else {
-            // shallowly compare all keys from both objects
-            var keysA = Object.keys(objA);
-            var keysB = Object.keys(objB);
-            return _shallowCompareKeys(objA, objB, { include: keysA })
-                && _shallowCompareKeys(objA, objB, { include: keysB });
-        }
-    },
-    /**
-     * Deep comparison between objects. If `keys` is provided, just that subset of keys will be
-     * compared; otherwise, all keys will be compared.
-     */
-    deepCompareKeys: function (objA, objB, keys) {
-        if (objA === objB) {
-            return true;
-        }
-        else if (objA == null && objB == null) {
-            // treat `null` and `undefined` as the same
-            return true;
-        }
-        else if (objA == null || objB == null) {
-            return false;
-        }
-        else if (Array.isArray(objA) || Array.isArray(objB)) {
-            return exports.Utils.arraysEqual(objA, objB, exports.Utils.deepCompareKeys);
-        }
-        else if (_isSimplePrimitiveType(objA) || _isSimplePrimitiveType(objB)) {
-            return objA === objB;
-        }
-        else if (keys != null) {
-            return _deepCompareKeys(objA, objB, keys);
-        }
-        else if (objA.constructor !== objB.constructor) {
-            return false;
-        }
-        else {
-            var keysA = Object.keys(objA);
-            var keysB = Object.keys(objB);
-            if (keysA == null || keysB == null) {
-                return false;
-            }
-            if (keysA.length === 0 && keysB.length === 0) {
-                return true;
-            }
-            return exports.Utils.arraysEqual(keysA, keysB) && _deepCompareKeys(objA, objB, keysA);
-        }
-    },
-    /**
-     * Returns a descriptive object for each key whose values are shallowly unequal between two
-     * provided objects. Useful for debugging shouldComponentUpdate.
-     */
-    getShallowUnequalKeyValues: function (objA, objB, keys) {
-        // default param values let null values pass through, so we have to take this more thorough approach
-        var definedObjA = (objA == null) ? {} : objA;
-        var definedObjB = (objB == null) ? {} : objB;
-        var filteredKeys = _filterKeys(definedObjA, definedObjB, keys == null ? { exclude: [] } : keys);
-        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.shallowCompareKeys(a, b, { include: [key] }); });
-    },
-    /**
-     * Returns a descriptive object for each key whose values are deeply unequal between two
-     * provided objects. Useful for debugging shouldComponentUpdate.
-     */
-    getDeepUnequalKeyValues: function (objA, objB, keys) {
-        var definedObjA = (objA == null) ? {} : objA;
-        var definedObjB = (objB == null) ? {} : objB;
-        var filteredKeys = (keys == null) ? _unionKeys(definedObjA, definedObjB) : keys;
-        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.deepCompareKeys(a, b, [key]); });
-    },
-    /**
-     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
-     * at the absolute index in the original ordering but emit the new index in the reordered list.
-     * This function converts an absolute "guide" index to a relative "reordered" index.
-     *
-     * Example: Say we want to move the first three columns two spots to the right. While we drag, a
-     * vertical guide is shown to preview where we'll be dropping the columns. (In the following
-     * ASCII art, `*` denotes a selected column, `·` denotes a cell border, and `|` denotes a
-     * vertical guide).
-     *
-     *     Before mousedown:
-     *     · 0 · 1 · 2 · 3 · 4 · 5 ·
-     *       *   *   *
-     *
-     *     During mousemove two spots to the right:
-     *     · 0 · 1 · 2 · 3 · 4 | 5 ·
-     *       *   *   *
-     *
-     *     After mouseup:
-     *     · 3 · 4 · 0 · 1 · 2 · 5 ·
-     *               *   *   *
-     *
-     * Note that moving the three columns beyond index 4 effectively moves them two spots rightward.
-     *
-     * In this case, the inputs to this function would be:
-     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
-     *     - newIndex: 5 (the index on whose left boundary the guide appears in the original ordering)
-     *     - length: 3 (the number of columns to move)
-     *
-     * The return value will then be 2, the left-most index of the columns in the new ordering.
-     */
-    guideIndexToReorderedIndex: function (oldIndex, newIndex, length) {
-        if (newIndex < oldIndex) {
-            return newIndex;
-        }
-        else if (oldIndex <= newIndex && newIndex < oldIndex + length) {
-            return oldIndex;
-        }
-        else {
-            return Math.max(0, newIndex - length);
-        }
-    },
-    /**
-     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
-     * at the absolute index in the original ordering but emit the new index in the reordered list.
-     * This function converts a relative "reordered"" index to an absolute "guide" index.
-     *
-     * For the scenario in the example above, the inputs to this function would be:
-     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
-     *     - newIndex: 2 (the left-most index of the selected column range in the new ordering)
-     *     - length: 3 (the number of columns to move)
-     *
-     * The return value will then be 5, the index on whose left boundary the guide should appear in
-     * the original ordering.
-     */
-    reorderedIndexToGuideIndex: function (oldIndex, newIndex, length) {
-        return (newIndex <= oldIndex) ? newIndex : newIndex + length;
-    },
-    /**
-     * Returns a copy of the provided array with the `length` contiguous elements starting at the
-     * `from` index reordered to start at the `to` index.
-     *
-     * For example, given the array [A,B,C,D,E,F], reordering the 3 contiguous elements starting at
-     * index 1 (B, C, and D) to start at index 2 would yield [A,E,B,C,D,F].
-     */
-    reorderArray: function (array, from, to, length) {
-        if (length === void 0) { length = 1; }
-        if (length === 0 || length === array.length || from === to) {
-            // return an unchanged copy
-            return array.slice();
-        }
-        if (length < 0 || length > array.length || from + length > array.length) {
-            return undefined;
-        }
-        var before = array.slice(0, from);
-        var within = array.slice(from, from + length);
-        var after = array.slice(from + length);
-        var result = [];
-        var i = 0;
-        var b = 0;
-        var w = 0;
-        var a = 0;
-        while (i < to) {
-            if (b < before.length) {
-                result.push(before[b]);
-                b += 1;
-            }
-            else {
-                result.push(after[a]);
-                a += 1;
-            }
-            i += 1;
-        }
-        while (w < length) {
-            result.push(within[w]);
-            w += 1;
-            i += 1;
-        }
-        while (i < array.length) {
-            if (b < before.length) {
-                result.push(before[b]);
-                b += 1;
-            }
-            else {
-                result.push(after[a]);
-                a += 1;
-            }
-            i += 1;
-        }
-        return result;
-    },
-    /**
-     * Returns true if the mouse event was triggered by the left mouse button.
-     */
-    isLeftClick: function (event) {
-        return event.button === 0;
-    },
-    /**
-     * Returns true if the arrays are equal. Elements will be shallowly compared by default, or they
-     * will be compared using the custom `compare` function if one is provided.
-     */
-    arraysEqual: function (arrA, arrB, compare) {
-        if (compare === void 0) { compare = function (a, b) { return a === b; }; }
-        // treat `null` and `undefined` as the same
-        if (arrA == null && arrB == null) {
-            return true;
-        }
-        else if (arrA == null || arrB == null || arrA.length !== arrB.length) {
-            return false;
-        }
-        else {
-            return arrA.every(function (a, i) { return compare(a, arrB[i]); });
-        }
-    },
-};
-/**
- * Partial shallow comparison between objects using the given list of keys.
- */
-function _shallowCompareKeys(objA, objB, keys) {
-    return _filterKeys(objA, objB, keys).every(function (key) {
-        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
-            && objA[key] === objB[key];
-    });
-}
-/**
- * Partial deep comparison between objects using the given list of keys.
- */
-function _deepCompareKeys(objA, objB, keys) {
-    return keys.every(function (key) {
-        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
-            && exports.Utils.deepCompareKeys(objA[key], objB[key]);
-    });
-}
-function _isSimplePrimitiveType(value) {
-    return typeof value === "number"
-        || typeof value === "string"
-        || typeof value === "boolean";
-}
-function _filterKeys(objA, objB, keys) {
-    if (isWhitelist(keys)) {
-        return keys.include;
-    }
-    else {
-        var keysA = Object.keys(objA);
-        var keysB = Object.keys(objB);
-        // merge keys from both objects into a big set for quick access
-        var keySet_1 = _arrayToObject(keysA.concat(keysB));
-        // delete blacklisted keys from the key set
-        keys.exclude.forEach(function (key) { return delete keySet_1[key]; });
-        // return the remaining keys as an array
-        return Object.keys(keySet_1);
-    }
-}
-function isWhitelist(keys) {
-    return keys != null && keys.include != null;
-}
-function _arrayToObject(arr) {
-    return arr.reduce(function (obj, element) {
-        obj[element] = true;
-        return obj;
-    }, {});
-}
-function _getUnequalKeyValues(objA, objB, keys, compareFn) {
-    var unequalKeys = keys.filter(function (key) { return !compareFn(objA, objB, key); });
-    var unequalKeyValues = unequalKeys.map(function (key) { return ({
-        key: key,
-        valueA: objA[key],
-        valueB: objB[key],
-    }); });
-    return unequalKeyValues;
-}
-function _unionKeys(objA, objB) {
-    var keysA = Object.keys(objA);
-    var keysB = Object.keys(objB);
-    var concatKeys = keysA.concat(keysB);
-    var keySet = _arrayToObject(concatKeys);
-    return Object.keys(keySet);
-}
-
-//# sourceMappingURL=utils.js.map
-
-
-/***/ }),
-/* 280 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-/**
- * `Region`s contain sets of cells. Additionally, a distinction is drawn, for
- * example, between all cells within a column and the whole column itself.
- * The `RegionCardinality` enum represents these distinct types of `Region`s.
- */
-var RegionCardinality;
-(function (RegionCardinality) {
-    /**
-     * A region that contains a finite rectangular group of table cells
-     */
-    RegionCardinality[RegionCardinality["CELLS"] = 0] = "CELLS";
-    /**
-     * A region that represents all cells within 1 or more rows.
-     */
-    RegionCardinality[RegionCardinality["FULL_ROWS"] = 1] = "FULL_ROWS";
-    /**
-     * A region that represents all cells within 1 or more columns.
-     */
-    RegionCardinality[RegionCardinality["FULL_COLUMNS"] = 2] = "FULL_COLUMNS";
-    /**
-     * A region that represents all cells in the table.
-     */
-    RegionCardinality[RegionCardinality["FULL_TABLE"] = 3] = "FULL_TABLE";
-})(RegionCardinality = exports.RegionCardinality || (exports.RegionCardinality = {}));
-/**
- * A convenience object for subsets of `RegionCardinality` that are commonly
- * used as the `selectionMode` prop of the `<Table>`.
- */
-exports.SelectionModes = {
-    ALL: [
-        RegionCardinality.FULL_TABLE,
-        RegionCardinality.FULL_COLUMNS,
-        RegionCardinality.FULL_ROWS,
-        RegionCardinality.CELLS,
-    ],
-    COLUMNS_AND_CELLS: [
-        RegionCardinality.FULL_COLUMNS,
-        RegionCardinality.CELLS,
-    ],
-    COLUMNS_ONLY: [
-        RegionCardinality.FULL_COLUMNS,
-    ],
-    NONE: [],
-    ROWS_AND_CELLS: [
-        RegionCardinality.FULL_ROWS,
-        RegionCardinality.CELLS,
-    ],
-    ROWS_ONLY: [
-        RegionCardinality.FULL_ROWS,
-    ],
-};
-exports.ColumnLoadingOption = {
-    CELLS: "cells",
-    HEADER: "column-header",
-};
-exports.RowLoadingOption = {
-    CELLS: "cells",
-    HEADER: "row-header",
-};
-exports.TableLoadingOption = {
-    CELLS: "cells",
-    COLUMN_HEADERS: exports.ColumnLoadingOption.HEADER,
-    ROW_HEADERS: exports.RowLoadingOption.HEADER,
-};
-var Regions = (function () {
-    function Regions() {
-    }
-    /**
-     * Determines the cardinality of a region. We use null values to indicate
-     * an unbounded interval. Therefore, an example of a region containing the
-     * second and third columns would be:
-     *
-     *     {
-     *         rows: null,
-     *         cols: [1, 2]
-     *     }
-     *
-     * In this case, this method would return `RegionCardinality.FULL_COLUMNS`.
-     *
-     * If both rows and columns are unbounded, then the region covers the
-     * entire table. Therefore, a region like this:
-     *
-     *     {
-     *         rows: null,
-     *         cols: null
-     *     }
-     *
-     * will return `RegionCardinality.FULL_TABLE`.
-     *
-     * An example of a region containing a single cell in the table would be:
-     *
-     *     {
-     *         rows: [5, 5],
-     *         cols: [2, 2]
-     *     }
-     *
-     * In this case, this method would return `RegionCardinality.CELLS`.
-     */
-    Regions.getRegionCardinality = function (region) {
-        if (region.cols != null && region.rows != null) {
-            return RegionCardinality.CELLS;
-        }
-        else if (region.cols != null) {
-            return RegionCardinality.FULL_COLUMNS;
-        }
-        else if (region.rows != null) {
-            return RegionCardinality.FULL_ROWS;
-        }
-        else {
-            return RegionCardinality.FULL_TABLE;
-        }
-    };
-    Regions.getFocusCellCoordinatesFromRegion = function (region) {
-        var regionCardinality = Regions.getRegionCardinality(region);
-        switch (regionCardinality) {
-            case RegionCardinality.FULL_TABLE:
-                return { col: 0, row: 0 };
-            case RegionCardinality.FULL_COLUMNS:
-                return { col: region.cols[0], row: 0 };
-            case RegionCardinality.FULL_ROWS:
-                return { col: 0, row: region.rows[0] };
-            case RegionCardinality.CELLS:
-                return { col: region.cols[0], row: region.rows[0] };
-            default:
-                return null;
-        }
-    };
-    /**
-     * Returns a region containing one or more cells.
-     */
-    Regions.cell = function (row, col, row2, col2) {
-        return {
-            cols: this.normalizeInterval(col, col2),
-            rows: this.normalizeInterval(row, row2),
-        };
-    };
-    /**
-     * Returns a region containing one or more full rows.
-     */
-    Regions.row = function (row, row2) {
-        return { rows: this.normalizeInterval(row, row2) };
-    };
-    /**
-     * Returns a region containing one or more full columns.
-     */
-    Regions.column = function (col, col2) {
-        return { cols: this.normalizeInterval(col, col2) };
-    };
-    /**
-     * Returns a region containing the entire table.
-     */
-    Regions.table = function () {
-        return {};
-    };
-    /**
-     * Adds the region to the end of a cloned copy of the supplied region
-     * array.
-     */
-    Regions.add = function (regions, region) {
-        var copy = regions.slice();
-        copy.push(region);
-        return copy;
-    };
-    /**
-     * Replaces the region at the end of a cloned copy of the supplied region
-     * array.
-     */
-    Regions.update = function (regions, region) {
-        var copy = regions.slice();
-        copy.pop();
-        copy.push(region);
-        return copy;
-    };
-    /**
-     * Returns true iff the specified region is equal to the last region in
-     * the region list. This allows us to avoid immediate additive re-selection.
-     */
-    Regions.lastRegionIsEqual = function (regions, region) {
-        if (regions == null || regions.length === 0) {
-            return false;
-        }
-        var lastRegion = regions[regions.length - 1];
-        return Regions.regionsEqual(lastRegion, region);
-    };
-    /**
-     * Returns the index of the region that is equal to the supplied
-     * parameter. Returns -1 if no such region is found.
-     */
-    Regions.findMatchingRegion = function (regions, region) {
-        if (regions == null) {
-            return -1;
-        }
-        for (var i = 0; i < regions.length; i++) {
-            if (Regions.regionsEqual(regions[i], region)) {
-                return i;
-            }
-        }
-        return -1;
-    };
-    /**
-     * Returns the index of the region that wholly contains the supplied
-     * parameter. Returns -1 if no such region is found.
-     */
-    Regions.findContainingRegion = function (regions, region) {
-        if (regions == null) {
-            return -1;
-        }
-        for (var i = 0; i < regions.length; i++) {
-            if (Regions.regionContains(regions[i], region)) {
-                return i;
-            }
-        }
-        return -1;
-    };
-    /**
-     * Returns true if the regions contain a region that has FULL_COLUMNS
-     * cardinality and contains the specified column index.
-     */
-    Regions.hasFullColumn = function (regions, col) {
-        if (regions == null) {
-            return false;
-        }
-        for (var _i = 0, regions_1 = regions; _i < regions_1.length; _i++) {
-            var region = regions_1[_i];
-            var cardinality = Regions.getRegionCardinality(region);
-            if (cardinality === RegionCardinality.FULL_TABLE) {
-                return true;
-            }
-            if (cardinality === RegionCardinality.FULL_COLUMNS && Regions.intervalContainsIndex(region.cols, col)) {
-                return true;
-            }
-        }
-        return false;
-    };
-    /**
-     * Returns true if the regions contain a region that has FULL_ROWS
-     * cardinality and contains the specified row index.
-     */
-    Regions.hasFullRow = function (regions, row) {
-        if (regions == null) {
-            return false;
-        }
-        for (var _i = 0, regions_2 = regions; _i < regions_2.length; _i++) {
-            var region = regions_2[_i];
-            var cardinality = Regions.getRegionCardinality(region);
-            if (cardinality === RegionCardinality.FULL_TABLE) {
-                return true;
-            }
-            if (cardinality === RegionCardinality.FULL_ROWS && Regions.intervalContainsIndex(region.rows, row)) {
-                return true;
-            }
-        }
-        return false;
-    };
-    /**
-     * Returns true if the regions contain a region that has FULL_TABLE cardinality
-     */
-    Regions.hasFullTable = function (regions) {
-        if (regions == null) {
-            return false;
-        }
-        for (var _i = 0, regions_3 = regions; _i < regions_3.length; _i++) {
-            var region = regions_3[_i];
-            var cardinality = Regions.getRegionCardinality(region);
-            if (cardinality === RegionCardinality.FULL_TABLE) {
-                return true;
-            }
-        }
-        return false;
-    };
-    /**
-     * Returns true if the regions fully contain the query region.
-     */
-    Regions.containsRegion = function (regions, query) {
-        return Regions.overlapsRegion(regions, query, false);
-    };
-    /**
-     * Returns true if the regions at least partially overlap the query region.
-     */
-    Regions.overlapsRegion = function (regions, query, allowPartialOverlap) {
-        if (allowPartialOverlap === void 0) { allowPartialOverlap = false; }
-        var intervalCompareFn = allowPartialOverlap ? Regions.intervalOverlaps : Regions.intervalContains;
-        if (regions == null || query == null) {
-            return false;
-        }
-        for (var _i = 0, regions_4 = regions; _i < regions_4.length; _i++) {
-            var region = regions_4[_i];
-            var cardinality = Regions.getRegionCardinality(region);
-            switch (cardinality) {
-                case RegionCardinality.FULL_TABLE:
-                    return true;
-                case RegionCardinality.FULL_COLUMNS:
-                    if (intervalCompareFn(region.cols, query.cols)) {
-                        return true;
-                    }
-                    continue;
-                case RegionCardinality.FULL_ROWS:
-                    if (intervalCompareFn(region.rows, query.rows)) {
-                        return true;
-                    }
-                    continue;
-                case RegionCardinality.CELLS:
-                    if (intervalCompareFn(region.cols, query.cols)
-                        && intervalCompareFn(region.rows, query.rows)) {
-                        return true;
-                    }
-                    continue;
-                default:
-                    break;
-            }
-        }
-        return false;
-    };
-    Regions.eachUniqueFullColumn = function (regions, iteratee) {
-        if (regions == null || regions.length === 0 || iteratee == null) {
-            return;
-        }
-        var seen = {};
-        regions.forEach(function (region) {
-            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_COLUMNS) {
-                var _a = region.cols, start = _a[0], end = _a[1];
-                for (var col = start; col <= end; col++) {
-                    if (!seen[col]) {
-                        seen[col] = true;
-                        iteratee(col);
-                    }
-                }
-            }
-        });
-    };
-    Regions.eachUniqueFullRow = function (regions, iteratee) {
-        if (regions == null || regions.length === 0 || iteratee == null) {
-            return;
-        }
-        var seen = {};
-        regions.forEach(function (region) {
-            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_ROWS) {
-                var _a = region.rows, start = _a[0], end = _a[1];
-                for (var row = start; row <= end; row++) {
-                    if (!seen[row]) {
-                        seen[row] = true;
-                        iteratee(row);
-                    }
-                }
-            }
-        });
-    };
-    /**
-     * Using the supplied array of non-contiguous `IRegion`s, this method
-     * returns an ordered array of every unique cell that exists in those
-     * regions.
-     */
-    Regions.enumerateUniqueCells = function (regions, numRows, numCols) {
-        if (regions == null || regions.length === 0) {
-            return [];
-        }
-        var seen = {};
-        var list = [];
-        for (var _i = 0, regions_5 = regions; _i < regions_5.length; _i++) {
-            var region = regions_5[_i];
-            Regions.eachCellInRegion(region, numRows, numCols, function (row, col) {
-                // add to list if not seen
-                var key = row + "-" + col;
-                if (seen[key] !== true) {
-                    seen[key] = true;
-                    list.push([row, col]);
-                }
-            });
-        }
-        // sort list by rows then columns
-        list.sort(Regions.rowFirstComparator);
-        return list;
-    };
-    /**
-     * Using the supplied region, returns an "equivalent" region of
-     * type CELLS that define the bounds of the given region
-     */
-    Regions.getCellRegionFromRegion = function (region, numRows, numCols) {
-        var regionCardinality = Regions.getRegionCardinality(region);
-        switch (regionCardinality) {
-            case RegionCardinality.FULL_TABLE:
-                return Regions.cell(0, 0, numRows - 1, numCols - 1);
-            case RegionCardinality.FULL_COLUMNS:
-                return Regions.cell(0, region.cols[0], numRows - 1, region.cols[1]);
-            case RegionCardinality.FULL_ROWS:
-                return Regions.cell(region.rows[0], 0, region.rows[1], numCols - 1);
-            case RegionCardinality.CELLS:
-                return Regions.cell(region.rows[0], region.cols[0], region.rows[1], region.cols[1]);
-            default:
-                return null;
-        }
-    };
-    /**
-     * Maps a dense array of cell coordinates to a sparse 2-dimensional array
-     * of cell values.
-     *
-     * We create a new 2-dimensional array representing the smallest single
-     * contiguous `IRegion` that contains all cells in the supplied array. We
-     * invoke the mapper callback only on the cells in the supplied coordinate
-     * array and store the result. Returns the resulting 2-dimensional array.
-     */
-    Regions.sparseMapCells = function (cells, mapper) {
-        var bounds = Regions.getBoundingRegion(cells);
-        if (bounds == null) {
-            return null;
-        }
-        var numRows = bounds.rows[1] + 1 - bounds.rows[0];
-        var numCols = bounds.cols[1] + 1 - bounds.cols[0];
-        var result = utils_1.Utils.times(numRows, function () { return new Array(numCols); });
-        cells.forEach(function (_a) {
-            var row = _a[0], col = _a[1];
-            result[row - bounds.rows[0]][col - bounds.cols[0]] = mapper(row, col);
-        });
-        return result;
-    };
-    /**
-     * Returns the smallest single contiguous `IRegion` that contains all cells in the
-     * supplied array.
-     */
-    Regions.getBoundingRegion = function (cells) {
-        var minRow;
-        var maxRow;
-        var minCol;
-        var maxCol;
-        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
-            var _a = cells_1[_i], row = _a[0], col = _a[1];
-            minRow = (minRow == null || row < minRow) ? row : minRow;
-            maxRow = (maxRow == null || row > maxRow) ? row : maxRow;
-            minCol = (minCol == null || col < minCol) ? col : minCol;
-            maxCol = (maxCol == null || col > maxCol) ? col : maxCol;
-        }
-        if (minRow == null) {
-            return null;
-        }
-        return {
-            cols: [minCol, maxCol],
-            rows: [minRow, maxRow],
-        };
-    };
-    Regions.isValid = function (region) {
-        if (region == null) {
-            return false;
-        }
-        if ((region.rows != null) && (region.rows[0] < 0 || region.rows[1] < 0)) {
-            return false;
-        }
-        if ((region.cols != null) && (region.cols[0] < 0 || region.cols[1] < 0)) {
-            return false;
-        }
-        return true;
-    };
-    Regions.isRegionValidForTable = function (region, numRows, numCols) {
-        if (region.rows != null && (region.rows[0] >= numRows || region.rows[1] >= numRows)) {
-            return false;
-        }
-        if (region.cols != null && (region.cols[0] >= numCols || region.cols[1] >= numCols)) {
-            return false;
-        }
-        return true;
-    };
-    Regions.joinStyledRegionGroups = function (selectedRegions, otherRegions, focusedCell) {
-        var regionGroups = [];
-        if (otherRegions != null) {
-            regionGroups = regionGroups.concat(otherRegions);
-        }
-        if (selectedRegions != null && selectedRegions.length > 0) {
-            regionGroups.push({
-                className: Classes.TABLE_SELECTION_REGION,
-                regions: selectedRegions,
-            });
-        }
-        if (focusedCell != null) {
-            regionGroups.push({
-                className: Classes.TABLE_FOCUS_REGION,
-                regions: [Regions.cell(focusedCell.row, focusedCell.col)],
-            });
-        }
-        return regionGroups;
-    };
-    Regions.regionsEqual = function (regionA, regionB) {
-        return Regions.intervalsEqual(regionA.rows, regionB.rows)
-            && Regions.intervalsEqual(regionA.cols, regionB.cols);
-    };
-    /**
-     * Iterates over the cells within an `IRegion`, invoking the callback with
-     * each cell's coordinates.
-     */
-    Regions.eachCellInRegion = function (region, numRows, numCols, iteratee) {
-        var cardinality = Regions.getRegionCardinality(region);
-        switch (cardinality) {
-            case RegionCardinality.FULL_TABLE:
-                for (var row = 0; row < numRows; row++) {
-                    for (var col = 0; col < numCols; col++) {
-                        iteratee(row, col);
-                    }
-                }
-                break;
-            case RegionCardinality.FULL_COLUMNS:
-                for (var row = 0; row < numRows; row++) {
-                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
-                        iteratee(row, col);
-                    }
-                }
-                break;
-            case RegionCardinality.FULL_ROWS:
-                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
-                    for (var col = 0; col < numCols; col++) {
-                        iteratee(row, col);
-                    }
-                }
-                break;
-            case RegionCardinality.CELLS:
-                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
-                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
-                        iteratee(row, col);
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    };
-    Regions.regionContains = function (regionA, regionB) {
-        // containsRegion expects an array of regions as the first param
-        return Regions.overlapsRegion([regionA], regionB, false);
-    };
-    Regions.intervalsEqual = function (ivalA, ivalB) {
-        if (ivalA == null) {
-            return ivalB == null;
-        }
-        else if (ivalB == null) {
-            return false;
-        }
-        else {
-            return ivalA[0] === ivalB[0] && ivalA[1] === ivalB[1];
-        }
-    };
-    Regions.intervalContainsIndex = function (interval, index) {
-        if (interval == null) {
-            return false;
-        }
-        return interval[0] <= index && interval[1] >= index;
-    };
-    Regions.intervalContains = function (ivalA, ivalB) {
-        if (ivalA == null || ivalB == null) {
-            return false;
-        }
-        return ivalA[0] <= ivalB[0] && ivalB[1] <= ivalA[1];
-    };
-    Regions.intervalOverlaps = function (ivalA, ivalB) {
-        if (ivalA == null || ivalB == null) {
-            return false;
-        }
-        if (ivalA[1] < ivalB[0] || ivalA[0] > ivalB[1]) {
-            return false;
-        }
-        return true;
-    };
-    Regions.rowFirstComparator = function (a, b) {
-        var rowDiff = a[0] - b[0];
-        return rowDiff === 0 ? a[1] - b[1] : rowDiff;
-    };
-    Regions.numericalComparator = function (a, b) {
-        return a - b;
-    };
-    Regions.normalizeInterval = function (coord, coord2) {
-        if (coord2 == null) {
-            coord2 = coord;
-        }
-        var interval = [coord, coord2];
-        interval.sort(Regions.numericalComparator);
-        return interval;
-    };
-    return Regions;
-}());
-exports.Regions = Regions;
-
-//# sourceMappingURL=regions.js.map
-
-
-/***/ }),
-/* 281 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var utils_1 = __webpack_require__(279);
-var dragEvents_1 = __webpack_require__(290);
-var REATTACH_PROPS_KEYS = [
-    "stopPropagation",
-    "preventDefault",
-];
-/**
- * This component provides a simple interface for combined drag and/or click
- * events.
- *
- * Since the mouse interactions for drag and click are overloaded, here are
- * the events that will fire in these cases:
- *
- * A Click Interaction
- * 1. The user presses down on the render element, triggering the onActivate
- *    callback.
- * 2. The user releases the mouse button without moving it, triggering the
- *    onClick callback.
- *
- * A Drag Interaction
- * 1. The user presses down on the render element, triggering the onActivate
- *    callback.
- * 2. The user moves the mouse, triggering the onDragMove callback.
- * 3. The user moves the mouse, triggering the onDragMove callback.
- * 4. The user moves the mouse, triggering the onDragMove callback.
- * 5. The user releases the mouse button, triggering a final onDragMove
- *    callback as well as an onDragEnd callback.
- *
- * If `false` is returned from the onActivate callback, no further events
- * will be fired until the next activation.
- */
-var Draggable = (function (_super) {
-    tslib_1.__extends(Draggable, _super);
-    function Draggable() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Draggable.prototype.render = function () {
-        return React.Children.only(this.props.children);
-    };
-    Draggable.prototype.componentWillReceiveProps = function (nextProps) {
-        var propsWhitelist = { include: REATTACH_PROPS_KEYS };
-        if (this.events && !utils_1.Utils.shallowCompareKeys(this.props, nextProps, propsWhitelist)) {
-            this.events.attach(ReactDOM.findDOMNode(this), nextProps);
-        }
-    };
-    Draggable.prototype.componentDidMount = function () {
-        this.events = new dragEvents_1.DragEvents();
-        this.events.attach(ReactDOM.findDOMNode(this), this.props);
-    };
-    Draggable.prototype.componentWillUnmount = function () {
-        this.events.detach();
-        delete this.events;
-    };
-    return Draggable;
-}(React.Component));
-Draggable.defaultProps = {
-    preventDefault: true,
-    stopPropagation: false,
-};
-Draggable = tslib_1.__decorate([
-    PureRender
-], Draggable);
-exports.Draggable = Draggable;
-
-//# sourceMappingURL=draggable.js.map
-
-
-/***/ }),
-/* 282 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// HACKHACK: workaround for https://github.com/palantir/tslint/issues/1768
-// tslint:disable adjacent-overload-signatures
-/**
- * A simple object for storing the client bounds of HTMLElements. Since
- * ClientRects are immutable, this object enables editing and some simple
- * manipulation methods.
- */
-var Rect = (function () {
-    function Rect(left, top, width, height) {
-        this.left = left;
-        this.top = top;
-        this.width = width;
-        this.height = height;
-    }
-    /**
-     * Returns the smallest Rect that entirely contains the supplied rects
-     */
-    Rect.union = function (anyRect0, anyRect1) {
-        var rect0 = Rect.wrap(anyRect0);
-        var rect1 = Rect.wrap(anyRect1);
-        var top = Math.min(rect0.top, rect1.top);
-        var left = Math.min(rect0.left, rect1.left);
-        var bottom = Math.max(rect0.top + rect0.height, rect1.top + rect1.height);
-        var right = Math.max(rect0.left + rect0.width, rect1.left + rect1.width);
-        var height = bottom - top;
-        var width = right - left;
-        return new Rect(left, top, width, height);
-    };
-    /**
-     * Returns a new Rect that subtracts the origin of the second argument
-     * from the first.
-     */
-    Rect.subtractOrigin = function (anyRect0, anyRect1) {
-        var rect0 = Rect.wrap(anyRect0);
-        var rect1 = Rect.wrap(anyRect1);
-        return new Rect(rect0.left - rect1.left, rect0.top - rect1.top, rect0.width, rect0.height);
-    };
-    /**
-     * Returns the CSS properties representing the absolute positioning of
-     * this Rect.
-     */
-    Rect.style = function (rect) {
-        return {
-            height: rect.height + "px",
-            left: rect.left + "px",
-            position: "absolute",
-            top: rect.top + "px",
-            width: rect.width + "px",
-        };
-    };
-    /**
-     * Given a ClientRect or Rect object, returns a Rect object.
-     */
-    Rect.wrap = function (rect) {
-        if (rect instanceof Rect) {
-            return rect;
-        }
-        else {
-            return new Rect(rect.left, rect.top, rect.width, rect.height);
-        }
-    };
-    Rect.prototype.subtractOrigin = function (anyRect) {
-        return Rect.subtractOrigin(this, anyRect);
-    };
-    Rect.prototype.union = function (anyRect) {
-        return Rect.union(this, anyRect);
-    };
-    Rect.prototype.style = function () {
-        return Rect.style(this);
-    };
-    Rect.prototype.sizeStyle = function () {
-        return {
-            height: this.height + "px",
-            width: this.width + "px",
-        };
-    };
-    Rect.prototype.containsX = function (clientX) {
-        return clientX >= this.left && clientX <= this.left + this.width;
-    };
-    Rect.prototype.containsY = function (clientY) {
-        return clientY >= this.top && clientY <= this.top + this.height;
-    };
-    return Rect;
-}());
-Rect.ORIGIN = new Rect(0, 0, 0, 0);
-exports.Rect = Rect;
-
-//# sourceMappingURL=rect.js.map
-
-
-/***/ }),
-/* 283 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-var core_1 = __webpack_require__(228);
-var loadableContent_1 = __webpack_require__(285);
-exports.emptyCellRenderer = function () { return React.createElement(Cell, null); };
-var Cell = (function (_super) {
-    tslib_1.__extends(Cell, _super);
-    function Cell() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Cell.prototype.shouldComponentUpdate = function (nextProps) {
-        // deeply compare "style," because a new but identical object might have been provided.
-        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
-            || !utils_1.Utils.deepCompareKeys(this.props.style, nextProps.style);
-    };
-    Cell.prototype.render = function () {
-        var _a = this.props, style = _a.style, intent = _a.intent, interactive = _a.interactive, loading = _a.loading, tooltip = _a.tooltip, truncated = _a.truncated, className = _a.className, wrapText = _a.wrapText;
-        var classes = classNames(Classes.TABLE_CELL, core_1.Classes.intentClass(intent), (_b = {},
-            _b[Classes.TABLE_CELL_INTERACTIVE] = interactive,
-            _b[core_1.Classes.LOADING] = loading,
-            _b[Classes.TABLE_TRUNCATED_CELL] = truncated,
-            _b), className);
-        var textClasses = classNames((_c = {},
-            _c[Classes.TABLE_TRUNCATED_TEXT] = truncated,
-            _c[Classes.TABLE_NO_WRAP_TEXT] = !wrapText,
-            _c));
-        var content = React.createElement("div", { className: textClasses }, this.props.children);
-        return (React.createElement("div", { className: classes, style: style, title: tooltip },
-            React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, content)));
-        var _b, _c;
-    };
-    return Cell;
-}(React.Component));
-Cell.defaultProps = {
-    truncated: true,
-    wrapText: false,
-};
-exports.Cell = Cell;
-
-//# sourceMappingURL=cell.js.map
-
-
-/***/ }),
-/* 284 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var draggable_1 = __webpack_require__(281);
-var Orientation;
-(function (Orientation) {
-    Orientation[Orientation["HORIZONTAL"] = 1] = "HORIZONTAL";
-    Orientation[Orientation["VERTICAL"] = 0] = "VERTICAL";
-})(Orientation = exports.Orientation || (exports.Orientation = {}));
-var ResizeHandle = (function (_super) {
-    tslib_1.__extends(ResizeHandle, _super);
-    function ResizeHandle() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = {
-            isDragging: false,
-        };
-        _this.handleActivate = function (event) {
-            _this.setState({ isDragging: true });
-            _this.props.onLayoutLock(true);
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-            return true;
-        };
-        _this.handleDragMove = function (_event, coords) {
-            var orientationIndex = _this.props.orientation;
-            if (_this.props.onResizeMove != null) {
-                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
-            }
-        };
-        _this.handleDragEnd = function (_event, coords) {
-            var orientationIndex = _this.props.orientation;
-            _this.setState({ isDragging: false });
-            _this.props.onLayoutLock(false);
-            if (_this.props.onResizeMove != null) {
-                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
-            }
-            if (_this.props.onResizeEnd != null) {
-                _this.props.onResizeEnd(coords.offset[orientationIndex]);
-            }
-        };
-        _this.handleClick = function (_event) {
-            _this.setState({ isDragging: false });
-            _this.props.onLayoutLock(false);
-        };
-        _this.handleDoubleClick = function (_event) {
-            _this.setState({ isDragging: false });
-            _this.props.onLayoutLock(false);
-            if (_this.props.onDoubleClick != null) {
-                _this.props.onDoubleClick();
-            }
-        };
-        return _this;
-    }
-    ResizeHandle.prototype.render = function () {
-        var _a = this.props, onResizeMove = _a.onResizeMove, onResizeEnd = _a.onResizeEnd, onDoubleClick = _a.onDoubleClick, orientation = _a.orientation;
-        if (onResizeMove == null && onResizeEnd == null && onDoubleClick == null) {
-            return undefined;
-        }
-        var targetClasses = classNames(Classes.TABLE_RESIZE_HANDLE_TARGET, (_b = {},
-            _b[Classes.TABLE_DRAGGING] = this.state.isDragging,
-            _b[Classes.TABLE_RESIZE_HORIZONTAL] = orientation === Orientation.HORIZONTAL,
-            _b[Classes.TABLE_RESIZE_VERTICAL] = orientation === Orientation.VERTICAL,
-            _b));
-        var handleClasses = classNames(Classes.TABLE_RESIZE_HANDLE, (_c = {},
-            _c[Classes.TABLE_DRAGGING] = this.state.isDragging,
-            _c));
-        return (React.createElement(draggable_1.Draggable, { onActivate: this.handleActivate, onClick: this.handleClick, onDoubleClick: this.handleDoubleClick, onDragEnd: this.handleDragEnd, onDragMove: this.handleDragMove },
-            React.createElement("div", { className: targetClasses },
-                React.createElement("div", { className: handleClasses }))));
-        var _b, _c;
-    };
-    return ResizeHandle;
-}(React.Component));
-ResizeHandle = tslib_1.__decorate([
-    PureRender
-], ResizeHandle);
-exports.ResizeHandle = ResizeHandle;
-
-//# sourceMappingURL=resizeHandle.js.map
-
-
-/***/ }),
-/* 285 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var core_1 = __webpack_require__(228);
-// This class expects a single, non-string child.
-var LoadableContent = (function (_super) {
-    tslib_1.__extends(LoadableContent, _super);
-    function LoadableContent(props) {
-        var _this = _super.call(this, props) || this;
-        _this.style = _this.calculateStyle(props.variableLength);
-        return _this;
-    }
-    LoadableContent.prototype.componentWillReceiveProps = function (nextProps) {
-        if (!this.props.loading && nextProps.loading || this.props.variableLength !== nextProps.variableLength) {
-            this.style = this.calculateStyle(nextProps.variableLength);
-        }
-    };
-    LoadableContent.prototype.render = function () {
-        if (this.props.loading) {
-            return React.createElement("div", { className: core_1.Classes.SKELETON, style: this.style });
-        }
-        return React.Children.only(this.props.children);
-    };
-    LoadableContent.prototype.calculateStyle = function (variableLength) {
-        var skeletonLength = variableLength ? 75 - Math.floor(Math.random() * 11) * 5 : 100;
-        return { width: skeletonLength + "%" };
-    };
-    return LoadableContent;
-}(React.Component));
-LoadableContent = tslib_1.__decorate([
-    PureRender
-], LoadableContent);
-exports.LoadableContent = LoadableContent;
-
-//# sourceMappingURL=loadableContent.js.map
-
-
-/***/ }),
-/* 286 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var clipboard_1 = __webpack_require__(287);
-exports.Clipboard = clipboard_1.Clipboard;
-var grid_1 = __webpack_require__(293);
-exports.Grid = grid_1.Grid;
-var rect_1 = __webpack_require__(282);
-exports.Rect = rect_1.Rect;
-var roundSize_1 = __webpack_require__(306);
-exports.RoundSize = roundSize_1.RoundSize;
-var utils_1 = __webpack_require__(279);
-exports.Utils = utils_1.Utils;
-// NOTE: Errors is not exported in public API
-
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-/* 287 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* istanbul ignore next */
-exports.Clipboard = {
-    /**
-     * Overrides the inherited CSS of the element to make sure it is
-     * selectable. This method also makes the element pseudo-invisible.
-     */
-    applySelectableStyles: function (elem) {
-        elem.style.overflow = "hidden";
-        elem.style.height = "0px";
-        elem.style.setProperty("-webkit-user-select", "all");
-        elem.style.setProperty("-moz-user-select", "all");
-        elem.style.setProperty("-ms-user-select", "all");
-        elem.style.setProperty("user-select", "all");
-        return elem;
-    },
-    /**
-     * Copies table cells to the clipboard. The parameter is a row-major
-     * 2-dimensional `Array` of strings and can contain nulls. We assume all
-     * rows are the same length. If not, the cells will still be copied, but
-     * the columns may not align. Returns a boolean indicating whether the
-     * copy succeeded.
-     *
-     * See `Clipboard.copy`
-     */
-    copyCells: function (cells) {
-        var table = document.createElement("table");
-        exports.Clipboard.applySelectableStyles(table);
-        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
-            var row = cells_1[_i];
-            var tr = table.appendChild(document.createElement("tr"));
-            for (var _a = 0, row_1 = row; _a < row_1.length; _a++) {
-                var cell = row_1[_a];
-                var td = tr.appendChild(document.createElement("td"));
-                td.textContent = cell;
-            }
-        }
-        var tsv = cells.map(function (row) { return row.join("\t"); }).join("\n");
-        return exports.Clipboard.copyElement(table, tsv);
-    },
-    /**
-     * Copies the text to the clipboard. Returns a boolean
-     * indicating whether the copy succeeded.
-     *
-     * See `Clipboard.copy`
-     */
-    copyString: function (value) {
-        var text = document.createElement("textarea");
-        exports.Clipboard.applySelectableStyles(text);
-        text.value = value;
-        return exports.Clipboard.copyElement(text, value);
-    },
-    /**
-     * Copies the element and its children to the clipboard. Returns a boolean
-     * indicating whether the copy succeeded.
-     *
-     * If a plaintext argument is supplied, we add both the text/html and
-     * text/plain mime types to the clipboard. This preserves the built in
-     * semantics of copying elements to the clipboard while allowing custom
-     * plaintext output for programs that can't cope with HTML data in the
-     * clipboard.
-     *
-     * Verified on Firefox 47, Chrome 51.
-     *
-     * Note: Sometimes the copy does not succeed. Presumably, in order to
-     * prevent memory issues, browsers will limit the total amount of data you
-     * can copy to the clipboard. Based on ad hoc testing, we found an
-     * inconsistent limit at about 300KB or 40,000 cells. Depending on the on
-     * the content of cells, your limits may vary.
-     */
-    copyElement: function (elem, plaintext) {
-        if (!exports.Clipboard.isCopySupported()) {
-            return false;
-        }
-        // must be document.body instead of document.documentElement for firefox
-        document.body.appendChild(elem);
-        try {
-            window.getSelection().selectAllChildren(elem);
-            if (plaintext != null) {
-                // add plaintext fallback
-                // http://stackoverflow.com/questions/23211018/copy-to-clipboard-with-jquery-js-in-chrome
-                elem.addEventListener("copy", function (e) {
-                    e.preventDefault();
-                    var clipboardData = e.clipboardData || window.clipboardData;
-                    if (clipboardData != null) {
-                        clipboardData.setData("text/html", elem.outerHTML);
-                        clipboardData.setData("text/plain", plaintext);
-                    }
-                });
-            }
-            return document.execCommand("copy");
-        }
-        catch (err) {
-            return false;
-        }
-        finally {
-            document.body.removeChild(elem);
-        }
-    },
-    /**
-     * Returns a boolean indicating whether the current browser nominally
-     * supports the `copy` operation using the `execCommand` API.
-     */
-    isCopySupported: function () {
-        return document.queryCommandSupported != null && document.queryCommandSupported("copy");
-    },
-};
-
-//# sourceMappingURL=clipboard.js.map
-
-
-/***/ }),
-/* 288 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var utils_1 = __webpack_require__(279);
-var dragEvents_1 = __webpack_require__(290);
-var draggable_1 = __webpack_require__(281);
-var regions_1 = __webpack_require__(280);
-var DragSelectable = (function (_super) {
-    tslib_1.__extends(DragSelectable, _super);
-    function DragSelectable() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.didExpandSelectionOnActivate = false;
-        _this.handleActivate = function (event) {
-            if (_this.shouldIgnoreMouseDown(event)) {
-                return false;
-            }
-            var region = _this.props.locateClick(event);
-            if (!regions_1.Regions.isValid(region)) {
-                return false;
-            }
-            var _a = _this.props, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
-            var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(region);
-            if (selectedRegionTransform != null) {
-                region = selectedRegionTransform(region, event);
-            }
-            var foundIndex = regions_1.Regions.findMatchingRegion(selectedRegions, region);
-            if (foundIndex !== -1) {
-                // If re-clicking on an existing region, we either carefully
-                // remove it if the meta key is used or otherwise we clear the
-                // selection entirely.
-                if (dragEvents_1.DragEvents.isAdditive(event)) {
-                    var newSelectedRegions = selectedRegions.slice();
-                    newSelectedRegions.splice(foundIndex, 1);
-                    onSelection(newSelectedRegions);
-                }
-                else {
-                    onSelection([]);
-                }
-                var fullFocusCellCoordinates_1 = {
-                    col: focusCellCoordinates.col,
-                    focusSelectionIndex: null,
-                    row: focusCellCoordinates.row,
-                };
-                _this.props.onFocus(fullFocusCellCoordinates_1);
-                return false;
-            }
-            var focusSelectionIndex = null;
-            if (event.shiftKey && selectedRegions.length > 0) {
-                _this.didExpandSelectionOnActivate = true;
-                onSelection(expandSelectedRegions(selectedRegions, region));
-                focusSelectionIndex = 0;
-            }
-            else if (dragEvents_1.DragEvents.isAdditive(event) && _this.props.allowMultipleSelection) {
-                onSelection(regions_1.Regions.add(selectedRegions, region));
-                // the focus should be in the newly created region,
-                // which is at index of the current list of regions plus one,
-                // which is the length of the current list of regions
-                focusSelectionIndex = selectedRegions.length;
-            }
-            else {
-                onSelection([region]);
-                focusSelectionIndex = 0;
-            }
-            var fullFocusCellCoordinates = {
-                col: focusCellCoordinates.col,
-                focusSelectionIndex: focusSelectionIndex,
-                row: focusCellCoordinates.row,
-            };
-            _this.props.onFocus(fullFocusCellCoordinates);
-            return true;
-        };
-        _this.handleDragMove = function (event, coords) {
-            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
-            if (nextSelectedRegions == null) {
-                return;
-            }
-            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
-            if (!_this.props.allowMultipleSelection) {
-                // have the focused cell follow the selected region
-                var mostRecentRegion = nextSelectedRegions[nextSelectedRegions.length - 1];
-                var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(mostRecentRegion);
-                var fullFocusCellCoordinates = {
-                    col: focusCellCoordinates.col,
-                    focusSelectionIndex: nextSelectedRegions.length - 1,
-                    row: focusCellCoordinates.row,
-                };
-                _this.props.onFocus(fullFocusCellCoordinates);
-            }
-        };
-        _this.handleDragEnd = function (event, coords) {
-            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
-            if (nextSelectedRegions == null) {
-                return;
-            }
-            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
-            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
-            _this.finishInteraction();
-        };
-        _this.handleClick = function (event) {
-            if (_this.shouldIgnoreMouseDown(event)) {
-                return false;
-            }
-            var region = _this.props.locateClick(event);
-            var selectedRegions = _this.props.selectedRegions;
-            if (!regions_1.Regions.isValid(region)) {
-                _this.maybeInvokeSelectionCallback([]);
-                core_1.Utils.safeInvoke(_this.props.onSelectionEnd, []);
-                return false;
-            }
-            if (_this.props.selectedRegionTransform != null) {
-                region = _this.props.selectedRegionTransform(region, event);
-            }
-            var nextSelectedRegions;
-            if (_this.didExpandSelectionOnActivate) {
-                // we already expanded the selection in handleActivate,
-                // so we don't want to overwrite it here
-                nextSelectedRegions = selectedRegions;
-            }
-            else if (selectedRegions.length > 0) {
-                nextSelectedRegions = regions_1.Regions.update(selectedRegions, region);
-            }
-            else {
-                nextSelectedRegions = [region];
-            }
-            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
-            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
-            _this.finishInteraction();
-            return false;
-        };
-        _this.finishInteraction = function () {
-            _this.didExpandSelectionOnActivate = false;
-        };
-        return _this;
-    }
-    DragSelectable.prototype.render = function () {
-        var draggableProps = this.getDraggableProps();
-        return (React.createElement(draggable_1.Draggable, tslib_1.__assign({}, draggableProps, { preventDefault: false }), this.props.children));
-    };
-    DragSelectable.prototype.getDraggableProps = function () {
-        return this.props.onSelection == null ? {} : {
-            onActivate: this.handleActivate,
-            onClick: this.handleClick,
-            onDragEnd: this.handleDragEnd,
-            onDragMove: this.handleDragMove,
-        };
-    };
-    DragSelectable.prototype.shouldIgnoreMouseDown = function (event) {
-        var _a = this.props.ignoredSelectors, ignoredSelectors = _a === void 0 ? [] : _a;
-        var element = event.target;
-        return !utils_1.Utils.isLeftClick(event)
-            || this.props.disabled
-            || ignoredSelectors.some(function (selector) { return element.closest(selector) != null; });
-    };
-    DragSelectable.prototype.getDragSelectedRegions = function (event, coords) {
-        var _a = this.props, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
-        var region = this.props.allowMultipleSelection
-            ? this.props.locateDrag(event, coords)
-            : this.props.locateClick(event);
-        if (!regions_1.Regions.isValid(region)) {
-            return undefined;
-        }
-        if (selectedRegionTransform != null) {
-            region = selectedRegionTransform(region, event, coords);
-        }
-        return this.didExpandSelectionOnActivate
-            ? expandSelectedRegions(selectedRegions, region)
-            : regions_1.Regions.update(selectedRegions, region);
-    };
-    DragSelectable.prototype.maybeInvokeSelectionCallback = function (nextSelectedRegions) {
-        var selectedRegions = this.props.selectedRegions;
-        // invoke only if the selection changed
-        if (!utils_1.Utils.deepCompareKeys(selectedRegions, nextSelectedRegions)) {
-            this.props.onSelection(nextSelectedRegions);
-        }
-    };
-    return DragSelectable;
-}(React.Component));
-DragSelectable = tslib_1.__decorate([
-    PureRender
-], DragSelectable);
-exports.DragSelectable = DragSelectable;
-function expandSelectedRegions(regions, region) {
-    if (regions.length === 0) {
-        return [region];
-    }
-    var lastRegion = regions[regions.length - 1];
-    var lastRegionCardinality = regions_1.Regions.getRegionCardinality(lastRegion);
-    var regionCardinality = regions_1.Regions.getRegionCardinality(region);
-    if (regionCardinality !== lastRegionCardinality) {
-        // TODO: add proper handling for expanding regions from one cardinality to another depending
-        // on the focused cell (see: https://github.com/palantir/blueprint/issues/823). for now,
-        // just return the new region by itself.
-        return [region];
-    }
-    // simplified algorithm: expand the most recently selected region, and clear all others.
-    // TODO: pass the current focused cell into DragSelectable via props, then update this logic
-    // to leverage the focus cell's coordinates appropriately.
-    // (see: https://github.com/palantir/blueprint/issues/823)
-    if (regionCardinality === regions_1.RegionCardinality.FULL_ROWS) {
-        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
-        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
-        return [regions_1.Regions.row(rowStart, rowEnd)];
-    }
-    else if (regionCardinality === regions_1.RegionCardinality.FULL_COLUMNS) {
-        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
-        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
-        return [regions_1.Regions.column(colStart, colEnd)];
-    }
-    else if (regionCardinality === regions_1.RegionCardinality.CELLS) {
-        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
-        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
-        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
-        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
-        return [regions_1.Regions.cell(rowStart, colStart, rowEnd, colEnd)];
-    }
-    else {
-        // if we've selected the FULL_TABLE, no need to expand it further.
-        return [region];
-    }
-}
-
-//# sourceMappingURL=selectable.js.map
-
-
-/***/ }),
-/* 289 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var core_1 = __webpack_require__(228);
-var Classes = __webpack_require__(278);
-var Errors = __webpack_require__(295);
-var loadableContent_1 = __webpack_require__(285);
-var headerCell_1 = __webpack_require__(296);
-function HorizontalCellDivider() {
-    return React.createElement("div", { className: Classes.TABLE_HORIZONTAL_CELL_DIVIDER });
-}
-exports.HorizontalCellDivider = HorizontalCellDivider;
-var ColumnHeaderCell = (function (_super) {
-    tslib_1.__extends(ColumnHeaderCell, _super);
-    function ColumnHeaderCell() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = {
-            isActive: false,
-        };
-        _this.handlePopoverDidOpen = function () {
-            _this.setState({ isActive: true });
-        };
-        _this.handlePopoverWillClose = function () {
-            _this.setState({ isActive: false });
-        };
-        return _this;
-    }
-    /**
-     * This method determines if a `MouseEvent` was triggered on a target that
-     * should be used as the header click/drag target. This enables users of
-     * this component to render fully interactive components in their header
-     * cells without worry of selection or resize operations from capturing
-     * their mouse events.
-     */
-    ColumnHeaderCell.isHeaderMouseTarget = function (target) {
-        return target.classList.contains(Classes.TABLE_HEADER)
-            || target.classList.contains(Classes.TABLE_COLUMN_NAME)
-            || target.classList.contains(Classes.TABLE_INTERACTION_BAR)
-            || target.classList.contains(Classes.TABLE_HEADER_CONTENT);
-    };
-    ColumnHeaderCell.prototype.render = function () {
-        var _a = this.props, 
-        // from IColumnHeaderCellProps
-        isColumnReorderable = _a.isColumnReorderable, isColumnSelected = _a.isColumnSelected, menuIconName = _a.menuIconName, 
-        // from IColumnNameProps
-        name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar, 
-        // from IHeaderProps
-        spreadableProps = tslib_1.__rest(_a, ["isColumnReorderable", "isColumnSelected", "menuIconName", "name", "renderName", "useInteractionBar"]);
-        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isColumnReorderable, isSelected: this.props.isColumnSelected }, spreadableProps),
-            this.renderName(),
-            this.maybeRenderContent(),
-            this.props.loading ? undefined : this.props.resizeHandle));
-    };
-    ColumnHeaderCell.prototype.validateProps = function (nextProps) {
-        if (nextProps.menu != null) {
-            // throw this warning from the publicly exported, higher-order *HeaderCell components
-            // rather than HeaderCell, so consumers know exactly which components are receiving the
-            // offending prop
-            console.warn(Errors.COLUMN_HEADER_CELL_MENU_DEPRECATED);
-        }
-    };
-    ColumnHeaderCell.prototype.renderName = function () {
-        var _a = this.props, index = _a.index, loading = _a.loading, name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar;
-        var dropdownMenu = this.maybeRenderDropdownMenu();
-        var defaultName = React.createElement("div", { className: Classes.TABLE_TRUNCATED_TEXT }, name);
-        var nameComponent = (React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, renderName == null ? defaultName : renderName(name, index)));
-        if (useInteractionBar) {
-            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
-                React.createElement("div", { className: Classes.TABLE_INTERACTION_BAR },
-                    this.props.reorderHandle,
-                    dropdownMenu),
-                React.createElement(HorizontalCellDivider, null),
-                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
-        }
-        else {
-            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
-                dropdownMenu,
-                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
-        }
-    };
-    ColumnHeaderCell.prototype.maybeRenderContent = function () {
-        if (this.props.children === null) {
-            return undefined;
-        }
-        return (React.createElement("div", { className: Classes.TABLE_HEADER_CONTENT }, this.props.children));
-    };
-    ColumnHeaderCell.prototype.maybeRenderDropdownMenu = function () {
-        var _a = this.props, index = _a.index, menu = _a.menu, menuIconName = _a.menuIconName, renderMenu = _a.renderMenu;
-        if (renderMenu == null && menu == null) {
-            return undefined;
-        }
-        var popoverTargetClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass(menuIconName));
-        var constraints = [{
-                attachment: "together",
-                pin: true,
-                to: "window",
-            }];
-        var classes = classNames(Classes.TABLE_TH_MENU_CONTAINER, (_b = {},
-            _b[Classes.TABLE_TH_MENU_OPEN] = this.state.isActive,
-            _b));
-        // prefer renderMenu if it's defined
-        var content = core_1.Utils.isFunction(renderMenu)
-            ? renderMenu(index)
-            : menu;
-        return (React.createElement("div", { className: classes },
-            React.createElement("div", { className: Classes.TABLE_TH_MENU_CONTAINER_BACKGROUND }),
-            React.createElement(core_1.Popover, { tetherOptions: { constraints: constraints }, content: content, position: core_1.Position.BOTTOM, className: Classes.TABLE_TH_MENU, popoverDidOpen: this.handlePopoverDidOpen, popoverWillClose: this.handlePopoverWillClose, useSmartArrowPositioning: true },
-                React.createElement("span", { className: popoverTargetClasses }))));
-        var _b;
-    };
-    return ColumnHeaderCell;
-}(core_1.AbstractComponent));
-ColumnHeaderCell.defaultProps = {
-    isActive: false,
-    menuIconName: "chevron-down",
-    useInteractionBar: false,
-};
-exports.ColumnHeaderCell = ColumnHeaderCell;
-
-//# sourceMappingURL=columnHeaderCell.js.map
-
-
-/***/ }),
-/* 290 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var DragEvents = (function () {
-    function DragEvents() {
-        var _this = this;
-        this.handleMouseDown = function (event) {
-            _this.initCoordinateData(event);
-            if (_this.handler != null && _this.handler.onActivate != null) {
-                var exitCode = _this.handler.onActivate(event);
-                if (exitCode === false) {
-                    return;
-                }
-            }
-            _this.isActivated = true;
-            _this.maybeAlterEventChain(event);
-            // It is possible that the mouseup would not be called after the initial
-            // mousedown (for example if the mouse is moved out of the window). So,
-            // we preemptively detach to avoid duplicate listeners.
-            _this.detachDocumentEventListeners();
-            _this.attachDocumentEventListeners();
-        };
-        this.handleMouseMove = function (event) {
-            _this.maybeAlterEventChain(event);
-            if (_this.isActivated) {
-                _this.isDragging = true;
-            }
-            if (_this.isDragging) {
-                var coords = _this.updateCoordinateData(event);
-                if (_this.handler != null && _this.handler.onDragMove != null) {
-                    _this.handler.onDragMove(event, coords);
-                }
-            }
-        };
-        this.handleMouseUp = function (event) {
-            _this.maybeAlterEventChain(event);
-            if (_this.handler != null) {
-                if (_this.isDragging) {
-                    var coords = _this.updateCoordinateData(event);
-                    if (_this.handler.onDragMove != null) {
-                        _this.handler.onDragMove(event, coords);
-                    }
-                    if (_this.handler.onDragEnd != null) {
-                        _this.handler.onDragEnd(event, coords);
-                    }
-                }
-                else if (_this.isActivated) {
-                    if (_this.handler.onDoubleClick != null) {
-                        if (_this.doubleClickTimeoutToken == null) {
-                            // if this the first click of a possible double-click,
-                            // we delay the firing of the click event by the
-                            // timeout.
-                            _this.doubleClickTimeoutToken = setTimeout(function () {
-                                delete _this.doubleClickTimeoutToken;
-                                if (_this.handler.onClick != null) {
-                                    _this.handler.onClick(event);
-                                }
-                            }, DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC);
-                        }
-                        else {
-                            // otherwise, this is the second click in the double-
-                            // click so we cancel the single-click timeout and
-                            // fire the double-click event.
-                            clearTimeout(_this.doubleClickTimeoutToken);
-                            delete _this.doubleClickTimeoutToken;
-                            _this.handler.onDoubleClick(event);
-                        }
-                    }
-                    else if (_this.handler.onClick != null) {
-                        _this.handler.onClick(event);
-                    }
-                }
-            }
-            _this.isActivated = false;
-            _this.isDragging = false;
-            _this.detachDocumentEventListeners();
-        };
-    }
-    /**
-     * Returns true if the event includes a modifier key that often adds the result of the drag
-     * event to any existing state. For example, holding CTRL before dragging may select another
-     * region in addition to an existing one, while the absence of a modifier key may clear the
-     * existing selection first.
-     * @param event the mouse event for the drag interaction
-     */
-    DragEvents.isAdditive = function (event) {
-        return event.ctrlKey || event.metaKey;
-    };
-    DragEvents.prototype.attach = function (element, handler) {
-        this.detach();
-        this.handler = handler;
-        this.element = element;
-        if (this.isValidDragHandler(handler)) {
-            this.element.addEventListener("mousedown", this.handleMouseDown);
-        }
-        return this;
-    };
-    DragEvents.prototype.detach = function () {
-        if (this.element != null) {
-            this.element.removeEventListener("mousedown", this.handleMouseDown);
-            this.detachDocumentEventListeners();
-        }
-    };
-    DragEvents.prototype.isValidDragHandler = function (handler) {
-        return handler != null && (handler.onActivate != null
-            || handler.onDragMove != null
-            || handler.onDragEnd != null
-            || handler.onClick != null
-            || handler.onDoubleClick != null);
-    };
-    DragEvents.prototype.attachDocumentEventListeners = function () {
-        document.addEventListener("mousemove", this.handleMouseMove);
-        document.addEventListener("mouseup", this.handleMouseUp);
-    };
-    DragEvents.prototype.detachDocumentEventListeners = function () {
-        document.removeEventListener("mousemove", this.handleMouseMove);
-        document.removeEventListener("mouseup", this.handleMouseUp);
-    };
-    DragEvents.prototype.initCoordinateData = function (event) {
-        this.activationCoordinates = [event.clientX, event.clientY];
-        this.lastCoordinates = this.activationCoordinates;
-    };
-    DragEvents.prototype.updateCoordinateData = function (event) {
-        var currentCoordinates = [event.clientX, event.clientY];
-        var deltaCoordinates = [
-            currentCoordinates[0] - this.lastCoordinates[0],
-            currentCoordinates[1] - this.lastCoordinates[1],
-        ];
-        var offsetCoordinates = [
-            currentCoordinates[0] - this.activationCoordinates[0],
-            currentCoordinates[1] - this.activationCoordinates[1],
-        ];
-        var data = {
-            activation: this.activationCoordinates,
-            current: currentCoordinates,
-            delta: deltaCoordinates,
-            last: this.lastCoordinates,
-            offset: offsetCoordinates,
-        };
-        this.lastCoordinates = [event.clientX, event.clientY];
-        return data;
-    };
-    DragEvents.prototype.maybeAlterEventChain = function (event) {
-        if (this.handler.preventDefault) {
-            event.preventDefault();
-        }
-        if (this.handler.stopPropagation) {
-            event.stopPropagation();
-        }
-    };
-    return DragEvents;
-}());
-DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC = 500;
-exports.DragEvents = DragEvents;
-
-//# sourceMappingURL=dragEvents.js.map
-
-
-/***/ }),
-/* 291 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-// amount in pixels that the content div width changes when truncated vs when
-// not truncated. Note: could be modified by styles
-var CONTENT_DIV_WIDTH_DELTA = 25;
-var TruncatedPopoverMode;
-(function (TruncatedPopoverMode) {
-    TruncatedPopoverMode[TruncatedPopoverMode["ALWAYS"] = 0] = "ALWAYS";
-    TruncatedPopoverMode[TruncatedPopoverMode["NEVER"] = 1] = "NEVER";
-    TruncatedPopoverMode[TruncatedPopoverMode["WHEN_TRUNCATED"] = 2] = "WHEN_TRUNCATED";
-})(TruncatedPopoverMode = exports.TruncatedPopoverMode || (exports.TruncatedPopoverMode = {}));
-var TruncatedFormat = (function (_super) {
-    tslib_1.__extends(TruncatedFormat, _super);
-    function TruncatedFormat() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = { isTruncated: false };
-        _this.handleContentDivRef = function (ref) { return _this.contentDiv = ref; };
-        return _this;
-    }
-    TruncatedFormat.prototype.render = function () {
-        var _a = this.props, children = _a.children, detectTruncation = _a.detectTruncation, preformatted = _a.preformatted, truncateLength = _a.truncateLength, truncationSuffix = _a.truncationSuffix;
-        var content = "" + children;
-        var cellContent = content;
-        if (!detectTruncation && truncateLength > 0 && cellContent.length > truncateLength) {
-            cellContent = cellContent.substring(0, truncateLength) + truncationSuffix;
-        }
-        if (this.shouldShowPopover(content)) {
-            var popoverClasses = classNames(Classes.TABLE_TRUNCATED_POPOVER, preformatted ? Classes.TABLE_POPOVER_WHITESPACE_PRE : Classes.TABLE_POPOVER_WHITESPACE_NORMAL);
-            var popoverContent = React.createElement("div", { className: popoverClasses }, children);
-            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT);
-            var constraints = [{
-                    attachment: "together",
-                    to: "window",
-                }];
-            var iconClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass("more"));
-            return (React.createElement("div", { className: className },
-                React.createElement("div", { className: Classes.TABLE_TRUNCATED_VALUE, ref: this.handleContentDivRef }, cellContent),
-                React.createElement(core_1.Popover, { className: Classes.TABLE_TRUNCATED_POPOVER_TARGET, tetherOptions: { constraints: constraints }, content: popoverContent, position: core_1.Position.BOTTOM, useSmartArrowPositioning: true },
-                    React.createElement("span", { className: iconClasses }))));
-        }
-        else {
-            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT_TEXT);
-            return React.createElement("div", { className: className, ref: this.handleContentDivRef }, cellContent);
-        }
-    };
-    TruncatedFormat.prototype.componentDidMount = function () {
-        this.setTruncationState();
-    };
-    TruncatedFormat.prototype.componentDidUpdate = function () {
-        this.setTruncationState();
-    };
-    TruncatedFormat.prototype.shouldShowPopover = function (content) {
-        var _a = this.props, detectTruncation = _a.detectTruncation, showPopover = _a.showPopover, truncateLength = _a.truncateLength;
-        switch (showPopover) {
-            case TruncatedPopoverMode.ALWAYS:
-                return true;
-            case TruncatedPopoverMode.NEVER:
-                return false;
-            case TruncatedPopoverMode.WHEN_TRUNCATED:
-                return detectTruncation
-                    ? this.state.isTruncated
-                    : (truncateLength > 0 && content.length > truncateLength);
-            default:
-                return false;
-        }
-    };
-    TruncatedFormat.prototype.setTruncationState = function () {
-        if (!this.props.detectTruncation || this.props.showPopover !== TruncatedPopoverMode.WHEN_TRUNCATED) {
-            return;
-        }
-        // if the popover handle exists, take it into account
-        var popoverHandleAdjustmentFactor = this.state.isTruncated ? CONTENT_DIV_WIDTH_DELTA : 0;
-        // add a slight bit of buffer space where we don't show the popover, to deal with cases
-        // where everything isn't pixel perfect
-        popoverHandleAdjustmentFactor += .5;
-        var isTruncated = this.contentDiv !== undefined &&
-            (this.contentDiv.scrollWidth - popoverHandleAdjustmentFactor > this.contentDiv.clientWidth ||
-                this.contentDiv.scrollHeight > this.contentDiv.clientHeight);
-        if (this.state.isTruncated !== isTruncated) {
-            this.setState({ isTruncated: isTruncated });
-        }
-    };
-    return TruncatedFormat;
-}(React.Component));
-TruncatedFormat.defaultProps = {
-    detectTruncation: true,
-    preformatted: false,
-    showPopover: TruncatedPopoverMode.WHEN_TRUNCATED,
-    truncateLength: 80,
-    truncationSuffix: "...",
-};
-exports.TruncatedFormat = TruncatedFormat;
-
-//# sourceMappingURL=truncatedFormat.js.map
-
-
-/***/ }),
-/* 292 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var cell_1 = __webpack_require__(283);
-var Column = (function (_super) {
-    tslib_1.__extends(Column, _super);
-    function Column() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return Column;
-}(React.Component));
-Column.defaultProps = {
-    renderCell: cell_1.emptyCellRenderer,
-};
-Column = tslib_1.__decorate([
-    PureRender
-], Column);
-exports.Column = Column;
-
-//# sourceMappingURL=column.js.map
-
-
-/***/ }),
-/* 293 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var regions_1 = __webpack_require__(280);
-var Classes = __webpack_require__(278);
-var rect_1 = __webpack_require__(282);
-var utils_1 = __webpack_require__(279);
-/**
- * This class manages the sizes of grid cells using arrays of individual row/column sizes.
- */
-var Grid = (function () {
-    /**
-     * This constructor accumulates the heights and widths in `O(n)`, saving
-     * time in later calculations.
-     *
-     * @param bleed - The number of rows/cols that we expand beyond the
-     *     viewport (on all sides). This helps avoid displaying an empty
-     *     viewport when the user scrolls quickly.
-     */
-    function Grid(rowHeights, columnWidths, bleed, ghostHeight, ghostWidth) {
-        if (bleed === void 0) { bleed = Grid.DEFAULT_BLEED; }
-        if (ghostHeight === void 0) { ghostHeight = Grid.DEFAULT_GHOST_HEIGHT; }
-        if (ghostWidth === void 0) { ghostWidth = Grid.DEFAULT_GHOST_WIDTH; }
-        var _this = this;
-        this.getCumulativeWidthBefore = function (index) {
-            return (index === 0) ? 0 : _this.getCumulativeWidthAt(index - 1);
-        };
-        this.getCumulativeWidthAt = function (index) {
-            if (_this.numCols === 0) {
-                return _this.ghostWidth * index;
-            }
-            else if (index >= _this.numCols) {
-                return _this.cumulativeColumnWidths[_this.numCols - 1] + _this.ghostWidth * (index - _this.numCols + 1);
-            }
-            else {
-                return _this.cumulativeColumnWidths[index];
-            }
-        };
-        this.getCumulativeHeightBefore = function (index) {
-            return (index === 0) ? 0 : _this.getCumulativeHeightAt(index - 1);
-        };
-        this.getCumulativeHeightAt = function (index) {
-            if (_this.numRows === 0) {
-                return _this.ghostHeight * index;
-            }
-            else if (index >= _this.numRows) {
-                return _this.cumulativeRowHeights[_this.numRows - 1] + _this.ghostHeight * (index - _this.numRows + 1);
-            }
-            else {
-                return _this.cumulativeRowHeights[index];
-            }
-        };
-        this.columnWidths = columnWidths;
-        this.rowHeights = rowHeights;
-        this.cumulativeColumnWidths = utils_1.Utils.accumulate(columnWidths);
-        this.cumulativeRowHeights = utils_1.Utils.accumulate(rowHeights);
-        this.numCols = columnWidths.length;
-        this.numRows = rowHeights.length;
-        this.bleed = bleed;
-        this.ghostHeight = ghostHeight;
-        this.ghostWidth = ghostWidth;
-    }
-    /**
-     * Returns the `Rect` bounds of a cell in scrollpane client space.
-     *
-     * Scrollpane client coordinate space uses the origin of the scrollpane
-     * client (the inside part that you're moving around).
-     *
-     * For example, let's say you're scrolling around a block of 1000 x 1000
-     * cells. Regardless where you've scrolled, the first cell is always at
-     * 0,0 in scrollpane client space. the cell to the right of it is always
-     * at, e.g., 100,0.
-     */
-    Grid.prototype.getCellRect = function (rowIndex, columnIndex) {
-        var height = this.rowHeights[rowIndex];
-        var top = this.cumulativeRowHeights[rowIndex] - height;
-        var width = this.columnWidths[columnIndex];
-        var left = this.cumulativeColumnWidths[columnIndex] - width;
-        return new rect_1.Rect(left, top, width, height);
-    };
-    /**
-     * Returns the `Rect` bounds of a cell in scrollpane client space.
-     *
-     * If the cell is beyond the bounds of the user-defined table cells, it is
-     * considered a "ghost" cell. If a width/height is not defined for that
-     * row/column, we use the default width/height.
-     */
-    Grid.prototype.getGhostCellRect = function (rowIndex, columnIndex) {
-        var left = 0;
-        var top = 0;
-        var width = 0;
-        var height = 0;
-        if (rowIndex >= this.rowHeights.length) {
-            height = this.ghostHeight;
-            top = this.getHeight() + this.ghostHeight * (rowIndex - this.numRows);
-        }
-        else {
-            height = this.rowHeights[rowIndex];
-            top = this.cumulativeRowHeights[rowIndex] - height;
-        }
-        if (columnIndex >= this.columnWidths.length) {
-            width = this.ghostWidth;
-            left = this.getWidth() + this.ghostWidth * (columnIndex - this.numCols);
-        }
-        else {
-            width = this.columnWidths[columnIndex];
-            left = this.cumulativeColumnWidths[columnIndex] - width;
-        }
-        return new rect_1.Rect(left, top, width, height);
-    };
-    /**
-     * Returns the `Rect` with the base coordinate and height of the specified row.
-     */
-    Grid.prototype.getRowRect = function (rowIndex) {
-        var height = this.rowHeights[rowIndex];
-        var top = this.cumulativeRowHeights[rowIndex] - height;
-        return new rect_1.Rect(0, top, this.getWidth(), height);
-    };
-    /**
-     * Returns the `Rect` with the base coordinate and width of the specified column.
-     */
-    Grid.prototype.getColumnRect = function (columnIndex) {
-        var width = this.columnWidths[columnIndex];
-        var left = this.cumulativeColumnWidths[columnIndex] - width;
-        return new rect_1.Rect(left, 0, width, this.getHeight());
-    };
-    /**
-     * Returns the total width of the entire grid
-     */
-    Grid.prototype.getWidth = function () {
-        return this.numCols === 0 ? 0 : this.cumulativeColumnWidths[this.numCols - 1];
-    };
-    /**
-     * Returns the total width of the entire grid
-     */
-    Grid.prototype.getHeight = function () {
-        return this.numRows === 0 ? 0 : this.cumulativeRowHeights[this.numRows - 1];
-    };
-    /**
-     * Returns the `Rect` bounds of entire grid
-     */
-    Grid.prototype.getRect = function () {
-        return new rect_1.Rect(0, 0, this.getWidth(), this.getHeight());
-    };
-    /**
-     * Maps each cell that intersects with the given `Rect` argument. The
-     * indices of iteration are extended in both directions by the integer
-     * `bleed` class property, then are clamped between 0 and the number of
-     * rows/columns.
-     *
-     * Uses a binary search for each of the 4 edges of the bounds, resulting
-     * in a runtime of `O(log(rows) + log(cols))` plus the `O(irows * icols)`
-     * iteration of intersecting cells.
-     */
-    Grid.prototype.mapCellsInRect = function (rect, callback) {
-        var results = [];
-        if (rect == null) {
-            return results;
-        }
-        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
-        var _b = this.getColumnIndicesInRect(rect), columnIndexStart = _b.columnIndexStart, columnIndexEnd = _b.columnIndexEnd;
-        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
-            for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
-                results.push(callback(rowIndex, columnIndex));
-            }
-        }
-        return results;
-    };
-    /**
-     * Maps each row that intersects with the given `Rect` argument.
-     *
-     * See Grid.mapCellsInRect for more details.
-     */
-    Grid.prototype.mapRowsInRect = function (rect, callback) {
-        var results = [];
-        if (rect == null) {
-            return results;
-        }
-        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
-        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
-            results.push(callback(rowIndex));
-        }
-        return results;
-    };
-    /**
-     * Maps each column that intersects with the given `Rect` argument.
-     *
-     * See Grid.mapCellsInRect for more details.
-     */
-    Grid.prototype.mapColumnsInRect = function (rect, callback) {
-        var results = [];
-        if (rect == null) {
-            return results;
-        }
-        var _a = this.getColumnIndicesInRect(rect), columnIndexStart = _a.columnIndexStart, columnIndexEnd = _a.columnIndexEnd;
-        for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
-            results.push(callback(columnIndex));
-        }
-        return results;
-    };
-    /**
-     * Returns the start and end indices of rows that intersect with the given
-     * `Rect` argument.
-     */
-    Grid.prototype.getRowIndicesInRect = function (rect, includeGhostCells, limit) {
-        if (includeGhostCells === void 0) { includeGhostCells = false; }
-        if (limit === void 0) { limit = Grid.DEFAULT_MAX_ROWS; }
-        if (rect == null) {
-            return { rowIndexEnd: 0, rowIndexStart: 0 };
-        }
-        var searchEnd = includeGhostCells ? Math.max(this.numRows, Grid.DEFAULT_MAX_ROWS) : this.numRows;
-        var _a = this.getIndicesInInterval(rect.top, rect.top + rect.height, searchEnd, !includeGhostCells, this.getCumulativeHeightAt), start = _a.start, end = _a.end;
-        var rowIndexEnd = (limit > 0 && end - start > limit)
-            ? start + limit
-            : end;
-        return {
-            rowIndexEnd: rowIndexEnd,
-            rowIndexStart: start,
-        };
-    };
-    /**
-     * Returns the start and end indices of columns that intersect with the
-     * given `Rect` argument.
-     */
-    Grid.prototype.getColumnIndicesInRect = function (rect, includeGhostCells, limit) {
-        if (includeGhostCells === void 0) { includeGhostCells = false; }
-        if (limit === void 0) { limit = Grid.DEFAULT_MAX_COLUMNS; }
-        if (rect == null) {
-            return { columnIndexEnd: 0, columnIndexStart: 0 };
-        }
-        var searchEnd = includeGhostCells ? Math.max(this.numCols, Grid.DEFAULT_MAX_COLUMNS) : this.numCols;
-        var _a = this.getIndicesInInterval(rect.left, rect.left + rect.width, searchEnd, !includeGhostCells, this.getCumulativeWidthAt), start = _a.start, end = _a.end;
-        var columnIndexEnd = (limit > 0 && end - start > limit)
-            ? start + limit
-            : end;
-        return {
-            columnIndexEnd: columnIndexEnd,
-            columnIndexStart: start,
-        };
-    };
-    Grid.prototype.isGhostIndex = function (rowIndex, columnIndex) {
-        return (rowIndex >= this.numRows || columnIndex >= this.numCols);
-    };
-    Grid.prototype.getExtremaClasses = function (rowIndex, columnIndex, rowEnd, columnEnd) {
-        if (rowIndex === rowEnd && columnIndex === columnEnd) {
-            return [Classes.TABLE_LAST_IN_COLUMN, Classes.TABLE_LAST_IN_ROW];
-        }
-        if (rowIndex === rowEnd) {
-            return [Classes.TABLE_LAST_IN_COLUMN];
-        }
-        if (columnIndex === columnEnd) {
-            return [Classes.TABLE_LAST_IN_ROW];
-        }
-        return [];
-    };
-    Grid.prototype.getRegionStyle = function (region) {
-        var cardinality = regions_1.Regions.getRegionCardinality(region);
-        switch (cardinality) {
-            case regions_1.RegionCardinality.CELLS: {
-                var _a = region.rows, rowStart = _a[0], rowEnd = _a[1];
-                var _b = region.cols, colStart = _b[0], colEnd = _b[1];
-                // if the region is outside the bounds of the table, don't display it
-                if (this.isGhostIndex(rowStart, colStart) || this.isGhostIndex(rowEnd, colEnd)) {
-                    return { display: "none" };
-                }
-                var cellRect0 = this.getCellRect(rowStart, colStart);
-                var cellRect1 = this.getCellRect(rowEnd, colEnd);
-                var offsetLeft = colStart === 0 ? 0 : 1;
-                var offsetTop = rowStart === 0 ? 0 : 1;
-                var rect = cellRect0.union(cellRect1);
-                rect.height += offsetTop;
-                rect.left -= offsetLeft;
-                rect.width += offsetLeft;
-                rect.top -= offsetTop;
-                return tslib_1.__assign({}, rect.style(), { display: "block" });
-            }
-            case regions_1.RegionCardinality.FULL_COLUMNS: {
-                var _c = region.cols, colStart = _c[0], colEnd = _c[1];
-                // if the region is outside the bounds of the table, don't display it
-                if (this.isGhostIndex(0, colStart) || this.isGhostIndex(0, colEnd)) {
-                    return { display: "none" };
-                }
-                var cellRect0 = this.getCellRect(0, colStart);
-                var cellRect1 = this.getCellRect(0, colEnd);
-                var rect = cellRect0.union(cellRect1);
-                var offsetLeft = colStart === 0 ? 0 : 1;
-                return {
-                    bottom: 0,
-                    display: "block",
-                    left: rect.left - offsetLeft,
-                    top: 0,
-                    width: rect.width + offsetLeft,
-                };
-            }
-            case regions_1.RegionCardinality.FULL_ROWS: {
-                var _d = region.rows, rowStart = _d[0], rowEnd = _d[1];
-                // if the region is outside the bounds of the table, don't display it
-                if (this.isGhostIndex(rowStart, 0) || this.isGhostIndex(rowEnd, 0)) {
-                    return { display: "none" };
-                }
-                var cellRect0 = this.getCellRect(rowStart, 0);
-                var cellRect1 = this.getCellRect(rowEnd, 0);
-                var rect = cellRect0.union(cellRect1);
-                var offsetTop = rowStart === 0 ? 0 : 1;
-                return {
-                    display: "block",
-                    height: rect.height + offsetTop,
-                    left: 0,
-                    right: 0,
-                    top: rect.top - offsetTop,
-                };
-            }
-            case regions_1.RegionCardinality.FULL_TABLE:
-                return {
-                    bottom: 0,
-                    display: "block",
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                };
-            default: return { display: "none" };
-        }
-    };
-    Grid.prototype.getIndicesInInterval = function (min, max, count, useEndBleed, lookup) {
-        var start = utils_1.Utils.binarySearch(min, count - 1, lookup);
-        var end = utils_1.Utils.binarySearch(max, count - 1, lookup);
-        // correct exact pixel alignment
-        if (start >= 0 && min === lookup(start)) {
-            start += 1;
-        }
-        // apply bounded bleeds
-        start = Math.max(0, start - this.bleed);
-        if (useEndBleed) {
-            end = Math.min(count - 1, end + this.bleed);
-        }
-        else {
-            end = Math.min(count - 1, end);
-        }
-        return { start: start, end: end };
-    };
-    return Grid;
-}());
-Grid.DEFAULT_BLEED = 3;
-Grid.DEFAULT_MAX_COLUMNS = 50;
-Grid.DEFAULT_MAX_ROWS = 200;
-Grid.DEFAULT_GHOST_HEIGHT = 20;
-Grid.DEFAULT_GHOST_WIDTH = 150;
-exports.Grid = Grid;
-
-//# sourceMappingURL=grid.js.map
-
-
-/***/ }),
-/* 294 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(307));
-__export(__webpack_require__(308));
-
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-/* 295 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ns = "[Blueprint Table]";
-var deprec = ns + " DEPRECATION:";
-exports.COLUMN_HEADER_CELL_MENU_DEPRECATED = deprec + " <ColumnHeaderCell> menu is deprecated. Use renderMenu instead.";
-exports.ROW_HEADER_CELL_MENU_DEPRECATED = deprec + " <RowHeaderCell> menu is deprecated. Use renderMenu instead.";
-
-//# sourceMappingURL=errors.js.map
-
-
-/***/ }),
-/* 296 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var core_1 = __webpack_require__(228);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-var HeaderCell = (function (_super) {
-    tslib_1.__extends(HeaderCell, _super);
-    function HeaderCell() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.state = {
-            isActive: false,
-        };
-        return _this;
-    }
-    HeaderCell.prototype.shouldComponentUpdate = function (nextProps) {
-        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
-            || !utils_1.Utils.deepCompareKeys(this.props, nextProps, ["style"]);
-    };
-    HeaderCell.prototype.renderContextMenu = function (_event) {
-        var renderMenu = this.props.renderMenu;
-        if (core_1.Utils.isFunction(renderMenu)) {
-            // the preferred way (a consistent function instance that won't cause as many re-renders)
-            return renderMenu(this.props.index);
-        }
-        else {
-            // the deprecated way (leads to lots of unnecessary re-renders because of menu-item
-            // callbacks needing access to the index of the right-clicked cell, which demands that
-            // new callback functions and JSX elements be recreated on each render of the parent)
-            return this.props.menu;
-        }
-    };
-    HeaderCell.prototype.render = function () {
-        var classes = classNames(Classes.TABLE_HEADER, (_a = {},
-            _a[Classes.TABLE_HEADER_ACTIVE] = this.props.isActive || this.state.isActive,
-            _a[Classes.TABLE_HEADER_SELECTED] = this.props.isSelected,
-            _a[core_1.Classes.LOADING] = this.props.loading,
-            _a), this.props.className);
-        return (React.createElement("div", { className: classes, style: this.props.style }, this.props.children));
-        var _a;
-    };
-    return HeaderCell;
-}(React.Component));
-HeaderCell = tslib_1.__decorate([
-    core_1.ContextMenuTarget
-], HeaderCell);
-exports.HeaderCell = HeaderCell;
-
-//# sourceMappingURL=headerCell.js.map
-
-
-/***/ }),
-/* 297 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var core_1 = __webpack_require__(228);
-var Classes = __webpack_require__(278);
-var Errors = __webpack_require__(295);
-var loadableContent_1 = __webpack_require__(285);
-var headerCell_1 = __webpack_require__(296);
-var RowHeaderCell = (function (_super) {
-    tslib_1.__extends(RowHeaderCell, _super);
-    function RowHeaderCell() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    RowHeaderCell.prototype.render = function () {
-        var loadableContentDivClasses = classNames(Classes.TABLE_ROW_NAME_TEXT, Classes.TABLE_TRUNCATED_TEXT);
-        var _a = this.props, 
-        // from IRowHeaderCellProps
-        isRowReorderable = _a.isRowReorderable, isRowSelected = _a.isRowSelected, 
-        // from IHeaderProps
-        spreadableProps = tslib_1.__rest(_a, ["isRowReorderable", "isRowSelected"]);
-        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isRowReorderable, isSelected: this.props.isRowSelected }, spreadableProps),
-            React.createElement("div", { className: Classes.TABLE_ROW_NAME },
-                React.createElement(loadableContent_1.LoadableContent, { loading: spreadableProps.loading },
-                    React.createElement("div", { className: loadableContentDivClasses }, spreadableProps.name))),
-            this.props.children,
-            spreadableProps.loading ? undefined : spreadableProps.resizeHandle));
-    };
-    RowHeaderCell.prototype.validateProps = function (nextProps) {
-        if (nextProps.menu != null) {
-            // throw this warning from the publicly exported, higher-order *HeaderCell components
-            // rather than HeaderCell, so consumers know exactly which components are receiving the
-            // offending prop
-            console.warn(Errors.ROW_HEADER_CELL_MENU_DEPRECATED);
-        }
-    };
-    return RowHeaderCell;
-}(core_1.AbstractComponent));
-exports.RowHeaderCell = RowHeaderCell;
-
-//# sourceMappingURL=rowHeaderCell.js.map
-
-
-/***/ }),
-/* 298 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var batcher_1 = __webpack_require__(299);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-var reorderable_1 = __webpack_require__(313);
-var resizable_1 = __webpack_require__(314);
-var selectable_1 = __webpack_require__(288);
-var regions_1 = __webpack_require__(280);
-var RESET_CELL_KEYS_BLACKLIST = [
-    "endIndex",
-    "startIndex",
-    "viewportRect",
-];
-var Header = (function (_super) {
-    tslib_1.__extends(Header, _super);
-    function Header(props, context) {
-        var _this = _super.call(this, props, context) || this;
-        _this.state = {
-            hasSelectionEnded: false,
-        };
-        _this.batcher = new batcher_1.Batcher();
-        _this.locateClick = function (event) {
-            var coord = _this.props.getMouseCoordinate(event);
-            _this.activationIndex = _this.props.convertPointToIndex(coord);
-            return _this.props.toRegion(_this.activationIndex);
-        };
-        _this.locateDragForSelection = function (_event, coords) {
-            var coord = _this.props.getDragCoordinate(coords.current);
-            var startIndex = _this.activationIndex;
-            var endIndex = _this.props.convertPointToIndex(coord);
-            return _this.props.toRegion(startIndex, endIndex);
-        };
-        _this.locateDragForReordering = function (_event, coords) {
-            var coord = _this.props.getDragCoordinate(coords.current);
-            var guideIndex = _this.props.convertPointToIndex(coord, true);
-            return (guideIndex < 0) ? undefined : guideIndex;
-        };
-        _this.renderCells = function () {
-            var startIndex = _this.props.startIndex;
-            var endIndex = _this.props.endIndex;
-            _this.batcher.startNewBatch();
-            for (var index = startIndex; index <= endIndex; index++) {
-                _this.batcher.addArgsToBatch(index);
-            }
-            _this.batcher.removeOldAddNew(_this.renderNewCell);
-            if (!_this.batcher.isDone()) {
-                _this.batcher.idleCallback(function () { return _this.forceUpdate(); });
-            }
-            return _this.batcher.getList();
-        };
-        _this.renderNewCell = function (index) {
-            var extremaClasses = _this.props.getCellExtremaClasses(index, _this.props.endIndex);
-            var renderer = _this.props.isGhostIndex(index)
-                ? _this.props.renderGhostCell
-                : _this.renderCell;
-            return renderer(index, extremaClasses);
-        };
-        _this.renderCell = function (index, extremaClasses) {
-            var _a = _this.props, getIndexClass = _a.getIndexClass, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions;
-            var cell = _this.props.renderHeaderCell(index);
-            var isLoading = cell.props.loading != null ? cell.props.loading : _this.props.loading;
-            var isSelected = _this.props.isCellSelected(index);
-            var isEntireCellTargetReorderable = _this.isEntireCellTargetReorderable(cell, isSelected);
-            var className = classNames(extremaClasses, (_b = {},
-                _b[Classes.TABLE_DRAGGABLE] = onSelection != null,
-                _b[Classes.TABLE_HEADER_REORDERABLE] = isEntireCellTargetReorderable,
-                _b), _this.props.getCellIndexClass(index), cell.props.className);
-            var cellProps = (_c = {
-                    className: className,
-                    index: index
-                },
-                _c[_this.props.headerCellIsSelectedPropName] = isSelected,
-                _c[_this.props.headerCellIsReorderablePropName] = isEntireCellTargetReorderable,
-                _c.loading = isLoading,
-                _c.reorderHandle = _this.maybeRenderReorderHandle(cell, index),
-                _c);
-            var modifiedHandleSizeChanged = function (size) { return _this.props.handleSizeChanged(index, size); };
-            var modifiedHandleResizeEnd = function (size) { return _this.props.handleResizeEnd(index, size); };
-            var modifiedHandleResizeHandleDoubleClick = function () { return _this.props.handleResizeDoubleClick(index); };
-            var baseChildren = (React.createElement(selectable_1.DragSelectable, { allowMultipleSelection: _this.props.allowMultipleSelection, disabled: isEntireCellTargetReorderable, ignoredSelectors: ["." + Classes.TABLE_REORDER_HANDLE], key: getIndexClass(index), locateClick: _this.locateClick, locateDrag: _this.locateDragForSelection, onFocus: _this.props.onFocus, onSelection: _this.handleDragSelectableSelection, onSelectionEnd: _this.handleDragSelectableSelectionEnd, selectedRegions: selectedRegions, selectedRegionTransform: _this.props.selectedRegionTransform },
-                React.createElement(resizable_1.Resizable, { isResizable: _this.props.isResizable, maxSize: _this.props.maxSize, minSize: _this.props.minSize, onDoubleClick: modifiedHandleResizeHandleDoubleClick, onLayoutLock: _this.props.onLayoutLock, onResizeEnd: modifiedHandleResizeEnd, onSizeChanged: modifiedHandleSizeChanged, orientation: _this.props.resizeOrientation, size: _this.props.getCellSize(index) }, React.cloneElement(cell, cellProps))));
-            return _this.isReorderHandleEnabled(cell)
-                ? baseChildren // reordering will be handled by interacting with the reorder handle
-                : _this.wrapInDragReorderable(index, baseChildren, !isEntireCellTargetReorderable);
-            var _b, _c;
-        };
-        _this.handleDragSelectableSelection = function (selectedRegions) {
-            _this.props.onSelection(selectedRegions);
-            _this.setState({ hasSelectionEnded: false });
-        };
-        _this.handleDragSelectableSelectionEnd = function () {
-            _this.activationIndex = null; // not strictly required, but good practice
-            _this.setState({ hasSelectionEnded: true });
-        };
-        _this.isEntireCellTargetReorderable = function (cell, isSelected) {
-            var selectedRegions = _this.props.selectedRegions;
-            // although reordering may be generally enabled for this row/column (via props.isReorderable), the
-            // row/column shouldn't actually become reorderable from a user perspective until a few other
-            // conditions are true:
-            return _this.props.isReorderable
-                && isSelected
-                && _this.state.hasSelectionEnded
-                && regions_1.Regions.getRegionCardinality(selectedRegions[0]) === _this.props.fullRegionCardinality
-                && selectedRegions.length === 1
-                && !_this.isReorderHandleEnabled(cell);
-        };
-        return _this;
-    }
-    Header.prototype.componentDidMount = function () {
-        if (this.props.selectedRegions != null && this.props.selectedRegions.length > 0) {
-            // we already have a selection defined, so we'll want to enable reordering interactions
-            // right away if other criteria are satisfied too.
-            this.setState({ hasSelectionEnded: true });
-        }
-    };
-    Header.prototype.componentWillUnmount = function () {
-        this.batcher.cancelOutstandingCallback();
-    };
-    Header.prototype.componentWillReceiveProps = function (nextProps) {
-        if (nextProps.selectedRegions != null && nextProps.selectedRegions.length > 0) {
-            this.setState({ hasSelectionEnded: true });
-        }
-        else {
-            this.setState({ hasSelectionEnded: false });
-        }
-    };
-    Header.prototype.componentWillUpdate = function (nextProps, nextState) {
-        var resetKeysBlacklist = { exclude: RESET_CELL_KEYS_BLACKLIST };
-        var shouldResetBatcher = !utils_1.Utils.shallowCompareKeys(this.props, nextProps, resetKeysBlacklist);
-        shouldResetBatcher = shouldResetBatcher || !utils_1.Utils.shallowCompareKeys(this.state, nextState);
-        if (shouldResetBatcher) {
-            this.batcher.reset();
-        }
-    };
-    Header.prototype.render = function () {
-        return this.props.wrapCells(this.renderCells());
-    };
-    Header.prototype.isReorderHandleEnabled = function (cell) {
-        // the reorder handle can only appear in the column interaction bar
-        return this.isColumnHeader() && cell.props.useInteractionBar && this.props.isReorderable;
-    };
-    Header.prototype.maybeRenderReorderHandle = function (cell, index) {
-        return !this.isReorderHandleEnabled(cell)
-            ? undefined
-            : this.wrapInDragReorderable(index, React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE_TARGET },
-                React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE },
-                    React.createElement("span", { className: classNames(core_1.Classes.ICON_STANDARD, core_1.IconClasses.DRAG_HANDLE_VERTICAL) }))));
-    };
-    Header.prototype.isColumnHeader = function () {
-        return this.props.fullRegionCardinality === regions_1.RegionCardinality.FULL_COLUMNS;
-    };
-    Header.prototype.wrapInDragReorderable = function (index, children, disabled) {
-        return (React.createElement(reorderable_1.DragReorderable, { disabled: disabled, key: this.props.getIndexClass(index), locateClick: this.locateClick, locateDrag: this.locateDragForReordering, onReordered: this.props.onReordered, onReordering: this.props.onReordering, onSelection: this.props.onSelection, selectedRegions: this.props.selectedRegions, toRegion: this.props.toRegion }, children));
-    };
-    return Header;
-}(React.Component));
-exports.Header = Header;
-/**
- * In the current architecture, ColumnHeaderCell and RowHeaderCell each need to include this same
- * shouldComponentUpdate code at their level. To avoid writing the same code in two places, we
- * expose this utility for each higher-level component to leverage in their own respective
- * shouldComponentUpdate functions.
- *
- * (See: https://github.com/palantir/blueprint/issues/1214)
- *
- * @param props - the current props
- * @param nextProps - the next props
- */
-function shouldHeaderComponentUpdate(props, nextProps, isSelectedRegionRelevant) {
-    if (!utils_1.Utils.shallowCompareKeys(props, nextProps, { exclude: ["selectedRegions"] })) {
-        return true;
-    }
-    var relevantSelectedRegions = props.selectedRegions.filter(isSelectedRegionRelevant);
-    var nextRelevantSelectedRegions = nextProps.selectedRegions.filter(isSelectedRegionRelevant);
-    // ignore selection changes that didn't involve any relevant selected regions (FULL_COLUMNS
-    // for column headers, or FULL_ROWS for row headers)
-    if (relevantSelectedRegions.length > 0 || nextRelevantSelectedRegions.length > 0) {
-        return !utils_1.Utils.deepCompareKeys(relevantSelectedRegions, nextRelevantSelectedRegions);
-    }
-    return false;
-}
-exports.shouldHeaderComponentUpdate = shouldHeaderComponentUpdate;
-
-//# sourceMappingURL=header.js.map
-
-
-/***/ }),
-/* 299 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = __webpack_require__(228);
-var requestIdleCallback_1 = __webpack_require__(312);
-/**
- * This class helps batch updates to large lists.
- *
- * For example, if your React component has many children, updating them all at
- * once may cause jank when reconciling the DOM. This class helps you update
- * only a few children per frame.
- *
- * A typical usage would be:
- *
- * ```tsx
- * public renderChildren = (allChildrenKeys: string[]) => {
- *
- *     batcher.startNewBatch();
- *
- *     allChildrenKeys.forEach((prop1: string, index: number) => {
- *         batcher.addArgsToBatch(prop1, "prop2", index);
- *     });
- *
- *     batcher.removeOldAddNew((prop1: string, prop2: string, other: number) => {
- *         return <Child prop1={prop1} prop2={prop2} other={other} />;
- *     });
- *
- *     if (!batcher.isDone()) {
- *         batcher.idleCallback(this.forceUpdate());
- *     }
- *
- *     const currentChildren = batcher.getList();
- *     return currentChildren;
- * }
- *
- * ```
- */
-var Batcher = (function () {
-    function Batcher() {
-        var _this = this;
-        this.currentObjects = {};
-        this.oldObjects = {};
-        this.batchArgs = {};
-        this.done = true;
-        this.handleIdleCallback = function () {
-            var callback = _this.callback;
-            delete _this.callback;
-            core_1.Utils.safeInvoke(callback);
-        };
-        this.mapCurrentObjectKey = function (key) {
-            return _this.currentObjects[key];
-        };
-    }
-    /**
-     * Resets the "batch" and "current" sets. This essentially clears the cache
-     * and prevents accidental re-use of "current" objects.
-     */
-    Batcher.prototype.reset = function () {
-        this.batchArgs = {};
-        this.oldObjects = this.currentObjects;
-        this.currentObjects = {};
-    };
-    /**
-     * Starts a new "batch" argument set
-     */
-    Batcher.prototype.startNewBatch = function () {
-        this.batchArgs = {};
-    };
-    /**
-     * Stores the variadic arguments to be later batched together.
-     *
-     * The arguments must be simple stringifyable objects.
-     */
-    Batcher.prototype.addArgsToBatch = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        this.batchArgs[args.join(Batcher.ARG_DELIMITER)] = args;
-    };
-    /**
-     * Compares the set of "batch" arguments to the "current" set. Creates any
-     * new objects using the callback as a factory. Removes old objects.
-     *
-     * Arguments that are in the "current" set but were not part of the last
-     * "batch" set are considered candidates for removal. Similarly, Arguments
-     * that are part of the "batch" set but not the "current" set are candidates
-     * for addition.
-     *
-     * The number of objects added and removed may be limited with the
-     * `...Limit` parameters.
-     *
-     * Finally, the batcher determines if the batching is complete if the
-     * "current" arguments match the "batch" arguments.
-     */
-    Batcher.prototype.removeOldAddNew = function (callback, addNewLimit, removeOldLimit, updateLimit) {
-        var _this = this;
-        if (addNewLimit === void 0) { addNewLimit = Batcher.DEFAULT_ADD_LIMIT; }
-        if (removeOldLimit === void 0) { removeOldLimit = Batcher.DEFAULT_REMOVE_LIMIT; }
-        if (updateLimit === void 0) { updateLimit = Batcher.DEFAULT_UPDATE_LIMIT; }
-        // remove old
-        var keysToRemove = this.setKeysDifference(this.currentObjects, this.batchArgs, removeOldLimit);
-        keysToRemove.forEach(function (key) { return delete _this.currentObjects[key]; });
-        // remove ALL old objects not in batch
-        var keysToRemoveOld = this.setKeysDifference(this.oldObjects, this.batchArgs, -1);
-        keysToRemoveOld.forEach(function (key) { return delete _this.oldObjects[key]; });
-        // copy ALL old objects into current objects if not defined
-        var keysToShallowCopy = Object.keys(this.oldObjects);
-        keysToShallowCopy.forEach(function (key) {
-            if (_this.currentObjects[key] == null) {
-                _this.currentObjects[key] = _this.oldObjects[key];
-            }
-        });
-        // update old objects with factory
-        var keysToUpdate = this.setKeysIntersection(this.oldObjects, this.currentObjects, updateLimit);
-        keysToUpdate.forEach(function (key) {
-            delete _this.oldObjects[key];
-            _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]);
-        });
-        // add new objects with factory
-        var keysToAdd = this.setKeysDifference(this.batchArgs, this.currentObjects, addNewLimit);
-        keysToAdd.forEach(function (key) { return _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]); });
-        // set `done` to true of sets match exactly after add/remove and there
-        // are no "old objects" remaining
-        this.done = this.setHasSameKeys(this.batchArgs, this.currentObjects)
-            && Object.keys(this.oldObjects).length === 0;
-    };
-    /**
-     * Returns true of the "current" set matches the "batch" set.
-     */
-    Batcher.prototype.isDone = function () {
-        return this.done;
-    };
-    /**
-     * Returns all the objects in the "current" set.
-     */
-    Batcher.prototype.getList = function () {
-        return Object.keys(this.currentObjects).map(this.mapCurrentObjectKey);
-    };
-    /**
-     * Registers a callback to be invoked on the next idle frame. If a callback
-     * has already been registered, we do not register a new one.
-     */
-    Batcher.prototype.idleCallback = function (callback) {
-        if (!this.callback) {
-            this.callback = callback;
-            requestIdleCallback_1.requestIdleCallback(this.handleIdleCallback);
-        }
-    };
-    Batcher.prototype.cancelOutstandingCallback = function () {
-        delete this.callback;
-    };
-    Batcher.prototype.setKeysDifference = function (a, b, limit) {
-        return this.setKeysOperation(a, b, "difference", limit);
-    };
-    Batcher.prototype.setKeysIntersection = function (a, b, limit) {
-        return this.setKeysOperation(a, b, "intersect", limit);
-    };
-    /**
-     * Compares the keys of A from B -- and performs an "intersection" or
-     * "difference" operation on the keys.
-     *
-     * Note that the order of operands A and B matters for the "difference"
-     * operation.
-     *
-     * Returns an array of at most `limit` keys.
-     */
-    Batcher.prototype.setKeysOperation = function (a, b, operation, limit) {
-        var result = [];
-        var aKeys = Object.keys(a);
-        for (var i = 0; i < aKeys.length && (limit < 0 || result.length < limit); i++) {
-            var key = aKeys[i];
-            if ((operation === "difference" && a[key] && !b[key]) ||
-                (operation === "intersect" && a[key] && b[key])) {
-                result.push(key);
-            }
-        }
-        return result;
-    };
-    /**
-     * Returns true of objects `a` and `b` have exactly the same keys.
-     */
-    Batcher.prototype.setHasSameKeys = function (a, b) {
-        var aKeys = Object.keys(a);
-        var bKeys = Object.keys(b);
-        if (aKeys.length !== bKeys.length) {
-            return false;
-        }
-        for (var _i = 0, aKeys_1 = aKeys; _i < aKeys_1.length; _i++) {
-            var aKey = aKeys_1[_i];
-            if (b[aKey] === undefined) {
-                return false;
-            }
-        }
-        return true;
-    };
-    return Batcher;
-}());
-Batcher.DEFAULT_ADD_LIMIT = 20;
-Batcher.DEFAULT_UPDATE_LIMIT = 20;
-Batcher.DEFAULT_REMOVE_LIMIT = 20;
-Batcher.ARG_DELIMITER = "|";
-exports.Batcher = Batcher;
-
-//# sourceMappingURL=batcher.js.map
-
-
-/***/ }),
 /* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -37743,14 +37743,24 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(1);
+var React = __webpack_require__(0);
 var table_1 = __webpack_require__(301);
 var TableEx = (function (_super) {
     __extends(TableEx, _super);
     function TableEx() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cellValidator = function (r, c) {
+            console.log('Change', r, c);
+        };
+        _this.r = -1;
+        _this.c = -1;
+        _this.confirmEdit = function (v, r, c) {
+            console.log('FinalV', v, 'at(', _this.r, _this.c, ')');
+        };
         _this.renderCell = function (rowIndex, col) {
-            return React.createElement(table_1.Cell, null, "$" + (rowIndex * 10 + 11).toFixed(2));
+            _this.r = rowIndex;
+            _this.c = col;
+            return (React.createElement(table_1.EditableCell, { onChange: _this.cellValidator, value: "$" + (rowIndex * 10 + 11).toFixed(2), onConfirm: _this.confirmEdit }));
         };
         _this.renderNamesCell = function (rowId, col) {
             return React.createElement(table_1.Cell, null,
@@ -37795,39 +37805,39 @@ exports.TableEx = TableEx;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(302);
-var cell_1 = __webpack_require__(283);
+var cell_1 = __webpack_require__(57);
 exports.Cell = cell_1.Cell;
 var editableCell_1 = __webpack_require__(304);
 exports.EditableCell = editableCell_1.EditableCell;
 var jsonFormat_1 = __webpack_require__(305);
 exports.JSONFormat = jsonFormat_1.JSONFormat;
-var truncatedFormat_1 = __webpack_require__(291);
+var truncatedFormat_1 = __webpack_require__(141);
 exports.TruncatedPopoverMode = truncatedFormat_1.TruncatedPopoverMode;
 exports.TruncatedFormat = truncatedFormat_1.TruncatedFormat;
-var column_1 = __webpack_require__(292);
+var column_1 = __webpack_require__(142);
 exports.Column = column_1.Column;
-var index_1 = __webpack_require__(286);
+var index_1 = __webpack_require__(81);
 exports.Clipboard = index_1.Clipboard;
 exports.Grid = index_1.Grid;
 exports.Rect = index_1.Rect;
 exports.Utils = index_1.Utils;
-var draggable_1 = __webpack_require__(281);
+var draggable_1 = __webpack_require__(42);
 exports.Draggable = draggable_1.Draggable;
-var menus_1 = __webpack_require__(294);
+var menus_1 = __webpack_require__(144);
 exports.CopyCellsMenuItem = menus_1.CopyCellsMenuItem;
-var resizeHandle_1 = __webpack_require__(284);
+var resizeHandle_1 = __webpack_require__(58);
 exports.Orientation = resizeHandle_1.Orientation;
 exports.ResizeHandle = resizeHandle_1.ResizeHandle;
-var selectable_1 = __webpack_require__(288);
+var selectable_1 = __webpack_require__(83);
 exports.DragSelectable = selectable_1.DragSelectable;
-var columnHeaderCell_1 = __webpack_require__(289);
+var columnHeaderCell_1 = __webpack_require__(84);
 exports.ColumnHeaderCell = columnHeaderCell_1.ColumnHeaderCell;
 exports.HorizontalCellDivider = columnHeaderCell_1.HorizontalCellDivider;
-var rowHeaderCell_1 = __webpack_require__(297);
+var rowHeaderCell_1 = __webpack_require__(147);
 exports.RowHeaderCell = rowHeaderCell_1.RowHeaderCell;
 var editableName_1 = __webpack_require__(309);
 exports.EditableName = editableName_1.EditableName;
-var regions_1 = __webpack_require__(280);
+var regions_1 = __webpack_require__(21);
 exports.ColumnLoadingOption = regions_1.ColumnLoadingOption;
 exports.RegionCardinality = regions_1.RegionCardinality;
 exports.Regions = regions_1.Regions;
@@ -41691,7 +41701,7 @@ exports.Table = table_1.Table;
   return globals;
 }));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(303), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(303), __webpack_require__(1)))
 
 /***/ }),
 /* 303 */
@@ -41734,13 +41744,13 @@ module.exports = g;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var ReactDOM = __webpack_require__(20);
-var core_1 = __webpack_require__(228);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-var draggable_1 = __webpack_require__(281);
-var cell_1 = __webpack_require__(283);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(22);
+var core_1 = __webpack_require__(14);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+var draggable_1 = __webpack_require__(42);
+var cell_1 = __webpack_require__(57);
 var EditableCell = (function (_super) {
     tslib_1.__extends(EditableCell, _super);
     function EditableCell(props, context) {
@@ -41827,10 +41837,10 @@ exports.EditableCell = EditableCell;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var truncatedFormat_1 = __webpack_require__(291);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var truncatedFormat_1 = __webpack_require__(141);
 var JSONFormat = (function (_super) {
     tslib_1.__extends(JSONFormat, _super);
     function JSONFormat() {
@@ -41884,8 +41894,8 @@ exports.JSONFormat = JSONFormat;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
 /**
  * A React component that measures and rounds the size of its only child. This
  * is necessary due to a Chrome bug that prevents scrolling when the size is
@@ -41942,11 +41952,11 @@ exports.RoundSize = RoundSize;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var clipboard_1 = __webpack_require__(287);
-var regions_1 = __webpack_require__(280);
+var core_1 = __webpack_require__(14);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var clipboard_1 = __webpack_require__(82);
+var regions_1 = __webpack_require__(21);
 var CopyCellsMenuItem = (function (_super) {
     tslib_1.__extends(CopyCellsMenuItem, _super);
     function CopyCellsMenuItem() {
@@ -41988,7 +41998,7 @@ exports.CopyCellsMenuItem = CopyCellsMenuItem;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var regions_1 = __webpack_require__(280);
+var regions_1 = __webpack_require__(21);
 var MenuContext = (function () {
     function MenuContext(target, selectedRegions, numRows, numCols) {
         this.target = target;
@@ -42030,11 +42040,11 @@ exports.MenuContext = MenuContext;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var classNames = __webpack_require__(6);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
+var core_1 = __webpack_require__(14);
+var classNames = __webpack_require__(3);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
 var EditableName = (function (_super) {
     tslib_1.__extends(EditableName, _super);
     function EditableName() {
@@ -42068,24 +42078,24 @@ exports.EditableName = EditableName;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var core_2 = __webpack_require__(228);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var column_1 = __webpack_require__(292);
-var Classes = __webpack_require__(278);
-var clipboard_1 = __webpack_require__(287);
-var grid_1 = __webpack_require__(293);
-var rect_1 = __webpack_require__(282);
-var utils_1 = __webpack_require__(279);
+var core_1 = __webpack_require__(14);
+var core_2 = __webpack_require__(14);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var column_1 = __webpack_require__(142);
+var Classes = __webpack_require__(12);
+var clipboard_1 = __webpack_require__(82);
+var grid_1 = __webpack_require__(143);
+var rect_1 = __webpack_require__(43);
+var utils_1 = __webpack_require__(17);
 var columnHeader_1 = __webpack_require__(311);
-var columnHeaderCell_1 = __webpack_require__(289);
+var columnHeaderCell_1 = __webpack_require__(84);
 var rowHeader_1 = __webpack_require__(315);
 var resizeSensor_1 = __webpack_require__(316);
 var guides_1 = __webpack_require__(317);
 var regions_1 = __webpack_require__(318);
 var locator_1 = __webpack_require__(319);
-var regions_2 = __webpack_require__(280);
+var regions_2 = __webpack_require__(21);
 var tableBody_1 = __webpack_require__(320);
 var Table = Table_1 = (function (_super) {
     tslib_1.__extends(Table, _super);
@@ -42991,14 +43001,14 @@ var Table_1;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var index_1 = __webpack_require__(286);
-var resizeHandle_1 = __webpack_require__(284);
-var regions_1 = __webpack_require__(280);
-var columnHeaderCell_1 = __webpack_require__(289);
-var header_1 = __webpack_require__(298);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var index_1 = __webpack_require__(81);
+var resizeHandle_1 = __webpack_require__(58);
+var regions_1 = __webpack_require__(21);
+var columnHeaderCell_1 = __webpack_require__(84);
+var header_1 = __webpack_require__(148);
 var ColumnHeader = (function (_super) {
     tslib_1.__extends(ColumnHeader, _super);
     function ColumnHeader() {
@@ -43205,11 +43215,11 @@ exports.requestIdleCallback = function (callback) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var utils_1 = __webpack_require__(279);
-var draggable_1 = __webpack_require__(281);
-var regions_1 = __webpack_require__(280);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(17);
+var draggable_1 = __webpack_require__(42);
+var regions_1 = __webpack_require__(21);
 var DragReorderable = (function (_super) {
     tslib_1.__extends(DragReorderable, _super);
     function DragReorderable() {
@@ -43309,10 +43319,10 @@ exports.DragReorderable = DragReorderable;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
-var index_1 = __webpack_require__(286);
-var resizeHandle_1 = __webpack_require__(284);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
+var index_1 = __webpack_require__(81);
+var resizeHandle_1 = __webpack_require__(58);
 var Resizable = (function (_super) {
     tslib_1.__extends(Resizable, _super);
     function Resizable(props, context) {
@@ -43412,13 +43422,13 @@ exports.Resizable = Resizable;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var resizeHandle_1 = __webpack_require__(284);
-var regions_1 = __webpack_require__(280);
-var header_1 = __webpack_require__(298);
-var rowHeaderCell_1 = __webpack_require__(297);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var resizeHandle_1 = __webpack_require__(58);
+var regions_1 = __webpack_require__(21);
+var header_1 = __webpack_require__(148);
+var rowHeaderCell_1 = __webpack_require__(147);
 var RowHeader = (function (_super) {
     tslib_1.__extends(RowHeader, _super);
     function RowHeader() {
@@ -43531,7 +43541,7 @@ exports.renderDefaultRowHeader = renderDefaultRowHeader;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Classes = __webpack_require__(278);
+var Classes = __webpack_require__(12);
 /**
  * Efficiently detect when an HTMLElement is resized.
  *
@@ -43629,10 +43639,10 @@ exports.ResizeSensor = ResizeSensor;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
 var GuideLayer = (function (_super) {
     tslib_1.__extends(GuideLayer, _super);
     function GuideLayer() {
@@ -43695,11 +43705,11 @@ exports.GuideLayer = GuideLayer;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var Classes = __webpack_require__(278);
-var utils_1 = __webpack_require__(279);
-var regions_1 = __webpack_require__(280);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(12);
+var utils_1 = __webpack_require__(17);
+var regions_1 = __webpack_require__(21);
 // don't include "regions" or "regionStyles" in here, because they can't be shallowly compared
 var UPDATE_PROPS_KEYS = [
     "className",
@@ -43752,9 +43762,9 @@ exports.RegionLayer = RegionLayer;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Classes = __webpack_require__(278);
-var rect_1 = __webpack_require__(282);
-var utils_1 = __webpack_require__(279);
+var Classes = __webpack_require__(12);
+var rect_1 = __webpack_require__(43);
+var utils_1 = __webpack_require__(17);
 var Locator = (function () {
     function Locator(tableElement, bodyElement, grid) {
         var _this = this;
@@ -43882,17 +43892,17 @@ exports.Locator = Locator;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var classNames = __webpack_require__(6);
-var React = __webpack_require__(1);
-var cell_1 = __webpack_require__(283);
-var batcher_1 = __webpack_require__(299);
-var Classes = __webpack_require__(278);
+var classNames = __webpack_require__(3);
+var React = __webpack_require__(0);
+var cell_1 = __webpack_require__(57);
+var batcher_1 = __webpack_require__(149);
+var Classes = __webpack_require__(12);
 var contextMenuTargetWrapper_1 = __webpack_require__(321);
-var rect_1 = __webpack_require__(282);
-var utils_1 = __webpack_require__(279);
-var menus_1 = __webpack_require__(294);
-var selectable_1 = __webpack_require__(288);
-var regions_1 = __webpack_require__(280);
+var rect_1 = __webpack_require__(43);
+var utils_1 = __webpack_require__(17);
+var menus_1 = __webpack_require__(144);
+var selectable_1 = __webpack_require__(83);
+var regions_1 = __webpack_require__(21);
 /**
  * For perf, we want to ignore changes to the `ISelectableProps` part of the
  * `ITableBodyProps` since those are only used when a context menu is launched.
@@ -44037,9 +44047,9 @@ exports.TableBody = TableBody;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(228);
-var PureRender = __webpack_require__(10);
-var React = __webpack_require__(1);
+var core_1 = __webpack_require__(14);
+var PureRender = __webpack_require__(7);
+var React = __webpack_require__(0);
 /**
  * Since the ContextMenuTarget uses the `onContextMenu` prop instead
  * `element.addEventListener`, the prop can be lost. This wrapper helps us
