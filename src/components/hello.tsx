@@ -26,9 +26,7 @@ class DialogExample extends React.Component<{}, IDialogExampleState> {
     public state = { isOpen: false };
 
 
-    private renderCell = (rowIndex: number) => {
-        return <Cell>{`$${(rowIndex * 10+11).toFixed(2)}`}</Cell>
-    };
+   
 
 
     public render() {
@@ -57,10 +55,6 @@ class DialogExample extends React.Component<{}, IDialogExampleState> {
                     </div>
                 </Dialog>
                 <h5>Table! </h5>
-                <Table numRows={10}>
-                    <Column name="Dollars" renderCell={this.renderCell} />
-                </Table>
-            
             </div>
         );
     }
