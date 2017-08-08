@@ -7940,7 +7940,7 @@ var Hello = (function (_super) {
     Hello.prototype.render = function () {
         return React.createElement("div", null,
             React.createElement("b", null,
-                "Hello from ",
+                "Hi there! ",
                 this.props.compiler,
                 " and ",
                 this.props.framework,
@@ -7959,7 +7959,7 @@ var DialogExample = (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = { isOpen: false };
         _this.renderCell = function (rowIndex) {
-            return React.createElement(table_1.Cell, null, "$" + (rowIndex * 10).toFixed(2));
+            return React.createElement(table_1.Cell, null, "$" + (rowIndex * 10 + 11).toFixed(2));
         };
         _this.toggleDialog = function () { return _this.setState({ isOpen: !_this.state.isOpen }); };
         return _this;
@@ -7973,6 +7973,7 @@ var DialogExample = (function (_super) {
                     React.createElement("div", { className: "pt-dialog-footer-actions" },
                         React.createElement(core_1.Button, { text: "Secondary" }),
                         React.createElement(core_1.Button, { intent: core_1.Intent.PRIMARY, onClick: this.toggleDialog, text: "Primary" })))),
+            React.createElement("h5", null, "Table! "),
             React.createElement(table_1.Table, { numRows: 10 },
                 React.createElement(table_1.Column, { name: "Dollars", renderCell: this.renderCell }))));
     };

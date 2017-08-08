@@ -9,7 +9,7 @@ export interface HelloProps { compiler: string; framework: string; }
 export class Hello extends React.Component<HelloProps, undefined> {
     render() {
         return <div>
-            <b>Hello from {this.props.compiler} and {this.props.framework}!</b> <br />
+            <b>Hi there! {this.props.compiler} and {this.props.framework}!</b> <br />
             <AnchorButton text="Click" />
             <DialogExample />
         </div>;
@@ -27,7 +27,7 @@ class DialogExample extends React.Component<{}, IDialogExampleState> {
 
 
     private renderCell = (rowIndex: number) => {
-        return <Cell>{`$${(rowIndex * 10).toFixed(2)}`}</Cell>
+        return <Cell>{`$${(rowIndex * 10+11).toFixed(2)}`}</Cell>
     };
 
 
@@ -56,7 +56,7 @@ class DialogExample extends React.Component<{}, IDialogExampleState> {
                         </div>
                     </div>
                 </Dialog>
-
+                <h5>Table! </h5>
                 <Table numRows={10}>
                     <Column name="Dollars" renderCell={this.renderCell} />
                 </Table>
