@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Intent, Spinner,AnchorButton , Button, Dialog } from "@blueprintjs/core";
+import { Intent, Spinner, AnchorButton, Button, Dialog } from "@blueprintjs/core";
+import { Table, Cell, Column } from "@blueprintjs/table";
 
 export interface HelloProps { compiler: string; framework: string; }
 
@@ -8,9 +9,9 @@ export interface HelloProps { compiler: string; framework: string; }
 export class Hello extends React.Component<HelloProps, undefined> {
     render() {
         return <div>
-             <b>Hello from {this.props.compiler} and {this.props.framework}!</b> <br/>
-             <AnchorButton text="Click" />
-             <DialogExample />
+            <b>Hello from {this.props.compiler} and {this.props.framework}!</b> <br />
+            <AnchorButton text="Click" />
+            <DialogExample />
         </div>;
     }
 }
@@ -20,13 +21,20 @@ export class Hello extends React.Component<HelloProps, undefined> {
 interface IDialogExampleState {
     isOpen: boolean;
 }
- 
+
 class DialogExample extends React.Component<{}, IDialogExampleState> {
     public state = { isOpen: false };
- 
+
+
+    private renderCell = (rowIndex: number) => {
+        return <Cell>{`$${(rowIndex * 10).toFixed(2)}`}</Cell>
+    };
+
+
     public render() {
         return (
-            <div>
+            <div style={{padding:'10%'}}>
+                 
                 <Button onClick={this.toggleDialog} text="Show dialog" />
                 <Dialog
                     iconName="inbox"
@@ -48,9 +56,15 @@ class DialogExample extends React.Component<{}, IDialogExampleState> {
                         </div>
                     </div>
                 </Dialog>
+
+                <Table numRows={10}>
+                    <Column name="Dollars" renderCell={this.renderCell} />
+                </Table>
+            
             </div>
         );
     }
- 
+
     private toggleDialog = () => this.setState({ isOpen: !this.state.isOpen });
 }
+

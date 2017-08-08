@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 50);
+/******/ 	return __webpack_require__(__webpack_require__.s = 73);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -257,6 +257,61 @@ function __asyncValues(o) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2016 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				classes.push(classNames.apply(null, arg));
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+			return classNames;
+		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /*
  * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
@@ -266,7 +321,7 @@ function __asyncValues(o) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var intent_1 = __webpack_require__(27);
+var intent_1 = __webpack_require__(40);
 // modifiers
 exports.DARK = "pt-dark";
 exports.ACTIVE = "pt-active";
@@ -432,62 +487,80 @@ exports.intentClass = intentClass;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-  Copyright (c) 2016 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
+"use strict";
+/**
+ * @author Félix Girault <felix.girault@gmail.com>
+ * @license MIT
+ */
 
-(function () {
-	'use strict';
 
-	var hasOwn = {}.hasOwnProperty;
+var warning = __webpack_require__(27);
+var shallowEqual = __webpack_require__(80);
 
-	function classNames () {
-		var classes = [];
 
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
 
-			var argType = typeof arg;
+/**
+ * Tells if a component should update given it's next props
+ * and state.
+ *
+ * @param object nextProps Next props.
+ * @param object nextState Next state.
+ */
+function shouldComponentUpdate(nextProps, nextState) {
+  return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
+}
 
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg)) {
-				classes.push(classNames.apply(null, arg));
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
+/**
+ * Returns a text description of the component that can be
+ * used to identify it in error messages.
+ *
+ * @see https://github.com/facebook/react/blob/v15.4.0-rc.3/src/renderers/shared/stack/reconciler/ReactCompositeComponent.js#L1143
+ * @param {function} component The component.
+ * @return {string} The name of the component.
+ */
+function getComponentName(component) {
+  var constructor = component.prototype && component.prototype.constructor;
 
-		return classes.join(' ');
-	}
+  return (
+    component.displayName
+    || (constructor && constructor.displayName)
+    || component.name
+    || (constructor && constructor.name)
+    || 'a component'
+  );
+}
 
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = classNames;
-	} else if (true) {
-		// register as 'classnames', consistent with npm package name
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-			return classNames;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-		window.classNames = classNames;
-	}
-}());
+/**
+ * Makes the given component "pure".
+ *
+ * @param object component Component.
+ */
+function pureRenderDecorator(component) {
+  if (component.prototype.shouldComponentUpdate !== undefined) {
+    // We're not using the condition mecanism of warning()
+    // here to avoid useless calls to getComponentName().
+    warning(
+      false,
+      'Cannot decorate `%s` with @pureRenderDecorator, '
+      + 'because it already implements `shouldComponentUpdate().',
+      getComponentName(component)
+    )
+  }
+
+  component.prototype.shouldComponentUpdate = shouldComponentUpdate;
+  return component;
+}
+
+
+
+module.exports = pureRenderDecorator;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -499,7 +572,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = __webpack_require__(7);
+var errors_1 = __webpack_require__(9);
 /** Returns whether `process.env.NODE_ENV` exists and equals `env`. */
 function isNodeEnv(env) {
     return typeof process !== "undefined" && process.env && process.env.NODE_ENV === env;
@@ -587,83 +660,153 @@ exports.throttleEvent = throttleEvent;
 ;
 
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * @author Félix Girault <felix.girault@gmail.com>
- * @license MIT
- */
-
-
-var warning = __webpack_require__(19);
-var shallowEqual = __webpack_require__(58);
-
-
-
-/**
- * Tells if a component should update given it's next props
- * and state.
- *
- * @param object nextProps Next props.
- * @param object nextState Next state.
- */
-function shouldComponentUpdate(nextProps, nextState) {
-  return !shallowEqual(this.props, nextProps) || !shallowEqual(this.state, nextState);
-}
-
-/**
- * Returns a text description of the component that can be
- * used to identify it in error messages.
- *
- * @see https://github.com/facebook/react/blob/v15.4.0-rc.3/src/renderers/shared/stack/reconciler/ReactCompositeComponent.js#L1143
- * @param {function} component The component.
- * @return {string} The name of the component.
- */
-function getComponentName(component) {
-  var constructor = component.prototype && component.prototype.constructor;
-
-  return (
-    component.displayName
-    || (constructor && constructor.displayName)
-    || component.name
-    || (constructor && constructor.name)
-    || 'a component'
-  );
-}
-
-/**
- * Makes the given component "pure".
- *
- * @param object component Component.
- */
-function pureRenderDecorator(component) {
-  if (component.prototype.shouldComponentUpdate !== undefined) {
-    // We're not using the condition mecanism of warning()
-    // here to avoid useless calls to getComponentName().
-    warning(
-      false,
-      'Cannot decorate `%s` with @pureRenderDecorator, '
-      + 'because it already implements `shouldComponentUpdate().',
-      getComponentName(component)
-    )
-  }
-
-  component.prototype.shouldComponentUpdate = shouldComponentUpdate;
-  return component;
-}
-
-
-
-module.exports = pureRenderDecorator;
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TABLE_BODY = "bp-table-body";
+exports.TABLE_BODY_SCROLL_CLIENT = "bp-table-body-scroll-client";
+exports.TABLE_BODY_VIRTUAL_CLIENT = "bp-table-body-virtual-client";
+exports.TABLE_BOTTOM_CONTAINER = "bp-table-bottom-container";
+exports.TABLE_CELL = "bp-table-cell";
+exports.TABLE_CELL_CLIENT = "bp-table-cell-client";
+exports.TABLE_CELL_GHOST = "bp-table-cell-ghost";
+exports.TABLE_CELL_INTERACTIVE = "bp-table-cell-interactive";
+exports.TABLE_CELL_LEDGER_EVEN = "bp-table-cell-ledger-even";
+exports.TABLE_CELL_LEDGER_ODD = "bp-table-cell-ledger-odd";
+exports.TABLE_COLUMN_HEADER_TR = "bp-table-column-header-tr";
+exports.TABLE_COLUMN_HEADERS = "bp-table-column-headers";
+exports.TABLE_COLUMN_NAME = "bp-table-column-name";
+exports.TABLE_COLUMN_NAME_TEXT = "bp-table-column-name-text";
+exports.TABLE_CONTAINER = "bp-table-container";
+exports.TABLE_DRAGGABLE = "bp-table-draggable";
+exports.TABLE_DRAGGING = "bp-table-dragging";
+exports.TABLE_EDITABLE_NAME = "bp-table-editable-name";
+exports.TABLE_FOCUS_REGION = "bp-table-focus-region";
+exports.TABLE_HEADER = "bp-table-header";
+exports.TABLE_HEADER_ACTIVE = "bp-table-header-active";
+exports.TABLE_HEADER_CONTENT = "bp-table-header-content";
+exports.TABLE_HEADER_REORDERABLE = "bp-table-header-reorderable";
+exports.TABLE_HEADER_SELECTED = "bp-table-header-selected";
+exports.TABLE_HORIZONTAL_CELL_DIVIDER = "bp-table-horizontal-cell-divider";
+exports.TABLE_HORIZONTAL_GUIDE = "bp-table-horizontal-guide";
+exports.TABLE_INTERACTION_BAR = "bp-table-interaction-bar";
+exports.TABLE_LAST_IN_COLUMN = "bp-table-last-in-column";
+exports.TABLE_LAST_IN_ROW = "bp-table-last-in-row";
+exports.TABLE_MENU = "bp-table-menu";
+exports.TABLE_NO_HORIZONTAL_SCROLL = "bp-table-no-horizontal-scroll";
+exports.TABLE_NO_LAYOUT = "bp-table-no-layout";
+exports.TABLE_NO_VERTICAL_SCROLL = "bp-table-no-vertical-scroll";
+exports.TABLE_NO_WRAP_TEXT = "bp-table-no-wrap-text";
+exports.TABLE_NULL = "bp-table-null";
+exports.TABLE_OVERLAY = "bp-table-overlay";
+exports.TABLE_OVERLAY_LAYER = "bp-table-overlay-layer";
+exports.TABLE_POPOVER_WHITESPACE_NORMAL = "bp-table-popover-whitespace-normal";
+exports.TABLE_POPOVER_WHITESPACE_PRE = "bp-table-popover-whitespace-pre";
+exports.TABLE_REGION = "bp-table-region";
+exports.TABLE_REORDER_HANDLE = "bp-table-reorder-handle";
+exports.TABLE_REORDER_HANDLE_TARGET = "bp-table-reorder-handle-target";
+exports.TABLE_REORDERING = "bp-table-reordering";
+exports.TABLE_RESIZE_GUIDES = "bp-table-resize-guides";
+exports.TABLE_RESIZE_HANDLE = "bp-table-resize-handle";
+exports.TABLE_RESIZE_HANDLE_TARGET = "bp-table-resize-handle-target";
+exports.TABLE_RESIZE_HORIZONTAL = "bp-table-resize-horizontal";
+exports.TABLE_RESIZE_SENSOR = "bp-table-resize-sensor";
+exports.TABLE_RESIZE_SENSOR_EXPAND = "bp-table-resize-sensor-expand";
+exports.TABLE_RESIZE_SENSOR_SHRINK = "bp-table-resize-sensor-shrink";
+exports.TABLE_RESIZE_VERTICAL = "bp-table-resize-vertical";
+exports.TABLE_ROUNDED_LAYOUT = "bp-table-rounded-layout";
+exports.TABLE_ROW_HEADERS = "bp-table-row-headers";
+exports.TABLE_ROW_NAME = "bp-table-row-name";
+exports.TABLE_ROW_NAME_TEXT = "bp-table-row-name-text";
+exports.TABLE_SELECTION_ENABLED = "bp-table-selection-enabled";
+exports.TABLE_SELECTION_REGION = "bp-table-selection-region";
+exports.TABLE_TH_MENU = "bp-table-th-menu";
+exports.TABLE_TH_MENU_CONTAINER = "bp-table-th-menu-container";
+exports.TABLE_TH_MENU_CONTAINER_BACKGROUND = "bp-table-th-menu-container-background";
+exports.TABLE_TH_MENU_OPEN = "bp-table-th-menu-open";
+exports.TABLE_THEAD = "bp-table-thead";
+exports.TABLE_TOP_CONTAINER = "bp-table-top-container";
+exports.TABLE_TRUNCATED_CELL = "bp-table-truncated-cell";
+exports.TABLE_TRUNCATED_FORMAT = "bp-table-truncated-format";
+exports.TABLE_TRUNCATED_FORMAT_TEXT = "bp-table-truncated-format-text";
+exports.TABLE_TRUNCATED_POPOVER = "bp-table-truncated-popover";
+exports.TABLE_TRUNCATED_POPOVER_TARGET = "bp-table-truncated-popover-target";
+exports.TABLE_TRUNCATED_TEXT = "bp-table-truncated-text";
+exports.TABLE_TRUNCATED_VALUE = "bp-table-truncated-value";
+exports.TABLE_VERTICAL_GUIDE = "bp-table-vertical-guide";
+/** Common code for row and column index class generator functions, since they're essentially the same. */
+function dimensionIndexClass(classPrefix, index) {
+    if (index == null) {
+        return undefined;
+    }
+    if (typeof index === "number") {
+        return "" + classPrefix + index;
+    }
+    return index.indexOf(classPrefix) === 0 ? index : "" + classPrefix + index;
+}
+/** Return CSS class for table colummn index, whether or not 'bp-table-col-' prefix is included. */
+function columnIndexClass(columnIndex) {
+    return dimensionIndexClass("bp-table-col-", columnIndex);
+}
+exports.columnIndexClass = columnIndexClass;
+/** Return CSS class for table row index, whether or not 'bp-table-row-' prefix is included. */
+function rowIndexClass(rowIndex) {
+    return dimensionIndexClass("bp-table-row-", rowIndex);
+}
+exports.rowIndexClass = rowIndexClass;
+/** Return CSS class for table colummn cell index, whether or not 'bp-table-cell-col-' prefix is included. */
+function columnCellIndexClass(columnIndex) {
+    return dimensionIndexClass("bp-table-cell-col-", columnIndex);
+}
+exports.columnCellIndexClass = columnCellIndexClass;
+/** Return CSS class for table row cell index, whether or not 'bp-table-cell-row-' prefix is included. */
+function rowCellIndexClass(rowIndex) {
+    return dimensionIndexClass("bp-table-cell-row-", rowIndex);
+}
+exports.rowCellIndexClass = rowCellIndexClass;
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(75));
+__export(__webpack_require__(16));
+__export(__webpack_require__(42));
+var iconClasses_1 = __webpack_require__(125);
+exports.IconClasses = iconClasses_1.IconClasses;
+var iconStrings_1 = __webpack_require__(126);
+exports.IconContents = iconStrings_1.IconContents;
+
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -677,7 +820,7 @@ module.exports = pureRenderDecorator;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var utils_1 = __webpack_require__(4);
+var utils_1 = __webpack_require__(5);
 /**
  * An abstract component that Blueprint components can extend
  * in order to add some common functionality like runtime props validation.
@@ -743,7 +886,7 @@ exports.AbstractComponent = AbstractComponent;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -798,7 +941,1086 @@ exports.DIALOG_WARN_NO_HEADER_CLOSE_BUTTON = ns + " <Dialog> isCloseButtonShown 
 
 
 /***/ }),
-/* 8 */
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+;
+// tslint:enable
+/**
+ * Since Firefox doesn't provide a computed "font" property, we manually
+ * construct it using the ordered properties that can be specifed in CSS.
+ */
+var CSS_FONT_PROPERTIES = [
+    "font-style",
+    "font-variant",
+    "font-weight",
+    "font-size",
+    "font-family",
+];
+exports.Utils = {
+    /**
+     * Returns a clone of the ReactElement with a className that includes the
+     * element's original className and any other classes passed in with variadic
+     * arguments matching the `classNames` api.
+     */
+    assignClasses: function (elem) {
+        var extendedClasses = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            extendedClasses[_i - 1] = arguments[_i];
+        }
+        var classes = classNames.apply(void 0, [elem.props.className].concat(extendedClasses));
+        return React.cloneElement(elem, { className: classes });
+    },
+    /**
+     * Invokes the callback `n` times, collecting the results in an array, which
+     * is the return value. Similar to _.times
+     */
+    times: function (n, callback) {
+        var result = Array(n);
+        for (var index = 0; index < n; index++) {
+            result[index] = callback(index);
+        }
+        return result;
+    },
+    /**
+     * Takes an array of numbers, returns an array of numbers of the same length in which each
+     * value is the sum of current and previous values in the input array.
+     *
+     * Example input:  [10, 20, 50]
+     *         output: [10, 30, 80]
+     */
+    accumulate: function (numbers) {
+        var result = [];
+        var sum = 0;
+        for (var _i = 0, numbers_1 = numbers; _i < numbers_1.length; _i++) {
+            var num = numbers_1[_i];
+            sum += num;
+            result.push(sum);
+        }
+        return result;
+    },
+    /**
+     * Returns traditional spreadsheet-style column names
+     * e.g. (A, B, ..., Z, AA, AB, ..., ZZ, AAA, AAB, ...).
+     *
+     * Note that this isn't technically mathematically equivalent to base 26 since
+     * there is no zero element.
+     */
+    toBase26Alpha: function (num) {
+        var str = "";
+        while (true) {
+            var letter = num % 26;
+            str = String.fromCharCode(65 + letter) + str;
+            num = num - letter;
+            if (num <= 0) {
+                return str;
+            }
+            num = (num / 26) - 1;
+        }
+    },
+    /**
+     * Performs the binary search algorithm to find the index of the `value`
+     * parameter in a sorted list of numbers. If `value` is not in the list, the
+     * index where `value` can be inserted to maintain the sort is returned.
+     *
+     * Unlike a typical binary search implementation, we use a `lookup`
+     * callback to access the sorted list of numbers instead of an array. This
+     * avoids additional storage overhead.
+     *
+     * We use this to, for example, find the index of a row/col given its client
+     * coordinate.
+     *
+     * Adapted from lodash https://github.com/lodash/lodash/blob/4.11.2/lodash.js#L3579
+     *
+     * @param value - the query value
+     * @param high - the length of the sorted list of numbers
+     * @param lookup - returns the number from the list at the supplied index
+     */
+    binarySearch: function (value, high, lookup) {
+        var low = 0;
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2.0);
+            var computed = lookup(mid);
+            if (computed < value) {
+                low = mid + 1;
+            }
+            else {
+                high = mid;
+            }
+        }
+        return high;
+    },
+    /**
+     * Returns a copy of the array that will have a length of the supplied parameter.
+     * If the array is too long, it will be truncated. If it is too short, it will be
+     * filled with the suppleid `fillValue` argument.
+     *
+     * @param array - the `Array` to copy and adjust
+     * @param length - the target length of the array
+     * @param fillValue - the value to add to the array if it is too short
+     */
+    arrayOfLength: function (array, length, fillValue) {
+        if (array.length > length) {
+            return array.slice(0, length);
+        }
+        array = array.slice();
+        while (array.length < length) {
+            array.push(fillValue);
+        }
+        return array;
+    },
+    /**
+     * Takes in one full array of values and one sparse array of the same
+     * length and type. Returns a copy of the `defaults` array, where each
+     * value is replaced with the corresponding non-null value at the same
+     * index in `sparseOverrides`.
+     *
+     * @param defaults - the full array of default values
+     * @param sparseOverrides - the sparse array of override values
+     */
+    assignSparseValues: function (defaults, sparseOverrides) {
+        if (sparseOverrides == null || defaults.length !== sparseOverrides.length) {
+            return defaults;
+        }
+        defaults = defaults.slice();
+        for (var i = 0; i < defaults.length; i++) {
+            var override = sparseOverrides[i];
+            if (override != null) {
+                defaults[i] = override;
+            }
+        }
+        return defaults;
+    },
+    /**
+     * Measures the bounds of supplied element's textContent.
+     *
+     * We use the computed font from the supplied element and a non-DOM canvas
+     * context to measure the text.
+     *
+     * Returns a `TextMetrics` object.
+     */
+    measureElementTextContent: function (element) {
+        var context = document.createElement("canvas").getContext("2d");
+        var style = getComputedStyle(element, null);
+        context.font = CSS_FONT_PROPERTIES.map(function (prop) { return style.getPropertyValue(prop); }).join(" ");
+        return context.measureText(element.textContent);
+    },
+    /**
+     * Given a number, returns a value that is clamped within a
+     * minimum/maximum bounded range. The minimum and maximum are optional. If
+     * either is missing, that extrema limit is not applied.
+     *
+     * Assumes max >= min.
+     */
+    clamp: function (value, min, max) {
+        if (min != null && value < min) {
+            value = min;
+        }
+        if (max != null && value > max) {
+            value = max;
+        }
+        return value;
+    },
+    /**
+     * Shallow comparison between objects. If `keys` is provided, just that subset of keys will be
+     * compared; otherwise, all keys will be compared.
+     */
+    shallowCompareKeys: function (objA, objB, keys) {
+        // treat `null` and `undefined` as the same
+        if (objA == null && objB == null) {
+            return true;
+        }
+        else if (objA == null || objB == null) {
+            return false;
+        }
+        else if (Array.isArray(objA) || Array.isArray(objB)) {
+            return false;
+        }
+        else if (keys != null) {
+            return _shallowCompareKeys(objA, objB, keys);
+        }
+        else {
+            // shallowly compare all keys from both objects
+            var keysA = Object.keys(objA);
+            var keysB = Object.keys(objB);
+            return _shallowCompareKeys(objA, objB, { include: keysA })
+                && _shallowCompareKeys(objA, objB, { include: keysB });
+        }
+    },
+    /**
+     * Deep comparison between objects. If `keys` is provided, just that subset of keys will be
+     * compared; otherwise, all keys will be compared.
+     */
+    deepCompareKeys: function (objA, objB, keys) {
+        if (objA === objB) {
+            return true;
+        }
+        else if (objA == null && objB == null) {
+            // treat `null` and `undefined` as the same
+            return true;
+        }
+        else if (objA == null || objB == null) {
+            return false;
+        }
+        else if (Array.isArray(objA) || Array.isArray(objB)) {
+            return exports.Utils.arraysEqual(objA, objB, exports.Utils.deepCompareKeys);
+        }
+        else if (_isSimplePrimitiveType(objA) || _isSimplePrimitiveType(objB)) {
+            return objA === objB;
+        }
+        else if (keys != null) {
+            return _deepCompareKeys(objA, objB, keys);
+        }
+        else if (objA.constructor !== objB.constructor) {
+            return false;
+        }
+        else {
+            var keysA = Object.keys(objA);
+            var keysB = Object.keys(objB);
+            if (keysA == null || keysB == null) {
+                return false;
+            }
+            if (keysA.length === 0 && keysB.length === 0) {
+                return true;
+            }
+            return exports.Utils.arraysEqual(keysA, keysB) && _deepCompareKeys(objA, objB, keysA);
+        }
+    },
+    /**
+     * Returns a descriptive object for each key whose values are shallowly unequal between two
+     * provided objects. Useful for debugging shouldComponentUpdate.
+     */
+    getShallowUnequalKeyValues: function (objA, objB, keys) {
+        // default param values let null values pass through, so we have to take this more thorough approach
+        var definedObjA = (objA == null) ? {} : objA;
+        var definedObjB = (objB == null) ? {} : objB;
+        var filteredKeys = _filterKeys(definedObjA, definedObjB, keys == null ? { exclude: [] } : keys);
+        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.shallowCompareKeys(a, b, { include: [key] }); });
+    },
+    /**
+     * Returns a descriptive object for each key whose values are deeply unequal between two
+     * provided objects. Useful for debugging shouldComponentUpdate.
+     */
+    getDeepUnequalKeyValues: function (objA, objB, keys) {
+        var definedObjA = (objA == null) ? {} : objA;
+        var definedObjB = (objB == null) ? {} : objB;
+        var filteredKeys = (keys == null) ? _unionKeys(definedObjA, definedObjB) : keys;
+        return _getUnequalKeyValues(definedObjA, definedObjB, filteredKeys, function (a, b, key) { return exports.Utils.deepCompareKeys(a, b, [key]); });
+    },
+    /**
+     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
+     * at the absolute index in the original ordering but emit the new index in the reordered list.
+     * This function converts an absolute "guide" index to a relative "reordered" index.
+     *
+     * Example: Say we want to move the first three columns two spots to the right. While we drag, a
+     * vertical guide is shown to preview where we'll be dropping the columns. (In the following
+     * ASCII art, `*` denotes a selected column, `·` denotes a cell border, and `|` denotes a
+     * vertical guide).
+     *
+     *     Before mousedown:
+     *     · 0 · 1 · 2 · 3 · 4 · 5 ·
+     *       *   *   *
+     *
+     *     During mousemove two spots to the right:
+     *     · 0 · 1 · 2 · 3 · 4 | 5 ·
+     *       *   *   *
+     *
+     *     After mouseup:
+     *     · 3 · 4 · 0 · 1 · 2 · 5 ·
+     *               *   *   *
+     *
+     * Note that moving the three columns beyond index 4 effectively moves them two spots rightward.
+     *
+     * In this case, the inputs to this function would be:
+     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
+     *     - newIndex: 5 (the index on whose left boundary the guide appears in the original ordering)
+     *     - length: 3 (the number of columns to move)
+     *
+     * The return value will then be 2, the left-most index of the columns in the new ordering.
+     */
+    guideIndexToReorderedIndex: function (oldIndex, newIndex, length) {
+        if (newIndex < oldIndex) {
+            return newIndex;
+        }
+        else if (oldIndex <= newIndex && newIndex < oldIndex + length) {
+            return oldIndex;
+        }
+        else {
+            return Math.max(0, newIndex - length);
+        }
+    },
+    /**
+     * When reordering a contiguous block of rows or columns to a new index, we show a preview guide
+     * at the absolute index in the original ordering but emit the new index in the reordered list.
+     * This function converts a relative "reordered"" index to an absolute "guide" index.
+     *
+     * For the scenario in the example above, the inputs to this function would be:
+     *     - oldIndex: 0 (the left-most index of the selected column range in the original ordering)
+     *     - newIndex: 2 (the left-most index of the selected column range in the new ordering)
+     *     - length: 3 (the number of columns to move)
+     *
+     * The return value will then be 5, the index on whose left boundary the guide should appear in
+     * the original ordering.
+     */
+    reorderedIndexToGuideIndex: function (oldIndex, newIndex, length) {
+        return (newIndex <= oldIndex) ? newIndex : newIndex + length;
+    },
+    /**
+     * Returns a copy of the provided array with the `length` contiguous elements starting at the
+     * `from` index reordered to start at the `to` index.
+     *
+     * For example, given the array [A,B,C,D,E,F], reordering the 3 contiguous elements starting at
+     * index 1 (B, C, and D) to start at index 2 would yield [A,E,B,C,D,F].
+     */
+    reorderArray: function (array, from, to, length) {
+        if (length === void 0) { length = 1; }
+        if (length === 0 || length === array.length || from === to) {
+            // return an unchanged copy
+            return array.slice();
+        }
+        if (length < 0 || length > array.length || from + length > array.length) {
+            return undefined;
+        }
+        var before = array.slice(0, from);
+        var within = array.slice(from, from + length);
+        var after = array.slice(from + length);
+        var result = [];
+        var i = 0;
+        var b = 0;
+        var w = 0;
+        var a = 0;
+        while (i < to) {
+            if (b < before.length) {
+                result.push(before[b]);
+                b += 1;
+            }
+            else {
+                result.push(after[a]);
+                a += 1;
+            }
+            i += 1;
+        }
+        while (w < length) {
+            result.push(within[w]);
+            w += 1;
+            i += 1;
+        }
+        while (i < array.length) {
+            if (b < before.length) {
+                result.push(before[b]);
+                b += 1;
+            }
+            else {
+                result.push(after[a]);
+                a += 1;
+            }
+            i += 1;
+        }
+        return result;
+    },
+    /**
+     * Returns true if the mouse event was triggered by the left mouse button.
+     */
+    isLeftClick: function (event) {
+        return event.button === 0;
+    },
+    /**
+     * Returns true if the arrays are equal. Elements will be shallowly compared by default, or they
+     * will be compared using the custom `compare` function if one is provided.
+     */
+    arraysEqual: function (arrA, arrB, compare) {
+        if (compare === void 0) { compare = function (a, b) { return a === b; }; }
+        // treat `null` and `undefined` as the same
+        if (arrA == null && arrB == null) {
+            return true;
+        }
+        else if (arrA == null || arrB == null || arrA.length !== arrB.length) {
+            return false;
+        }
+        else {
+            return arrA.every(function (a, i) { return compare(a, arrB[i]); });
+        }
+    },
+};
+/**
+ * Partial shallow comparison between objects using the given list of keys.
+ */
+function _shallowCompareKeys(objA, objB, keys) {
+    return _filterKeys(objA, objB, keys).every(function (key) {
+        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
+            && objA[key] === objB[key];
+    });
+}
+/**
+ * Partial deep comparison between objects using the given list of keys.
+ */
+function _deepCompareKeys(objA, objB, keys) {
+    return keys.every(function (key) {
+        return objA.hasOwnProperty(key) === objB.hasOwnProperty(key)
+            && exports.Utils.deepCompareKeys(objA[key], objB[key]);
+    });
+}
+function _isSimplePrimitiveType(value) {
+    return typeof value === "number"
+        || typeof value === "string"
+        || typeof value === "boolean";
+}
+function _filterKeys(objA, objB, keys) {
+    if (isWhitelist(keys)) {
+        return keys.include;
+    }
+    else {
+        var keysA = Object.keys(objA);
+        var keysB = Object.keys(objB);
+        // merge keys from both objects into a big set for quick access
+        var keySet_1 = _arrayToObject(keysA.concat(keysB));
+        // delete blacklisted keys from the key set
+        keys.exclude.forEach(function (key) { return delete keySet_1[key]; });
+        // return the remaining keys as an array
+        return Object.keys(keySet_1);
+    }
+}
+function isWhitelist(keys) {
+    return keys != null && keys.include != null;
+}
+function _arrayToObject(arr) {
+    return arr.reduce(function (obj, element) {
+        obj[element] = true;
+        return obj;
+    }, {});
+}
+function _getUnequalKeyValues(objA, objB, keys, compareFn) {
+    var unequalKeys = keys.filter(function (key) { return !compareFn(objA, objB, key); });
+    var unequalKeyValues = unequalKeys.map(function (key) { return ({
+        key: key,
+        valueA: objA[key],
+        valueB: objB[key],
+    }); });
+    return unequalKeyValues;
+}
+function _unionKeys(objA, objB) {
+    var keysA = Object.keys(objA);
+    var keysB = Object.keys(objB);
+    var concatKeys = keysA.concat(keysB);
+    var keySet = _arrayToObject(concatKeys);
+    return Object.keys(keySet);
+}
+
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+/**
+ * `Region`s contain sets of cells. Additionally, a distinction is drawn, for
+ * example, between all cells within a column and the whole column itself.
+ * The `RegionCardinality` enum represents these distinct types of `Region`s.
+ */
+var RegionCardinality;
+(function (RegionCardinality) {
+    /**
+     * A region that contains a finite rectangular group of table cells
+     */
+    RegionCardinality[RegionCardinality["CELLS"] = 0] = "CELLS";
+    /**
+     * A region that represents all cells within 1 or more rows.
+     */
+    RegionCardinality[RegionCardinality["FULL_ROWS"] = 1] = "FULL_ROWS";
+    /**
+     * A region that represents all cells within 1 or more columns.
+     */
+    RegionCardinality[RegionCardinality["FULL_COLUMNS"] = 2] = "FULL_COLUMNS";
+    /**
+     * A region that represents all cells in the table.
+     */
+    RegionCardinality[RegionCardinality["FULL_TABLE"] = 3] = "FULL_TABLE";
+})(RegionCardinality = exports.RegionCardinality || (exports.RegionCardinality = {}));
+/**
+ * A convenience object for subsets of `RegionCardinality` that are commonly
+ * used as the `selectionMode` prop of the `<Table>`.
+ */
+exports.SelectionModes = {
+    ALL: [
+        RegionCardinality.FULL_TABLE,
+        RegionCardinality.FULL_COLUMNS,
+        RegionCardinality.FULL_ROWS,
+        RegionCardinality.CELLS,
+    ],
+    COLUMNS_AND_CELLS: [
+        RegionCardinality.FULL_COLUMNS,
+        RegionCardinality.CELLS,
+    ],
+    COLUMNS_ONLY: [
+        RegionCardinality.FULL_COLUMNS,
+    ],
+    NONE: [],
+    ROWS_AND_CELLS: [
+        RegionCardinality.FULL_ROWS,
+        RegionCardinality.CELLS,
+    ],
+    ROWS_ONLY: [
+        RegionCardinality.FULL_ROWS,
+    ],
+};
+exports.ColumnLoadingOption = {
+    CELLS: "cells",
+    HEADER: "column-header",
+};
+exports.RowLoadingOption = {
+    CELLS: "cells",
+    HEADER: "row-header",
+};
+exports.TableLoadingOption = {
+    CELLS: "cells",
+    COLUMN_HEADERS: exports.ColumnLoadingOption.HEADER,
+    ROW_HEADERS: exports.RowLoadingOption.HEADER,
+};
+var Regions = (function () {
+    function Regions() {
+    }
+    /**
+     * Determines the cardinality of a region. We use null values to indicate
+     * an unbounded interval. Therefore, an example of a region containing the
+     * second and third columns would be:
+     *
+     *     {
+     *         rows: null,
+     *         cols: [1, 2]
+     *     }
+     *
+     * In this case, this method would return `RegionCardinality.FULL_COLUMNS`.
+     *
+     * If both rows and columns are unbounded, then the region covers the
+     * entire table. Therefore, a region like this:
+     *
+     *     {
+     *         rows: null,
+     *         cols: null
+     *     }
+     *
+     * will return `RegionCardinality.FULL_TABLE`.
+     *
+     * An example of a region containing a single cell in the table would be:
+     *
+     *     {
+     *         rows: [5, 5],
+     *         cols: [2, 2]
+     *     }
+     *
+     * In this case, this method would return `RegionCardinality.CELLS`.
+     */
+    Regions.getRegionCardinality = function (region) {
+        if (region.cols != null && region.rows != null) {
+            return RegionCardinality.CELLS;
+        }
+        else if (region.cols != null) {
+            return RegionCardinality.FULL_COLUMNS;
+        }
+        else if (region.rows != null) {
+            return RegionCardinality.FULL_ROWS;
+        }
+        else {
+            return RegionCardinality.FULL_TABLE;
+        }
+    };
+    Regions.getFocusCellCoordinatesFromRegion = function (region) {
+        var regionCardinality = Regions.getRegionCardinality(region);
+        switch (regionCardinality) {
+            case RegionCardinality.FULL_TABLE:
+                return { col: 0, row: 0 };
+            case RegionCardinality.FULL_COLUMNS:
+                return { col: region.cols[0], row: 0 };
+            case RegionCardinality.FULL_ROWS:
+                return { col: 0, row: region.rows[0] };
+            case RegionCardinality.CELLS:
+                return { col: region.cols[0], row: region.rows[0] };
+            default:
+                return null;
+        }
+    };
+    /**
+     * Returns a region containing one or more cells.
+     */
+    Regions.cell = function (row, col, row2, col2) {
+        return {
+            cols: this.normalizeInterval(col, col2),
+            rows: this.normalizeInterval(row, row2),
+        };
+    };
+    /**
+     * Returns a region containing one or more full rows.
+     */
+    Regions.row = function (row, row2) {
+        return { rows: this.normalizeInterval(row, row2) };
+    };
+    /**
+     * Returns a region containing one or more full columns.
+     */
+    Regions.column = function (col, col2) {
+        return { cols: this.normalizeInterval(col, col2) };
+    };
+    /**
+     * Returns a region containing the entire table.
+     */
+    Regions.table = function () {
+        return {};
+    };
+    /**
+     * Adds the region to the end of a cloned copy of the supplied region
+     * array.
+     */
+    Regions.add = function (regions, region) {
+        var copy = regions.slice();
+        copy.push(region);
+        return copy;
+    };
+    /**
+     * Replaces the region at the end of a cloned copy of the supplied region
+     * array.
+     */
+    Regions.update = function (regions, region) {
+        var copy = regions.slice();
+        copy.pop();
+        copy.push(region);
+        return copy;
+    };
+    /**
+     * Returns true iff the specified region is equal to the last region in
+     * the region list. This allows us to avoid immediate additive re-selection.
+     */
+    Regions.lastRegionIsEqual = function (regions, region) {
+        if (regions == null || regions.length === 0) {
+            return false;
+        }
+        var lastRegion = regions[regions.length - 1];
+        return Regions.regionsEqual(lastRegion, region);
+    };
+    /**
+     * Returns the index of the region that is equal to the supplied
+     * parameter. Returns -1 if no such region is found.
+     */
+    Regions.findMatchingRegion = function (regions, region) {
+        if (regions == null) {
+            return -1;
+        }
+        for (var i = 0; i < regions.length; i++) {
+            if (Regions.regionsEqual(regions[i], region)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Returns the index of the region that wholly contains the supplied
+     * parameter. Returns -1 if no such region is found.
+     */
+    Regions.findContainingRegion = function (regions, region) {
+        if (regions == null) {
+            return -1;
+        }
+        for (var i = 0; i < regions.length; i++) {
+            if (Regions.regionContains(regions[i], region)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_COLUMNS
+     * cardinality and contains the specified column index.
+     */
+    Regions.hasFullColumn = function (regions, col) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_1 = regions; _i < regions_1.length; _i++) {
+            var region = regions_1[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+            if (cardinality === RegionCardinality.FULL_COLUMNS && Regions.intervalContainsIndex(region.cols, col)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_ROWS
+     * cardinality and contains the specified row index.
+     */
+    Regions.hasFullRow = function (regions, row) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_2 = regions; _i < regions_2.length; _i++) {
+            var region = regions_2[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+            if (cardinality === RegionCardinality.FULL_ROWS && Regions.intervalContainsIndex(region.rows, row)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions contain a region that has FULL_TABLE cardinality
+     */
+    Regions.hasFullTable = function (regions) {
+        if (regions == null) {
+            return false;
+        }
+        for (var _i = 0, regions_3 = regions; _i < regions_3.length; _i++) {
+            var region = regions_3[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            if (cardinality === RegionCardinality.FULL_TABLE) {
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     * Returns true if the regions fully contain the query region.
+     */
+    Regions.containsRegion = function (regions, query) {
+        return Regions.overlapsRegion(regions, query, false);
+    };
+    /**
+     * Returns true if the regions at least partially overlap the query region.
+     */
+    Regions.overlapsRegion = function (regions, query, allowPartialOverlap) {
+        if (allowPartialOverlap === void 0) { allowPartialOverlap = false; }
+        var intervalCompareFn = allowPartialOverlap ? Regions.intervalOverlaps : Regions.intervalContains;
+        if (regions == null || query == null) {
+            return false;
+        }
+        for (var _i = 0, regions_4 = regions; _i < regions_4.length; _i++) {
+            var region = regions_4[_i];
+            var cardinality = Regions.getRegionCardinality(region);
+            switch (cardinality) {
+                case RegionCardinality.FULL_TABLE:
+                    return true;
+                case RegionCardinality.FULL_COLUMNS:
+                    if (intervalCompareFn(region.cols, query.cols)) {
+                        return true;
+                    }
+                    continue;
+                case RegionCardinality.FULL_ROWS:
+                    if (intervalCompareFn(region.rows, query.rows)) {
+                        return true;
+                    }
+                    continue;
+                case RegionCardinality.CELLS:
+                    if (intervalCompareFn(region.cols, query.cols)
+                        && intervalCompareFn(region.rows, query.rows)) {
+                        return true;
+                    }
+                    continue;
+                default:
+                    break;
+            }
+        }
+        return false;
+    };
+    Regions.eachUniqueFullColumn = function (regions, iteratee) {
+        if (regions == null || regions.length === 0 || iteratee == null) {
+            return;
+        }
+        var seen = {};
+        regions.forEach(function (region) {
+            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_COLUMNS) {
+                var _a = region.cols, start = _a[0], end = _a[1];
+                for (var col = start; col <= end; col++) {
+                    if (!seen[col]) {
+                        seen[col] = true;
+                        iteratee(col);
+                    }
+                }
+            }
+        });
+    };
+    Regions.eachUniqueFullRow = function (regions, iteratee) {
+        if (regions == null || regions.length === 0 || iteratee == null) {
+            return;
+        }
+        var seen = {};
+        regions.forEach(function (region) {
+            if (Regions.getRegionCardinality(region) === RegionCardinality.FULL_ROWS) {
+                var _a = region.rows, start = _a[0], end = _a[1];
+                for (var row = start; row <= end; row++) {
+                    if (!seen[row]) {
+                        seen[row] = true;
+                        iteratee(row);
+                    }
+                }
+            }
+        });
+    };
+    /**
+     * Using the supplied array of non-contiguous `IRegion`s, this method
+     * returns an ordered array of every unique cell that exists in those
+     * regions.
+     */
+    Regions.enumerateUniqueCells = function (regions, numRows, numCols) {
+        if (regions == null || regions.length === 0) {
+            return [];
+        }
+        var seen = {};
+        var list = [];
+        for (var _i = 0, regions_5 = regions; _i < regions_5.length; _i++) {
+            var region = regions_5[_i];
+            Regions.eachCellInRegion(region, numRows, numCols, function (row, col) {
+                // add to list if not seen
+                var key = row + "-" + col;
+                if (seen[key] !== true) {
+                    seen[key] = true;
+                    list.push([row, col]);
+                }
+            });
+        }
+        // sort list by rows then columns
+        list.sort(Regions.rowFirstComparator);
+        return list;
+    };
+    /**
+     * Using the supplied region, returns an "equivalent" region of
+     * type CELLS that define the bounds of the given region
+     */
+    Regions.getCellRegionFromRegion = function (region, numRows, numCols) {
+        var regionCardinality = Regions.getRegionCardinality(region);
+        switch (regionCardinality) {
+            case RegionCardinality.FULL_TABLE:
+                return Regions.cell(0, 0, numRows - 1, numCols - 1);
+            case RegionCardinality.FULL_COLUMNS:
+                return Regions.cell(0, region.cols[0], numRows - 1, region.cols[1]);
+            case RegionCardinality.FULL_ROWS:
+                return Regions.cell(region.rows[0], 0, region.rows[1], numCols - 1);
+            case RegionCardinality.CELLS:
+                return Regions.cell(region.rows[0], region.cols[0], region.rows[1], region.cols[1]);
+            default:
+                return null;
+        }
+    };
+    /**
+     * Maps a dense array of cell coordinates to a sparse 2-dimensional array
+     * of cell values.
+     *
+     * We create a new 2-dimensional array representing the smallest single
+     * contiguous `IRegion` that contains all cells in the supplied array. We
+     * invoke the mapper callback only on the cells in the supplied coordinate
+     * array and store the result. Returns the resulting 2-dimensional array.
+     */
+    Regions.sparseMapCells = function (cells, mapper) {
+        var bounds = Regions.getBoundingRegion(cells);
+        if (bounds == null) {
+            return null;
+        }
+        var numRows = bounds.rows[1] + 1 - bounds.rows[0];
+        var numCols = bounds.cols[1] + 1 - bounds.cols[0];
+        var result = utils_1.Utils.times(numRows, function () { return new Array(numCols); });
+        cells.forEach(function (_a) {
+            var row = _a[0], col = _a[1];
+            result[row - bounds.rows[0]][col - bounds.cols[0]] = mapper(row, col);
+        });
+        return result;
+    };
+    /**
+     * Returns the smallest single contiguous `IRegion` that contains all cells in the
+     * supplied array.
+     */
+    Regions.getBoundingRegion = function (cells) {
+        var minRow;
+        var maxRow;
+        var minCol;
+        var maxCol;
+        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
+            var _a = cells_1[_i], row = _a[0], col = _a[1];
+            minRow = (minRow == null || row < minRow) ? row : minRow;
+            maxRow = (maxRow == null || row > maxRow) ? row : maxRow;
+            minCol = (minCol == null || col < minCol) ? col : minCol;
+            maxCol = (maxCol == null || col > maxCol) ? col : maxCol;
+        }
+        if (minRow == null) {
+            return null;
+        }
+        return {
+            cols: [minCol, maxCol],
+            rows: [minRow, maxRow],
+        };
+    };
+    Regions.isValid = function (region) {
+        if (region == null) {
+            return false;
+        }
+        if ((region.rows != null) && (region.rows[0] < 0 || region.rows[1] < 0)) {
+            return false;
+        }
+        if ((region.cols != null) && (region.cols[0] < 0 || region.cols[1] < 0)) {
+            return false;
+        }
+        return true;
+    };
+    Regions.isRegionValidForTable = function (region, numRows, numCols) {
+        if (region.rows != null && (region.rows[0] >= numRows || region.rows[1] >= numRows)) {
+            return false;
+        }
+        if (region.cols != null && (region.cols[0] >= numCols || region.cols[1] >= numCols)) {
+            return false;
+        }
+        return true;
+    };
+    Regions.joinStyledRegionGroups = function (selectedRegions, otherRegions, focusedCell) {
+        var regionGroups = [];
+        if (otherRegions != null) {
+            regionGroups = regionGroups.concat(otherRegions);
+        }
+        if (selectedRegions != null && selectedRegions.length > 0) {
+            regionGroups.push({
+                className: Classes.TABLE_SELECTION_REGION,
+                regions: selectedRegions,
+            });
+        }
+        if (focusedCell != null) {
+            regionGroups.push({
+                className: Classes.TABLE_FOCUS_REGION,
+                regions: [Regions.cell(focusedCell.row, focusedCell.col)],
+            });
+        }
+        return regionGroups;
+    };
+    Regions.regionsEqual = function (regionA, regionB) {
+        return Regions.intervalsEqual(regionA.rows, regionB.rows)
+            && Regions.intervalsEqual(regionA.cols, regionB.cols);
+    };
+    /**
+     * Iterates over the cells within an `IRegion`, invoking the callback with
+     * each cell's coordinates.
+     */
+    Regions.eachCellInRegion = function (region, numRows, numCols, iteratee) {
+        var cardinality = Regions.getRegionCardinality(region);
+        switch (cardinality) {
+            case RegionCardinality.FULL_TABLE:
+                for (var row = 0; row < numRows; row++) {
+                    for (var col = 0; col < numCols; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.FULL_COLUMNS:
+                for (var row = 0; row < numRows; row++) {
+                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.FULL_ROWS:
+                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
+                    for (var col = 0; col < numCols; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            case RegionCardinality.CELLS:
+                for (var row = region.rows[0]; row <= region.rows[1]; row++) {
+                    for (var col = region.cols[0]; col <= region.cols[1]; col++) {
+                        iteratee(row, col);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    };
+    Regions.regionContains = function (regionA, regionB) {
+        // containsRegion expects an array of regions as the first param
+        return Regions.overlapsRegion([regionA], regionB, false);
+    };
+    Regions.intervalsEqual = function (ivalA, ivalB) {
+        if (ivalA == null) {
+            return ivalB == null;
+        }
+        else if (ivalB == null) {
+            return false;
+        }
+        else {
+            return ivalA[0] === ivalB[0] && ivalA[1] === ivalB[1];
+        }
+    };
+    Regions.intervalContainsIndex = function (interval, index) {
+        if (interval == null) {
+            return false;
+        }
+        return interval[0] <= index && interval[1] >= index;
+    };
+    Regions.intervalContains = function (ivalA, ivalB) {
+        if (ivalA == null || ivalB == null) {
+            return false;
+        }
+        return ivalA[0] <= ivalB[0] && ivalB[1] <= ivalA[1];
+    };
+    Regions.intervalOverlaps = function (ivalA, ivalB) {
+        if (ivalA == null || ivalB == null) {
+            return false;
+        }
+        if (ivalA[1] < ivalB[0] || ivalA[0] > ivalB[1]) {
+            return false;
+        }
+        return true;
+    };
+    Regions.rowFirstComparator = function (a, b) {
+        var rowDiff = a[0] - b[0];
+        return rowDiff === 0 ? a[1] - b[1] : rowDiff;
+    };
+    Regions.numericalComparator = function (a, b) {
+        return a - b;
+    };
+    Regions.normalizeInterval = function (coord, coord2) {
+        if (coord2 == null) {
+            coord2 = coord;
+        }
+        var interval = [coord, coord2];
+        interval.sort(Regions.numericalComparator);
+        return interval;
+    };
+    return Regions;
+}());
+exports.Regions = Regions;
+
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = ReactDOM;
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -988,13 +2210,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = ReactDOM;
-
-/***/ }),
-/* 10 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1037,7 +2253,7 @@ exports.isPositionVertical = isPositionVertical;
 
 
 /***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1064,7 +2280,7 @@ exports.DELETE = 46;
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1079,15 +2295,15 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(6));
-__export(__webpack_require__(56));
-__export(__webpack_require__(27));
-__export(__webpack_require__(10));
-__export(__webpack_require__(13));
-__export(__webpack_require__(28));
-var classes = __webpack_require__(2);
-var keys = __webpack_require__(11);
-var utils = __webpack_require__(4);
+__export(__webpack_require__(8));
+__export(__webpack_require__(78));
+__export(__webpack_require__(40));
+__export(__webpack_require__(14));
+__export(__webpack_require__(17));
+__export(__webpack_require__(41));
+var classes = __webpack_require__(3);
+var keys = __webpack_require__(15);
+var utils = __webpack_require__(5);
 exports.Classes = classes;
 exports.Keys = keys;
 exports.Utils = utils;
@@ -1096,7 +2312,7 @@ exports.Utils = utils;
 
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1151,7 +2367,7 @@ exports.removeNonHTMLProps = removeNonHTMLProps;
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1164,20 +2380,20 @@ exports.removeNonHTMLProps = removeNonHTMLProps;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var react_dom_1 = __webpack_require__(9);
-var Tether = __webpack_require__(59);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var PosUtils = __webpack_require__(10);
-var TetherUtils = __webpack_require__(28);
-var Utils = __webpack_require__(4);
-var overlay_1 = __webpack_require__(15);
-var tooltip_1 = __webpack_require__(23);
-var Arrows = __webpack_require__(75);
+var react_dom_1 = __webpack_require__(12);
+var Tether = __webpack_require__(81);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var PosUtils = __webpack_require__(14);
+var TetherUtils = __webpack_require__(41);
+var Utils = __webpack_require__(5);
+var overlay_1 = __webpack_require__(21);
+var tooltip_1 = __webpack_require__(31);
+var Arrows = __webpack_require__(97);
 var SVG_SHADOW_PATH = "M8.11 6.302c1.015-.936 1.887-2.922 1.887-4.297v26c0-1.378" +
     "-.868-3.357-1.888-4.297L.925 17.09c-1.237-1.14-1.233-3.034 0-4.17L8.11 6.302z";
 var SVG_ARROW_PATH = "M8.787 7.036c1.22-1.125 2.21-3.376 2.21-5.03V0v30-2.005" +
@@ -1585,7 +2801,192 @@ exports.PopoverFactory = React.createFactory(Popover);
 
 
 /***/ }),
-/* 15 */
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(12);
+var utils_1 = __webpack_require__(10);
+var dragEvents_1 = __webpack_require__(63);
+var REATTACH_PROPS_KEYS = [
+    "stopPropagation",
+    "preventDefault",
+];
+/**
+ * This component provides a simple interface for combined drag and/or click
+ * events.
+ *
+ * Since the mouse interactions for drag and click are overloaded, here are
+ * the events that will fire in these cases:
+ *
+ * A Click Interaction
+ * 1. The user presses down on the render element, triggering the onActivate
+ *    callback.
+ * 2. The user releases the mouse button without moving it, triggering the
+ *    onClick callback.
+ *
+ * A Drag Interaction
+ * 1. The user presses down on the render element, triggering the onActivate
+ *    callback.
+ * 2. The user moves the mouse, triggering the onDragMove callback.
+ * 3. The user moves the mouse, triggering the onDragMove callback.
+ * 4. The user moves the mouse, triggering the onDragMove callback.
+ * 5. The user releases the mouse button, triggering a final onDragMove
+ *    callback as well as an onDragEnd callback.
+ *
+ * If `false` is returned from the onActivate callback, no further events
+ * will be fired until the next activation.
+ */
+var Draggable = (function (_super) {
+    tslib_1.__extends(Draggable, _super);
+    function Draggable() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Draggable.prototype.render = function () {
+        return React.Children.only(this.props.children);
+    };
+    Draggable.prototype.componentWillReceiveProps = function (nextProps) {
+        var propsWhitelist = { include: REATTACH_PROPS_KEYS };
+        if (this.events && !utils_1.Utils.shallowCompareKeys(this.props, nextProps, propsWhitelist)) {
+            this.events.attach(ReactDOM.findDOMNode(this), nextProps);
+        }
+    };
+    Draggable.prototype.componentDidMount = function () {
+        this.events = new dragEvents_1.DragEvents();
+        this.events.attach(ReactDOM.findDOMNode(this), this.props);
+    };
+    Draggable.prototype.componentWillUnmount = function () {
+        this.events.detach();
+        delete this.events;
+    };
+    return Draggable;
+}(React.Component));
+Draggable.defaultProps = {
+    preventDefault: true,
+    stopPropagation: false,
+};
+Draggable = tslib_1.__decorate([
+    PureRender
+], Draggable);
+exports.Draggable = Draggable;
+
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// HACKHACK: workaround for https://github.com/palantir/tslint/issues/1768
+// tslint:disable adjacent-overload-signatures
+/**
+ * A simple object for storing the client bounds of HTMLElements. Since
+ * ClientRects are immutable, this object enables editing and some simple
+ * manipulation methods.
+ */
+var Rect = (function () {
+    function Rect(left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+    }
+    /**
+     * Returns the smallest Rect that entirely contains the supplied rects
+     */
+    Rect.union = function (anyRect0, anyRect1) {
+        var rect0 = Rect.wrap(anyRect0);
+        var rect1 = Rect.wrap(anyRect1);
+        var top = Math.min(rect0.top, rect1.top);
+        var left = Math.min(rect0.left, rect1.left);
+        var bottom = Math.max(rect0.top + rect0.height, rect1.top + rect1.height);
+        var right = Math.max(rect0.left + rect0.width, rect1.left + rect1.width);
+        var height = bottom - top;
+        var width = right - left;
+        return new Rect(left, top, width, height);
+    };
+    /**
+     * Returns a new Rect that subtracts the origin of the second argument
+     * from the first.
+     */
+    Rect.subtractOrigin = function (anyRect0, anyRect1) {
+        var rect0 = Rect.wrap(anyRect0);
+        var rect1 = Rect.wrap(anyRect1);
+        return new Rect(rect0.left - rect1.left, rect0.top - rect1.top, rect0.width, rect0.height);
+    };
+    /**
+     * Returns the CSS properties representing the absolute positioning of
+     * this Rect.
+     */
+    Rect.style = function (rect) {
+        return {
+            height: rect.height + "px",
+            left: rect.left + "px",
+            position: "absolute",
+            top: rect.top + "px",
+            width: rect.width + "px",
+        };
+    };
+    /**
+     * Given a ClientRect or Rect object, returns a Rect object.
+     */
+    Rect.wrap = function (rect) {
+        if (rect instanceof Rect) {
+            return rect;
+        }
+        else {
+            return new Rect(rect.left, rect.top, rect.width, rect.height);
+        }
+    };
+    Rect.prototype.subtractOrigin = function (anyRect) {
+        return Rect.subtractOrigin(this, anyRect);
+    };
+    Rect.prototype.union = function (anyRect) {
+        return Rect.union(this, anyRect);
+    };
+    Rect.prototype.style = function () {
+        return Rect.style(this);
+    };
+    Rect.prototype.sizeStyle = function () {
+        return {
+            height: this.height + "px",
+            width: this.width + "px",
+        };
+    };
+    Rect.prototype.containsX = function (clientX) {
+        return clientX >= this.left && clientX <= this.left + this.width;
+    };
+    Rect.prototype.containsY = function (clientY) {
+        return clientY >= this.top && clientY <= this.top + this.height;
+    };
+    return Rect;
+}());
+Rect.ORIGIN = new Rect(0, 0, 0, 0);
+exports.Rect = Rect;
+
+
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1598,14 +2999,14 @@ exports.PopoverFactory = React.createFactory(Popover);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var CSSTransitionGroup = __webpack_require__(60);
-var Classes = __webpack_require__(2);
-var Keys = __webpack_require__(11);
-var utils_1 = __webpack_require__(4);
-var portal_1 = __webpack_require__(33);
+var CSSTransitionGroup = __webpack_require__(82);
+var Classes = __webpack_require__(3);
+var Keys = __webpack_require__(15);
+var utils_1 = __webpack_require__(5);
+var portal_1 = __webpack_require__(46);
 var Overlay = Overlay_1 = (function (_super) {
     tslib_1.__extends(Overlay, _super);
     function Overlay(props, context) {
@@ -1812,7 +3213,7 @@ var Overlay_1;
 
 
 /***/ }),
-/* 16 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {/**
@@ -1839,17 +3240,17 @@ if (process.env.NODE_ENV !== 'production') {
   // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
   var throwOnDirectAccess = true;
-  module.exports = __webpack_require__(62)(isValidElement, throwOnDirectAccess);
+  module.exports = __webpack_require__(84)(isValidElement, throwOnDirectAccess);
 } else {
   // By explicitly using `prop-types` you are opting into new production behavior.
   // http://fb.me/prop-types-in-prod
-  module.exports = __webpack_require__(64)();
+  module.exports = __webpack_require__(86)();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 17 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1865,8 +3266,8 @@ var tslib_1 = __webpack_require__(1);
 // HACKHACK: these components should go in separate files
 // tslint:disable max-classes-per-file
 var React = __webpack_require__(0);
-var props_1 = __webpack_require__(13);
-var abstractButton_1 = __webpack_require__(77);
+var props_1 = __webpack_require__(17);
+var abstractButton_1 = __webpack_require__(99);
 var Button = (function (_super) {
     tslib_1.__extends(Button, _super);
     function Button() {
@@ -1899,7 +3300,7 @@ exports.AnchorButtonFactory = React.createFactory(AnchorButton);
 
 
 /***/ }),
-/* 18 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1913,8 +3314,8 @@ exports.AnchorButtonFactory = React.createFactory(AnchorButton);
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var common_1 = __webpack_require__(12);
-var keyCombo_1 = __webpack_require__(40);
+var common_1 = __webpack_require__(16);
+var keyCombo_1 = __webpack_require__(53);
 var Hotkey = (function (_super) {
     tslib_1.__extends(Hotkey, _super);
     function Hotkey() {
@@ -1948,7 +3349,159 @@ exports.Hotkey = Hotkey;
 
 
 /***/ }),
-/* 19 */
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var core_1 = __webpack_require__(7);
+var loadableContent_1 = __webpack_require__(35);
+exports.emptyCellRenderer = function () { return React.createElement(Cell, null); };
+var Cell = (function (_super) {
+    tslib_1.__extends(Cell, _super);
+    function Cell() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Cell.prototype.shouldComponentUpdate = function (nextProps) {
+        // deeply compare "style," because a new but identical object might have been provided.
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
+            || !utils_1.Utils.deepCompareKeys(this.props.style, nextProps.style);
+    };
+    Cell.prototype.render = function () {
+        var _a = this.props, style = _a.style, intent = _a.intent, interactive = _a.interactive, loading = _a.loading, tooltip = _a.tooltip, truncated = _a.truncated, className = _a.className, wrapText = _a.wrapText;
+        var classes = classNames(Classes.TABLE_CELL, core_1.Classes.intentClass(intent), (_b = {},
+            _b[Classes.TABLE_CELL_INTERACTIVE] = interactive,
+            _b[core_1.Classes.LOADING] = loading,
+            _b[Classes.TABLE_TRUNCATED_CELL] = truncated,
+            _b), className);
+        var textClasses = classNames((_c = {},
+            _c[Classes.TABLE_TRUNCATED_TEXT] = truncated,
+            _c[Classes.TABLE_NO_WRAP_TEXT] = !wrapText,
+            _c));
+        var content = React.createElement("div", { className: textClasses }, this.props.children);
+        return (React.createElement("div", { className: classes, style: style, title: tooltip },
+            React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, content)));
+        var _b, _c;
+    };
+    return Cell;
+}(React.Component));
+Cell.defaultProps = {
+    truncated: true,
+    wrapText: false,
+};
+exports.Cell = Cell;
+
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var draggable_1 = __webpack_require__(19);
+var Orientation;
+(function (Orientation) {
+    Orientation[Orientation["HORIZONTAL"] = 1] = "HORIZONTAL";
+    Orientation[Orientation["VERTICAL"] = 0] = "VERTICAL";
+})(Orientation = exports.Orientation || (exports.Orientation = {}));
+var ResizeHandle = (function (_super) {
+    tslib_1.__extends(ResizeHandle, _super);
+    function ResizeHandle() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isDragging: false,
+        };
+        _this.handleActivate = function (event) {
+            _this.setState({ isDragging: true });
+            _this.props.onLayoutLock(true);
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            return true;
+        };
+        _this.handleDragMove = function (_event, coords) {
+            var orientationIndex = _this.props.orientation;
+            if (_this.props.onResizeMove != null) {
+                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
+            }
+        };
+        _this.handleDragEnd = function (_event, coords) {
+            var orientationIndex = _this.props.orientation;
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+            if (_this.props.onResizeMove != null) {
+                _this.props.onResizeMove(coords.offset[orientationIndex], coords.delta[orientationIndex]);
+            }
+            if (_this.props.onResizeEnd != null) {
+                _this.props.onResizeEnd(coords.offset[orientationIndex]);
+            }
+        };
+        _this.handleClick = function (_event) {
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+        };
+        _this.handleDoubleClick = function (_event) {
+            _this.setState({ isDragging: false });
+            _this.props.onLayoutLock(false);
+            if (_this.props.onDoubleClick != null) {
+                _this.props.onDoubleClick();
+            }
+        };
+        return _this;
+    }
+    ResizeHandle.prototype.render = function () {
+        var _a = this.props, onResizeMove = _a.onResizeMove, onResizeEnd = _a.onResizeEnd, onDoubleClick = _a.onDoubleClick, orientation = _a.orientation;
+        if (onResizeMove == null && onResizeEnd == null && onDoubleClick == null) {
+            return undefined;
+        }
+        var targetClasses = classNames(Classes.TABLE_RESIZE_HANDLE_TARGET, (_b = {},
+            _b[Classes.TABLE_DRAGGING] = this.state.isDragging,
+            _b[Classes.TABLE_RESIZE_HORIZONTAL] = orientation === Orientation.HORIZONTAL,
+            _b[Classes.TABLE_RESIZE_VERTICAL] = orientation === Orientation.VERTICAL,
+            _b));
+        var handleClasses = classNames(Classes.TABLE_RESIZE_HANDLE, (_c = {},
+            _c[Classes.TABLE_DRAGGING] = this.state.isDragging,
+            _c));
+        return (React.createElement(draggable_1.Draggable, { onActivate: this.handleActivate, onClick: this.handleClick, onDoubleClick: this.handleDoubleClick, onDragEnd: this.handleDragEnd, onDragMove: this.handleDragMove },
+            React.createElement("div", { className: targetClasses },
+                React.createElement("div", { className: handleClasses }))));
+        var _b, _c;
+    };
+    return ResizeHandle;
+}(React.Component));
+ResizeHandle = tslib_1.__decorate([
+    PureRender
+], ResizeHandle);
+exports.ResizeHandle = ResizeHandle;
+
+
+
+/***/ }),
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1964,7 +3517,7 @@ exports.Hotkey = Hotkey;
 
 
 
-var emptyFunction = __webpack_require__(20);
+var emptyFunction = __webpack_require__(28);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -2016,10 +3569,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 20 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2063,7 +3616,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 21 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2122,10 +3675,10 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 22 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2146,7 +3699,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 23 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2159,12 +3712,12 @@ module.exports = ReactPropTypesSecret;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var position_1 = __webpack_require__(10);
-var popover_1 = __webpack_require__(14);
+var Classes = __webpack_require__(3);
+var position_1 = __webpack_require__(14);
+var popover_1 = __webpack_require__(18);
 var Tooltip = (function (_super) {
     tslib_1.__extends(Tooltip, _super);
     function Tooltip() {
@@ -2198,7 +3751,7 @@ exports.TooltipFactory = React.createFactory(Tooltip);
 
 
 /***/ }),
-/* 24 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2211,11 +3764,11 @@ exports.TooltipFactory = React.createFactory(Tooltip);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
 // see http://stackoverflow.com/a/18473154/3124288 for calculating arc path
 var SPINNER_TRACK = "M 50,50 m 0,-44.5 a 44.5,44.5 0 1 1 0,89 a 44.5,44.5 0 1 1 0,-89";
 // unitless total length of SVG path, to which stroke-dash* properties are relative.
@@ -2266,7 +3819,7 @@ exports.SpinnerFactory = React.createFactory(Spinner);
 
 
 /***/ }),
-/* 25 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2279,9 +3832,9 @@ exports.SpinnerFactory = React.createFactory(Spinner);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var Menu = (function (_super) {
     tslib_1.__extends(Menu, _super);
     function Menu() {
@@ -2299,7 +3852,7 @@ exports.MenuFactory = React.createFactory(Menu);
 
 
 /***/ }),
-/* 26 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2573,7 +4126,576 @@ exports.normalizeKeyCombo = function (combo) {
 
 
 /***/ }),
-/* 27 */
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(7);
+// This class expects a single, non-string child.
+var LoadableContent = (function (_super) {
+    tslib_1.__extends(LoadableContent, _super);
+    function LoadableContent(props) {
+        var _this = _super.call(this, props) || this;
+        _this.style = _this.calculateStyle(props.variableLength);
+        return _this;
+    }
+    LoadableContent.prototype.componentWillReceiveProps = function (nextProps) {
+        if (!this.props.loading && nextProps.loading || this.props.variableLength !== nextProps.variableLength) {
+            this.style = this.calculateStyle(nextProps.variableLength);
+        }
+    };
+    LoadableContent.prototype.render = function () {
+        if (this.props.loading) {
+            return React.createElement("div", { className: core_1.Classes.SKELETON, style: this.style });
+        }
+        return React.Children.only(this.props.children);
+    };
+    LoadableContent.prototype.calculateStyle = function (variableLength) {
+        var skeletonLength = variableLength ? 75 - Math.floor(Math.random() * 11) * 5 : 100;
+        return { width: skeletonLength + "%" };
+    };
+    return LoadableContent;
+}(React.Component));
+LoadableContent = tslib_1.__decorate([
+    PureRender
+], LoadableContent);
+exports.LoadableContent = LoadableContent;
+
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var clipboard_1 = __webpack_require__(37);
+exports.Clipboard = clipboard_1.Clipboard;
+var grid_1 = __webpack_require__(66);
+exports.Grid = grid_1.Grid;
+var rect_1 = __webpack_require__(20);
+exports.Rect = rect_1.Rect;
+var roundSize_1 = __webpack_require__(132);
+exports.RoundSize = roundSize_1.RoundSize;
+var utils_1 = __webpack_require__(10);
+exports.Utils = utils_1.Utils;
+// NOTE: Errors is not exported in public API
+
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* istanbul ignore next */
+exports.Clipboard = {
+    /**
+     * Overrides the inherited CSS of the element to make sure it is
+     * selectable. This method also makes the element pseudo-invisible.
+     */
+    applySelectableStyles: function (elem) {
+        elem.style.overflow = "hidden";
+        elem.style.height = "0px";
+        elem.style.setProperty("-webkit-user-select", "all");
+        elem.style.setProperty("-moz-user-select", "all");
+        elem.style.setProperty("-ms-user-select", "all");
+        elem.style.setProperty("user-select", "all");
+        return elem;
+    },
+    /**
+     * Copies table cells to the clipboard. The parameter is a row-major
+     * 2-dimensional `Array` of strings and can contain nulls. We assume all
+     * rows are the same length. If not, the cells will still be copied, but
+     * the columns may not align. Returns a boolean indicating whether the
+     * copy succeeded.
+     *
+     * See `Clipboard.copy`
+     */
+    copyCells: function (cells) {
+        var table = document.createElement("table");
+        exports.Clipboard.applySelectableStyles(table);
+        for (var _i = 0, cells_1 = cells; _i < cells_1.length; _i++) {
+            var row = cells_1[_i];
+            var tr = table.appendChild(document.createElement("tr"));
+            for (var _a = 0, row_1 = row; _a < row_1.length; _a++) {
+                var cell = row_1[_a];
+                var td = tr.appendChild(document.createElement("td"));
+                td.textContent = cell;
+            }
+        }
+        var tsv = cells.map(function (row) { return row.join("\t"); }).join("\n");
+        return exports.Clipboard.copyElement(table, tsv);
+    },
+    /**
+     * Copies the text to the clipboard. Returns a boolean
+     * indicating whether the copy succeeded.
+     *
+     * See `Clipboard.copy`
+     */
+    copyString: function (value) {
+        var text = document.createElement("textarea");
+        exports.Clipboard.applySelectableStyles(text);
+        text.value = value;
+        return exports.Clipboard.copyElement(text, value);
+    },
+    /**
+     * Copies the element and its children to the clipboard. Returns a boolean
+     * indicating whether the copy succeeded.
+     *
+     * If a plaintext argument is supplied, we add both the text/html and
+     * text/plain mime types to the clipboard. This preserves the built in
+     * semantics of copying elements to the clipboard while allowing custom
+     * plaintext output for programs that can't cope with HTML data in the
+     * clipboard.
+     *
+     * Verified on Firefox 47, Chrome 51.
+     *
+     * Note: Sometimes the copy does not succeed. Presumably, in order to
+     * prevent memory issues, browsers will limit the total amount of data you
+     * can copy to the clipboard. Based on ad hoc testing, we found an
+     * inconsistent limit at about 300KB or 40,000 cells. Depending on the on
+     * the content of cells, your limits may vary.
+     */
+    copyElement: function (elem, plaintext) {
+        if (!exports.Clipboard.isCopySupported()) {
+            return false;
+        }
+        // must be document.body instead of document.documentElement for firefox
+        document.body.appendChild(elem);
+        try {
+            window.getSelection().selectAllChildren(elem);
+            if (plaintext != null) {
+                // add plaintext fallback
+                // http://stackoverflow.com/questions/23211018/copy-to-clipboard-with-jquery-js-in-chrome
+                elem.addEventListener("copy", function (e) {
+                    e.preventDefault();
+                    var clipboardData = e.clipboardData || window.clipboardData;
+                    if (clipboardData != null) {
+                        clipboardData.setData("text/html", elem.outerHTML);
+                        clipboardData.setData("text/plain", plaintext);
+                    }
+                });
+            }
+            return document.execCommand("copy");
+        }
+        catch (err) {
+            return false;
+        }
+        finally {
+            document.body.removeChild(elem);
+        }
+    },
+    /**
+     * Returns a boolean indicating whether the current browser nominally
+     * supports the `copy` operation using the `execCommand` API.
+     */
+    isCopySupported: function () {
+        return document.queryCommandSupported != null && document.queryCommandSupported("copy");
+    },
+};
+
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(10);
+var dragEvents_1 = __webpack_require__(63);
+var draggable_1 = __webpack_require__(19);
+var regions_1 = __webpack_require__(11);
+var DragSelectable = (function (_super) {
+    tslib_1.__extends(DragSelectable, _super);
+    function DragSelectable() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.didExpandSelectionOnActivate = false;
+        _this.handleActivate = function (event) {
+            if (_this.shouldIgnoreMouseDown(event)) {
+                return false;
+            }
+            var region = _this.props.locateClick(event);
+            if (!regions_1.Regions.isValid(region)) {
+                return false;
+            }
+            var _a = _this.props, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
+            var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(region);
+            if (selectedRegionTransform != null) {
+                region = selectedRegionTransform(region, event);
+            }
+            var foundIndex = regions_1.Regions.findMatchingRegion(selectedRegions, region);
+            if (foundIndex !== -1) {
+                // If re-clicking on an existing region, we either carefully
+                // remove it if the meta key is used or otherwise we clear the
+                // selection entirely.
+                if (dragEvents_1.DragEvents.isAdditive(event)) {
+                    var newSelectedRegions = selectedRegions.slice();
+                    newSelectedRegions.splice(foundIndex, 1);
+                    onSelection(newSelectedRegions);
+                }
+                else {
+                    onSelection([]);
+                }
+                var fullFocusCellCoordinates_1 = {
+                    col: focusCellCoordinates.col,
+                    focusSelectionIndex: null,
+                    row: focusCellCoordinates.row,
+                };
+                _this.props.onFocus(fullFocusCellCoordinates_1);
+                return false;
+            }
+            var focusSelectionIndex = null;
+            if (event.shiftKey && selectedRegions.length > 0) {
+                _this.didExpandSelectionOnActivate = true;
+                onSelection(expandSelectedRegions(selectedRegions, region));
+                focusSelectionIndex = 0;
+            }
+            else if (dragEvents_1.DragEvents.isAdditive(event) && _this.props.allowMultipleSelection) {
+                onSelection(regions_1.Regions.add(selectedRegions, region));
+                // the focus should be in the newly created region,
+                // which is at index of the current list of regions plus one,
+                // which is the length of the current list of regions
+                focusSelectionIndex = selectedRegions.length;
+            }
+            else {
+                onSelection([region]);
+                focusSelectionIndex = 0;
+            }
+            var fullFocusCellCoordinates = {
+                col: focusCellCoordinates.col,
+                focusSelectionIndex: focusSelectionIndex,
+                row: focusCellCoordinates.row,
+            };
+            _this.props.onFocus(fullFocusCellCoordinates);
+            return true;
+        };
+        _this.handleDragMove = function (event, coords) {
+            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
+            if (nextSelectedRegions == null) {
+                return;
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            if (!_this.props.allowMultipleSelection) {
+                // have the focused cell follow the selected region
+                var mostRecentRegion = nextSelectedRegions[nextSelectedRegions.length - 1];
+                var focusCellCoordinates = regions_1.Regions.getFocusCellCoordinatesFromRegion(mostRecentRegion);
+                var fullFocusCellCoordinates = {
+                    col: focusCellCoordinates.col,
+                    focusSelectionIndex: nextSelectedRegions.length - 1,
+                    row: focusCellCoordinates.row,
+                };
+                _this.props.onFocus(fullFocusCellCoordinates);
+            }
+        };
+        _this.handleDragEnd = function (event, coords) {
+            var nextSelectedRegions = _this.getDragSelectedRegions(event, coords);
+            if (nextSelectedRegions == null) {
+                return;
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
+            _this.finishInteraction();
+        };
+        _this.handleClick = function (event) {
+            if (_this.shouldIgnoreMouseDown(event)) {
+                return false;
+            }
+            var region = _this.props.locateClick(event);
+            var selectedRegions = _this.props.selectedRegions;
+            if (!regions_1.Regions.isValid(region)) {
+                _this.maybeInvokeSelectionCallback([]);
+                core_1.Utils.safeInvoke(_this.props.onSelectionEnd, []);
+                return false;
+            }
+            if (_this.props.selectedRegionTransform != null) {
+                region = _this.props.selectedRegionTransform(region, event);
+            }
+            var nextSelectedRegions;
+            if (_this.didExpandSelectionOnActivate) {
+                // we already expanded the selection in handleActivate,
+                // so we don't want to overwrite it here
+                nextSelectedRegions = selectedRegions;
+            }
+            else if (selectedRegions.length > 0) {
+                nextSelectedRegions = regions_1.Regions.update(selectedRegions, region);
+            }
+            else {
+                nextSelectedRegions = [region];
+            }
+            _this.maybeInvokeSelectionCallback(nextSelectedRegions);
+            core_1.Utils.safeInvoke(_this.props.onSelectionEnd, nextSelectedRegions);
+            _this.finishInteraction();
+            return false;
+        };
+        _this.finishInteraction = function () {
+            _this.didExpandSelectionOnActivate = false;
+        };
+        return _this;
+    }
+    DragSelectable.prototype.render = function () {
+        var draggableProps = this.getDraggableProps();
+        return (React.createElement(draggable_1.Draggable, tslib_1.__assign({}, draggableProps, { preventDefault: false }), this.props.children));
+    };
+    DragSelectable.prototype.getDraggableProps = function () {
+        return this.props.onSelection == null ? {} : {
+            onActivate: this.handleActivate,
+            onClick: this.handleClick,
+            onDragEnd: this.handleDragEnd,
+            onDragMove: this.handleDragMove,
+        };
+    };
+    DragSelectable.prototype.shouldIgnoreMouseDown = function (event) {
+        var _a = this.props.ignoredSelectors, ignoredSelectors = _a === void 0 ? [] : _a;
+        var element = event.target;
+        return !utils_1.Utils.isLeftClick(event)
+            || this.props.disabled
+            || ignoredSelectors.some(function (selector) { return element.closest(selector) != null; });
+    };
+    DragSelectable.prototype.getDragSelectedRegions = function (event, coords) {
+        var _a = this.props, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
+        var region = this.props.allowMultipleSelection
+            ? this.props.locateDrag(event, coords)
+            : this.props.locateClick(event);
+        if (!regions_1.Regions.isValid(region)) {
+            return undefined;
+        }
+        if (selectedRegionTransform != null) {
+            region = selectedRegionTransform(region, event, coords);
+        }
+        return this.didExpandSelectionOnActivate
+            ? expandSelectedRegions(selectedRegions, region)
+            : regions_1.Regions.update(selectedRegions, region);
+    };
+    DragSelectable.prototype.maybeInvokeSelectionCallback = function (nextSelectedRegions) {
+        var selectedRegions = this.props.selectedRegions;
+        // invoke only if the selection changed
+        if (!utils_1.Utils.deepCompareKeys(selectedRegions, nextSelectedRegions)) {
+            this.props.onSelection(nextSelectedRegions);
+        }
+    };
+    return DragSelectable;
+}(React.Component));
+DragSelectable = tslib_1.__decorate([
+    PureRender
+], DragSelectable);
+exports.DragSelectable = DragSelectable;
+function expandSelectedRegions(regions, region) {
+    if (regions.length === 0) {
+        return [region];
+    }
+    var lastRegion = regions[regions.length - 1];
+    var lastRegionCardinality = regions_1.Regions.getRegionCardinality(lastRegion);
+    var regionCardinality = regions_1.Regions.getRegionCardinality(region);
+    if (regionCardinality !== lastRegionCardinality) {
+        // TODO: add proper handling for expanding regions from one cardinality to another depending
+        // on the focused cell (see: https://github.com/palantir/blueprint/issues/823). for now,
+        // just return the new region by itself.
+        return [region];
+    }
+    // simplified algorithm: expand the most recently selected region, and clear all others.
+    // TODO: pass the current focused cell into DragSelectable via props, then update this logic
+    // to leverage the focus cell's coordinates appropriately.
+    // (see: https://github.com/palantir/blueprint/issues/823)
+    if (regionCardinality === regions_1.RegionCardinality.FULL_ROWS) {
+        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
+        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
+        return [regions_1.Regions.row(rowStart, rowEnd)];
+    }
+    else if (regionCardinality === regions_1.RegionCardinality.FULL_COLUMNS) {
+        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
+        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
+        return [regions_1.Regions.column(colStart, colEnd)];
+    }
+    else if (regionCardinality === regions_1.RegionCardinality.CELLS) {
+        var rowStart = Math.min(lastRegion.rows[0], region.rows[0]);
+        var colStart = Math.min(lastRegion.cols[0], region.cols[0]);
+        var rowEnd = Math.max(lastRegion.rows[1], region.rows[1]);
+        var colEnd = Math.max(lastRegion.cols[1], region.cols[1]);
+        return [regions_1.Regions.cell(rowStart, colStart, rowEnd, colEnd)];
+    }
+    else {
+        // if we've selected the FULL_TABLE, no need to expand it further.
+        return [region];
+    }
+}
+
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(7);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(68);
+var loadableContent_1 = __webpack_require__(35);
+var headerCell_1 = __webpack_require__(69);
+function HorizontalCellDivider() {
+    return React.createElement("div", { className: Classes.TABLE_HORIZONTAL_CELL_DIVIDER });
+}
+exports.HorizontalCellDivider = HorizontalCellDivider;
+var ColumnHeaderCell = (function (_super) {
+    tslib_1.__extends(ColumnHeaderCell, _super);
+    function ColumnHeaderCell() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isActive: false,
+        };
+        _this.handlePopoverDidOpen = function () {
+            _this.setState({ isActive: true });
+        };
+        _this.handlePopoverWillClose = function () {
+            _this.setState({ isActive: false });
+        };
+        return _this;
+    }
+    /**
+     * This method determines if a `MouseEvent` was triggered on a target that
+     * should be used as the header click/drag target. This enables users of
+     * this component to render fully interactive components in their header
+     * cells without worry of selection or resize operations from capturing
+     * their mouse events.
+     */
+    ColumnHeaderCell.isHeaderMouseTarget = function (target) {
+        return target.classList.contains(Classes.TABLE_HEADER)
+            || target.classList.contains(Classes.TABLE_COLUMN_NAME)
+            || target.classList.contains(Classes.TABLE_INTERACTION_BAR)
+            || target.classList.contains(Classes.TABLE_HEADER_CONTENT);
+    };
+    ColumnHeaderCell.prototype.render = function () {
+        var _a = this.props, 
+        // from IColumnHeaderCellProps
+        isColumnReorderable = _a.isColumnReorderable, isColumnSelected = _a.isColumnSelected, menuIconName = _a.menuIconName, 
+        // from IColumnNameProps
+        name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["isColumnReorderable", "isColumnSelected", "menuIconName", "name", "renderName", "useInteractionBar"]);
+        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isColumnReorderable, isSelected: this.props.isColumnSelected }, spreadableProps),
+            this.renderName(),
+            this.maybeRenderContent(),
+            this.props.loading ? undefined : this.props.resizeHandle));
+    };
+    ColumnHeaderCell.prototype.validateProps = function (nextProps) {
+        if (nextProps.menu != null) {
+            // throw this warning from the publicly exported, higher-order *HeaderCell components
+            // rather than HeaderCell, so consumers know exactly which components are receiving the
+            // offending prop
+            console.warn(Errors.COLUMN_HEADER_CELL_MENU_DEPRECATED);
+        }
+    };
+    ColumnHeaderCell.prototype.renderName = function () {
+        var _a = this.props, index = _a.index, loading = _a.loading, name = _a.name, renderName = _a.renderName, useInteractionBar = _a.useInteractionBar;
+        var dropdownMenu = this.maybeRenderDropdownMenu();
+        var defaultName = React.createElement("div", { className: Classes.TABLE_TRUNCATED_TEXT }, name);
+        var nameComponent = (React.createElement(loadableContent_1.LoadableContent, { loading: loading, variableLength: true }, renderName == null ? defaultName : renderName(name, index)));
+        if (useInteractionBar) {
+            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
+                React.createElement("div", { className: Classes.TABLE_INTERACTION_BAR },
+                    this.props.reorderHandle,
+                    dropdownMenu),
+                React.createElement(HorizontalCellDivider, null),
+                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
+        }
+        else {
+            return (React.createElement("div", { className: Classes.TABLE_COLUMN_NAME, title: name },
+                dropdownMenu,
+                React.createElement("div", { className: Classes.TABLE_COLUMN_NAME_TEXT }, nameComponent)));
+        }
+    };
+    ColumnHeaderCell.prototype.maybeRenderContent = function () {
+        if (this.props.children === null) {
+            return undefined;
+        }
+        return (React.createElement("div", { className: Classes.TABLE_HEADER_CONTENT }, this.props.children));
+    };
+    ColumnHeaderCell.prototype.maybeRenderDropdownMenu = function () {
+        var _a = this.props, index = _a.index, menu = _a.menu, menuIconName = _a.menuIconName, renderMenu = _a.renderMenu;
+        if (renderMenu == null && menu == null) {
+            return undefined;
+        }
+        var popoverTargetClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass(menuIconName));
+        var constraints = [{
+                attachment: "together",
+                pin: true,
+                to: "window",
+            }];
+        var classes = classNames(Classes.TABLE_TH_MENU_CONTAINER, (_b = {},
+            _b[Classes.TABLE_TH_MENU_OPEN] = this.state.isActive,
+            _b));
+        // prefer renderMenu if it's defined
+        var content = core_1.Utils.isFunction(renderMenu)
+            ? renderMenu(index)
+            : menu;
+        return (React.createElement("div", { className: classes },
+            React.createElement("div", { className: Classes.TABLE_TH_MENU_CONTAINER_BACKGROUND }),
+            React.createElement(core_1.Popover, { tetherOptions: { constraints: constraints }, content: content, position: core_1.Position.BOTTOM, className: Classes.TABLE_TH_MENU, popoverDidOpen: this.handlePopoverDidOpen, popoverWillClose: this.handlePopoverWillClose, useSmartArrowPositioning: true },
+                React.createElement("span", { className: popoverTargetClasses }))));
+        var _b;
+    };
+    return ColumnHeaderCell;
+}(core_1.AbstractComponent));
+ColumnHeaderCell.defaultProps = {
+    isActive: false,
+    menuIconName: "chevron-down",
+    useInteractionBar: false,
+};
+exports.ColumnHeaderCell = ColumnHeaderCell;
+
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2600,7 +4722,7 @@ var Intent;
 
 
 /***/ }),
-/* 28 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2613,7 +4735,7 @@ var Intent;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var position_1 = __webpack_require__(10);
+var position_1 = __webpack_require__(14);
 // per https://github.com/HubSpot/tether/pull/204, Tether now exposes a `bodyElement` option that,
 // when present, gets the tethered element injected into *it* instead of into the document body.
 // but both approaches still cause React to freak out, because it loses its handle on the DOM
@@ -2684,7 +4806,7 @@ function expandAttachmentClasses(attachments, prefix) {
 
 
 /***/ }),
-/* 29 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2701,56 +4823,56 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 if (typeof window !== "undefined" && typeof document !== "undefined") {
     // tslint:disable-next-line:no-var-requires
-    __webpack_require__(57); // only import actual dom4 if we're in the browser (not server-compatible)
+    __webpack_require__(79); // only import actual dom4 if we're in the browser (not server-compatible)
     // we'll still need dom4 types for the TypeScript to compile, these are included in package.json
 }
-var contextMenu = __webpack_require__(30);
+var contextMenu = __webpack_require__(43);
 exports.ContextMenu = contextMenu;
-__export(__webpack_require__(76));
-__export(__webpack_require__(78));
-__export(__webpack_require__(17));
-__export(__webpack_require__(35));
-__export(__webpack_require__(79));
-__export(__webpack_require__(80));
-__export(__webpack_require__(34));
-__export(__webpack_require__(81));
-__export(__webpack_require__(37));
-__export(__webpack_require__(38));
-__export(__webpack_require__(84));
-__export(__webpack_require__(85));
-__export(__webpack_require__(39));
-__export(__webpack_require__(25));
-__export(__webpack_require__(88));
-__export(__webpack_require__(36));
-__export(__webpack_require__(89));
-__export(__webpack_require__(15));
-__export(__webpack_require__(90));
-__export(__webpack_require__(14));
-__export(__webpack_require__(91));
-__export(__webpack_require__(33));
-__export(__webpack_require__(92));
-__export(__webpack_require__(93));
-__export(__webpack_require__(94));
-__export(__webpack_require__(95));
-__export(__webpack_require__(24));
-__export(__webpack_require__(96));
-__export(__webpack_require__(44));
-__export(__webpack_require__(97));
-__export(__webpack_require__(45));
-__export(__webpack_require__(46));
-__export(__webpack_require__(47));
 __export(__webpack_require__(98));
 __export(__webpack_require__(100));
+__export(__webpack_require__(23));
 __export(__webpack_require__(48));
 __export(__webpack_require__(101));
-__export(__webpack_require__(23));
 __export(__webpack_require__(102));
+__export(__webpack_require__(47));
+__export(__webpack_require__(103));
+__export(__webpack_require__(50));
+__export(__webpack_require__(51));
+__export(__webpack_require__(106));
+__export(__webpack_require__(107));
+__export(__webpack_require__(52));
+__export(__webpack_require__(33));
+__export(__webpack_require__(110));
 __export(__webpack_require__(49));
+__export(__webpack_require__(111));
+__export(__webpack_require__(21));
+__export(__webpack_require__(112));
+__export(__webpack_require__(18));
+__export(__webpack_require__(113));
+__export(__webpack_require__(46));
+__export(__webpack_require__(114));
+__export(__webpack_require__(115));
+__export(__webpack_require__(116));
+__export(__webpack_require__(117));
+__export(__webpack_require__(32));
+__export(__webpack_require__(118));
+__export(__webpack_require__(57));
+__export(__webpack_require__(119));
+__export(__webpack_require__(58));
+__export(__webpack_require__(59));
+__export(__webpack_require__(60));
+__export(__webpack_require__(120));
+__export(__webpack_require__(122));
+__export(__webpack_require__(61));
+__export(__webpack_require__(123));
+__export(__webpack_require__(31));
+__export(__webpack_require__(124));
+__export(__webpack_require__(62));
 
 
 
 /***/ }),
-/* 30 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2764,12 +4886,12 @@ __export(__webpack_require__(49));
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var position_1 = __webpack_require__(10);
-var utils_1 = __webpack_require__(4);
-var popover_1 = __webpack_require__(14);
+var ReactDOM = __webpack_require__(12);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var position_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(5);
+var popover_1 = __webpack_require__(18);
 var TETHER_OPTIONS = {
     constraints: [
         { attachment: "together", pin: true, to: "window" },
@@ -2853,7 +4975,7 @@ exports.isOpen = isOpen;
 
 
 /***/ }),
-/* 31 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2866,7 +4988,7 @@ exports.default = !!(typeof window !== 'undefined' && window.document && window.
 module.exports = exports['default'];
 
 /***/ }),
-/* 32 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2880,7 +5002,7 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(16);
+var _propTypes = __webpack_require__(22);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
@@ -2921,7 +5043,7 @@ var nameShape = exports.nameShape = _propTypes2.default.oneOfType([_propTypes2.d
 })]);
 
 /***/ }),
-/* 33 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2935,11 +5057,11 @@ var nameShape = exports.nameShape = _propTypes2.default.oneOfType([_propTypes2.d
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var props_1 = __webpack_require__(13);
-var utils_1 = __webpack_require__(4);
+var ReactDOM = __webpack_require__(12);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var props_1 = __webpack_require__(17);
+var utils_1 = __webpack_require__(5);
 var REACT_CONTEXT_TYPES = {
     blueprintPortalClassName: function (obj, key) {
         if (obj[key] != null && typeof obj[key] !== "string") {
@@ -2990,7 +5112,7 @@ exports.Portal = Portal;
 
 
 /***/ }),
-/* 34 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3003,12 +5125,12 @@ exports.Portal = Portal;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var overlay_1 = __webpack_require__(15);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var overlay_1 = __webpack_require__(21);
 var Dialog = (function (_super) {
     tslib_1.__extends(Dialog, _super);
     function Dialog() {
@@ -3067,7 +5189,7 @@ exports.DialogFactory = React.createFactory(Dialog);
 
 
 /***/ }),
-/* 35 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3080,10 +5202,10 @@ exports.DialogFactory = React.createFactory(Dialog);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
 var AnimationStates;
 (function (AnimationStates) {
     AnimationStates[AnimationStates["CLOSED"] = 0] = "CLOSED";
@@ -3226,7 +5348,7 @@ exports.Collapse = Collapse;
 
 
 /***/ }),
-/* 36 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3239,15 +5361,15 @@ exports.Collapse = Collapse;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var position_1 = __webpack_require__(10);
-var popover_1 = __webpack_require__(14);
-var menu_1 = __webpack_require__(25);
+var ReactDOM = __webpack_require__(12);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var position_1 = __webpack_require__(14);
+var popover_1 = __webpack_require__(18);
+var menu_1 = __webpack_require__(33);
 var REACT_CONTEXT_TYPES = {
     alignLeft: function (obj, key) {
         if (obj[key] != null && typeof obj[key] !== "boolean") {
@@ -3399,7 +5521,7 @@ exports.MenuItemFactory = React.createFactory(MenuItem);
 
 
 /***/ }),
-/* 37 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3416,11 +5538,11 @@ var tslib_1 = __webpack_require__(1);
 // tslint:disable max-classes-per-file
 // we need some empty interfaces to show up in docs
 // tslint:disable no-empty-interface
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var props_1 = __webpack_require__(13);
-var utils_1 = __webpack_require__(4);
+var Classes = __webpack_require__(3);
+var props_1 = __webpack_require__(17);
+var utils_1 = __webpack_require__(5);
 var INVALID_PROPS = [
     // we spread props to `<input>` but render `children` as its sibling
     "children",
@@ -3513,7 +5635,7 @@ exports.RadioFactory = React.createFactory(Radio);
 
 
 /***/ }),
-/* 38 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3526,11 +5648,11 @@ exports.RadioFactory = React.createFactory(Radio);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var props_1 = __webpack_require__(13);
+var Classes = __webpack_require__(3);
+var props_1 = __webpack_require__(17);
 var InputGroup = (function (_super) {
     tslib_1.__extends(InputGroup, _super);
     function InputGroup() {
@@ -3600,7 +5722,7 @@ exports.InputGroupFactory = React.createFactory(InputGroup);
 
 
 /***/ }),
-/* 39 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3615,23 +5737,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var react_1 = __webpack_require__(0);
 var React = __webpack_require__(0);
-var common_1 = __webpack_require__(12);
-var hotkey_1 = __webpack_require__(18);
-var hotkey_2 = __webpack_require__(18);
+var common_1 = __webpack_require__(16);
+var hotkey_1 = __webpack_require__(24);
+var hotkey_2 = __webpack_require__(24);
 exports.Hotkey = hotkey_2.Hotkey;
-var keyCombo_1 = __webpack_require__(40);
+var keyCombo_1 = __webpack_require__(53);
 exports.KeyCombo = keyCombo_1.KeyCombo;
-var hotkeysTarget_1 = __webpack_require__(86);
+var hotkeysTarget_1 = __webpack_require__(108);
 exports.HotkeysTarget = hotkeysTarget_1.HotkeysTarget;
-var hotkeyParser_1 = __webpack_require__(26);
+var hotkeyParser_1 = __webpack_require__(34);
 exports.comboMatches = hotkeyParser_1.comboMatches;
 exports.getKeyCombo = hotkeyParser_1.getKeyCombo;
 exports.getKeyComboString = hotkeyParser_1.getKeyComboString;
 exports.parseKeyCombo = hotkeyParser_1.parseKeyCombo;
-var hotkeysDialog_1 = __webpack_require__(41);
+var hotkeysDialog_1 = __webpack_require__(54);
 exports.hideHotkeysDialog = hotkeysDialog_1.hideHotkeysDialog;
 exports.setHotkeysDialogProps = hotkeysDialog_1.setHotkeysDialogProps;
-var errors_1 = __webpack_require__(7);
+var errors_1 = __webpack_require__(9);
 var Hotkeys = (function (_super) {
     tslib_1.__extends(Hotkeys, _super);
     function Hotkeys() {
@@ -3679,7 +5801,7 @@ exports.Hotkeys = Hotkeys;
 
 
 /***/ }),
-/* 40 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3693,7 +5815,7 @@ exports.Hotkeys = Hotkeys;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var hotkeyParser_1 = __webpack_require__(26);
+var hotkeyParser_1 = __webpack_require__(34);
 var KeyIcons = {
     alt: "pt-icon-key-option",
     ctrl: "pt-icon-key-control",
@@ -3738,7 +5860,7 @@ exports.KeyCombo = KeyCombo;
 
 
 /***/ }),
-/* 41 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3751,13 +5873,13 @@ exports.KeyCombo = KeyCombo;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var common_1 = __webpack_require__(12);
-var components_1 = __webpack_require__(29);
-var hotkey_1 = __webpack_require__(18);
-var hotkeys_1 = __webpack_require__(39);
+var ReactDOM = __webpack_require__(12);
+var common_1 = __webpack_require__(16);
+var components_1 = __webpack_require__(42);
+var hotkey_1 = __webpack_require__(24);
+var hotkeys_1 = __webpack_require__(52);
 /**
  * The delay before showing or hiding the dialog. Should be long enough to
  * allow all registered hotkey listeners to execute first.
@@ -3879,7 +6001,7 @@ exports.hideHotkeysDialogAfterDelay = hideHotkeysDialogAfterDelay;
 
 
 /***/ }),
-/* 42 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3892,13 +6014,13 @@ exports.hideHotkeysDialogAfterDelay = hideHotkeysDialogAfterDelay;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var utils_1 = __webpack_require__(4);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var utils_1 = __webpack_require__(5);
 var CoreSlider = (function (_super) {
     tslib_1.__extends(CoreSlider, _super);
     function CoreSlider(props) {
@@ -4013,7 +6135,7 @@ exports.CoreSlider = CoreSlider;
 
 
 /***/ }),
-/* 43 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4026,13 +6148,13 @@ exports.CoreSlider = CoreSlider;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Keys = __webpack_require__(11);
-var utils_1 = __webpack_require__(4);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Keys = __webpack_require__(15);
+var utils_1 = __webpack_require__(5);
 // props that require number values, for validation
 var NUMBER_PROPS = ["max", "min", "stepSize", "tickSize", "value"];
 var Handle = (function (_super) {
@@ -4168,7 +6290,7 @@ exports.Handle = Handle;
 
 
 /***/ }),
-/* 44 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4181,10 +6303,10 @@ exports.Handle = Handle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var Tab = (function (_super) {
     tslib_1.__extends(Tab, _super);
     function Tab() {
@@ -4209,7 +6331,7 @@ exports.TabFactory = React.createFactory(Tab);
 
 
 /***/ }),
-/* 45 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4222,11 +6344,11 @@ exports.TabFactory = React.createFactory(Tab);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
 var TabList = (function (_super) {
     tslib_1.__extends(TabList, _super);
     function TabList() {
@@ -4260,7 +6382,7 @@ exports.TabListFactory = React.createFactory(TabList);
 
 
 /***/ }),
-/* 46 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4273,10 +6395,10 @@ exports.TabListFactory = React.createFactory(TabList);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var TabPanel = (function (_super) {
     tslib_1.__extends(TabPanel, _super);
     function TabPanel() {
@@ -4297,7 +6419,7 @@ exports.TabPanelFactory = React.createFactory(TabPanel);
 
 
 /***/ }),
-/* 47 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4310,10 +6432,10 @@ exports.TabPanelFactory = React.createFactory(TabPanel);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var Tab2 = (function (_super) {
     tslib_1.__extends(Tab2, _super);
     function Tab2() {
@@ -4341,7 +6463,7 @@ exports.Tab2Factory = React.createFactory(Tab2);
 
 
 /***/ }),
-/* 48 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4354,13 +6476,13 @@ exports.Tab2Factory = React.createFactory(Tab2);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
-var buttons_1 = __webpack_require__(17);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
+var buttons_1 = __webpack_require__(23);
 var Toast = (function (_super) {
     tslib_1.__extends(Toast, _super);
     function Toast() {
@@ -4439,7 +6561,7 @@ exports.ToastFactory = React.createFactory(Toast);
 
 
 /***/ }),
-/* 49 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4452,11 +6574,11 @@ exports.ToastFactory = React.createFactory(Toast);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
-var collapse_1 = __webpack_require__(35);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
+var collapse_1 = __webpack_require__(48);
 var TreeNode = (function (_super) {
     tslib_1.__extends(TreeNode, _super);
     function TreeNode() {
@@ -4527,20 +6649,1269 @@ exports.TreeNode = TreeNode;
 
 
 /***/ }),
-/* 50 */
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var DragEvents = (function () {
+    function DragEvents() {
+        var _this = this;
+        this.handleMouseDown = function (event) {
+            _this.initCoordinateData(event);
+            if (_this.handler != null && _this.handler.onActivate != null) {
+                var exitCode = _this.handler.onActivate(event);
+                if (exitCode === false) {
+                    return;
+                }
+            }
+            _this.isActivated = true;
+            _this.maybeAlterEventChain(event);
+            // It is possible that the mouseup would not be called after the initial
+            // mousedown (for example if the mouse is moved out of the window). So,
+            // we preemptively detach to avoid duplicate listeners.
+            _this.detachDocumentEventListeners();
+            _this.attachDocumentEventListeners();
+        };
+        this.handleMouseMove = function (event) {
+            _this.maybeAlterEventChain(event);
+            if (_this.isActivated) {
+                _this.isDragging = true;
+            }
+            if (_this.isDragging) {
+                var coords = _this.updateCoordinateData(event);
+                if (_this.handler != null && _this.handler.onDragMove != null) {
+                    _this.handler.onDragMove(event, coords);
+                }
+            }
+        };
+        this.handleMouseUp = function (event) {
+            _this.maybeAlterEventChain(event);
+            if (_this.handler != null) {
+                if (_this.isDragging) {
+                    var coords = _this.updateCoordinateData(event);
+                    if (_this.handler.onDragMove != null) {
+                        _this.handler.onDragMove(event, coords);
+                    }
+                    if (_this.handler.onDragEnd != null) {
+                        _this.handler.onDragEnd(event, coords);
+                    }
+                }
+                else if (_this.isActivated) {
+                    if (_this.handler.onDoubleClick != null) {
+                        if (_this.doubleClickTimeoutToken == null) {
+                            // if this the first click of a possible double-click,
+                            // we delay the firing of the click event by the
+                            // timeout.
+                            _this.doubleClickTimeoutToken = setTimeout(function () {
+                                delete _this.doubleClickTimeoutToken;
+                                if (_this.handler.onClick != null) {
+                                    _this.handler.onClick(event);
+                                }
+                            }, DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC);
+                        }
+                        else {
+                            // otherwise, this is the second click in the double-
+                            // click so we cancel the single-click timeout and
+                            // fire the double-click event.
+                            clearTimeout(_this.doubleClickTimeoutToken);
+                            delete _this.doubleClickTimeoutToken;
+                            _this.handler.onDoubleClick(event);
+                        }
+                    }
+                    else if (_this.handler.onClick != null) {
+                        _this.handler.onClick(event);
+                    }
+                }
+            }
+            _this.isActivated = false;
+            _this.isDragging = false;
+            _this.detachDocumentEventListeners();
+        };
+    }
+    /**
+     * Returns true if the event includes a modifier key that often adds the result of the drag
+     * event to any existing state. For example, holding CTRL before dragging may select another
+     * region in addition to an existing one, while the absence of a modifier key may clear the
+     * existing selection first.
+     * @param event the mouse event for the drag interaction
+     */
+    DragEvents.isAdditive = function (event) {
+        return event.ctrlKey || event.metaKey;
+    };
+    DragEvents.prototype.attach = function (element, handler) {
+        this.detach();
+        this.handler = handler;
+        this.element = element;
+        if (this.isValidDragHandler(handler)) {
+            this.element.addEventListener("mousedown", this.handleMouseDown);
+        }
+        return this;
+    };
+    DragEvents.prototype.detach = function () {
+        if (this.element != null) {
+            this.element.removeEventListener("mousedown", this.handleMouseDown);
+            this.detachDocumentEventListeners();
+        }
+    };
+    DragEvents.prototype.isValidDragHandler = function (handler) {
+        return handler != null && (handler.onActivate != null
+            || handler.onDragMove != null
+            || handler.onDragEnd != null
+            || handler.onClick != null
+            || handler.onDoubleClick != null);
+    };
+    DragEvents.prototype.attachDocumentEventListeners = function () {
+        document.addEventListener("mousemove", this.handleMouseMove);
+        document.addEventListener("mouseup", this.handleMouseUp);
+    };
+    DragEvents.prototype.detachDocumentEventListeners = function () {
+        document.removeEventListener("mousemove", this.handleMouseMove);
+        document.removeEventListener("mouseup", this.handleMouseUp);
+    };
+    DragEvents.prototype.initCoordinateData = function (event) {
+        this.activationCoordinates = [event.clientX, event.clientY];
+        this.lastCoordinates = this.activationCoordinates;
+    };
+    DragEvents.prototype.updateCoordinateData = function (event) {
+        var currentCoordinates = [event.clientX, event.clientY];
+        var deltaCoordinates = [
+            currentCoordinates[0] - this.lastCoordinates[0],
+            currentCoordinates[1] - this.lastCoordinates[1],
+        ];
+        var offsetCoordinates = [
+            currentCoordinates[0] - this.activationCoordinates[0],
+            currentCoordinates[1] - this.activationCoordinates[1],
+        ];
+        var data = {
+            activation: this.activationCoordinates,
+            current: currentCoordinates,
+            delta: deltaCoordinates,
+            last: this.lastCoordinates,
+            offset: offsetCoordinates,
+        };
+        this.lastCoordinates = [event.clientX, event.clientY];
+        return data;
+    };
+    DragEvents.prototype.maybeAlterEventChain = function (event) {
+        if (this.handler.preventDefault) {
+            event.preventDefault();
+        }
+        if (this.handler.stopPropagation) {
+            event.stopPropagation();
+        }
+    };
+    return DragEvents;
+}());
+DragEvents.DOUBLE_CLICK_TIMEOUT_MSEC = 500;
+exports.DragEvents = DragEvents;
+
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+// amount in pixels that the content div width changes when truncated vs when
+// not truncated. Note: could be modified by styles
+var CONTENT_DIV_WIDTH_DELTA = 25;
+var TruncatedPopoverMode;
+(function (TruncatedPopoverMode) {
+    TruncatedPopoverMode[TruncatedPopoverMode["ALWAYS"] = 0] = "ALWAYS";
+    TruncatedPopoverMode[TruncatedPopoverMode["NEVER"] = 1] = "NEVER";
+    TruncatedPopoverMode[TruncatedPopoverMode["WHEN_TRUNCATED"] = 2] = "WHEN_TRUNCATED";
+})(TruncatedPopoverMode = exports.TruncatedPopoverMode || (exports.TruncatedPopoverMode = {}));
+var TruncatedFormat = (function (_super) {
+    tslib_1.__extends(TruncatedFormat, _super);
+    function TruncatedFormat() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = { isTruncated: false };
+        _this.handleContentDivRef = function (ref) { return _this.contentDiv = ref; };
+        return _this;
+    }
+    TruncatedFormat.prototype.render = function () {
+        var _a = this.props, children = _a.children, detectTruncation = _a.detectTruncation, preformatted = _a.preformatted, truncateLength = _a.truncateLength, truncationSuffix = _a.truncationSuffix;
+        var content = "" + children;
+        var cellContent = content;
+        if (!detectTruncation && truncateLength > 0 && cellContent.length > truncateLength) {
+            cellContent = cellContent.substring(0, truncateLength) + truncationSuffix;
+        }
+        if (this.shouldShowPopover(content)) {
+            var popoverClasses = classNames(Classes.TABLE_TRUNCATED_POPOVER, preformatted ? Classes.TABLE_POPOVER_WHITESPACE_PRE : Classes.TABLE_POPOVER_WHITESPACE_NORMAL);
+            var popoverContent = React.createElement("div", { className: popoverClasses }, children);
+            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT);
+            var constraints = [{
+                    attachment: "together",
+                    to: "window",
+                }];
+            var iconClasses = classNames(core_1.Classes.ICON_STANDARD, core_1.Classes.iconClass("more"));
+            return (React.createElement("div", { className: className },
+                React.createElement("div", { className: Classes.TABLE_TRUNCATED_VALUE, ref: this.handleContentDivRef }, cellContent),
+                React.createElement(core_1.Popover, { className: Classes.TABLE_TRUNCATED_POPOVER_TARGET, tetherOptions: { constraints: constraints }, content: popoverContent, position: core_1.Position.BOTTOM, useSmartArrowPositioning: true },
+                    React.createElement("span", { className: iconClasses }))));
+        }
+        else {
+            var className = classNames(this.props.className, Classes.TABLE_TRUNCATED_FORMAT_TEXT);
+            return React.createElement("div", { className: className, ref: this.handleContentDivRef }, cellContent);
+        }
+    };
+    TruncatedFormat.prototype.componentDidMount = function () {
+        this.setTruncationState();
+    };
+    TruncatedFormat.prototype.componentDidUpdate = function () {
+        this.setTruncationState();
+    };
+    TruncatedFormat.prototype.shouldShowPopover = function (content) {
+        var _a = this.props, detectTruncation = _a.detectTruncation, showPopover = _a.showPopover, truncateLength = _a.truncateLength;
+        switch (showPopover) {
+            case TruncatedPopoverMode.ALWAYS:
+                return true;
+            case TruncatedPopoverMode.NEVER:
+                return false;
+            case TruncatedPopoverMode.WHEN_TRUNCATED:
+                return detectTruncation
+                    ? this.state.isTruncated
+                    : (truncateLength > 0 && content.length > truncateLength);
+            default:
+                return false;
+        }
+    };
+    TruncatedFormat.prototype.setTruncationState = function () {
+        if (!this.props.detectTruncation || this.props.showPopover !== TruncatedPopoverMode.WHEN_TRUNCATED) {
+            return;
+        }
+        // if the popover handle exists, take it into account
+        var popoverHandleAdjustmentFactor = this.state.isTruncated ? CONTENT_DIV_WIDTH_DELTA : 0;
+        // add a slight bit of buffer space where we don't show the popover, to deal with cases
+        // where everything isn't pixel perfect
+        popoverHandleAdjustmentFactor += .5;
+        var isTruncated = this.contentDiv !== undefined &&
+            (this.contentDiv.scrollWidth - popoverHandleAdjustmentFactor > this.contentDiv.clientWidth ||
+                this.contentDiv.scrollHeight > this.contentDiv.clientHeight);
+        if (this.state.isTruncated !== isTruncated) {
+            this.setState({ isTruncated: isTruncated });
+        }
+    };
+    return TruncatedFormat;
+}(React.Component));
+TruncatedFormat.defaultProps = {
+    detectTruncation: true,
+    preformatted: false,
+    showPopover: TruncatedPopoverMode.WHEN_TRUNCATED,
+    truncateLength: 80,
+    truncationSuffix: "...",
+};
+exports.TruncatedFormat = TruncatedFormat;
+
+
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var cell_1 = __webpack_require__(25);
+var Column = (function (_super) {
+    tslib_1.__extends(Column, _super);
+    function Column() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return Column;
+}(React.Component));
+Column.defaultProps = {
+    renderCell: cell_1.emptyCellRenderer,
+};
+Column = tslib_1.__decorate([
+    PureRender
+], Column);
+exports.Column = Column;
+
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var regions_1 = __webpack_require__(11);
+var Classes = __webpack_require__(6);
+var rect_1 = __webpack_require__(20);
+var utils_1 = __webpack_require__(10);
+/**
+ * This class manages the sizes of grid cells using arrays of individual row/column sizes.
+ */
+var Grid = (function () {
+    /**
+     * This constructor accumulates the heights and widths in `O(n)`, saving
+     * time in later calculations.
+     *
+     * @param bleed - The number of rows/cols that we expand beyond the
+     *     viewport (on all sides). This helps avoid displaying an empty
+     *     viewport when the user scrolls quickly.
+     */
+    function Grid(rowHeights, columnWidths, bleed, ghostHeight, ghostWidth) {
+        if (bleed === void 0) { bleed = Grid.DEFAULT_BLEED; }
+        if (ghostHeight === void 0) { ghostHeight = Grid.DEFAULT_GHOST_HEIGHT; }
+        if (ghostWidth === void 0) { ghostWidth = Grid.DEFAULT_GHOST_WIDTH; }
+        var _this = this;
+        this.getCumulativeWidthBefore = function (index) {
+            return (index === 0) ? 0 : _this.getCumulativeWidthAt(index - 1);
+        };
+        this.getCumulativeWidthAt = function (index) {
+            if (_this.numCols === 0) {
+                return _this.ghostWidth * index;
+            }
+            else if (index >= _this.numCols) {
+                return _this.cumulativeColumnWidths[_this.numCols - 1] + _this.ghostWidth * (index - _this.numCols + 1);
+            }
+            else {
+                return _this.cumulativeColumnWidths[index];
+            }
+        };
+        this.getCumulativeHeightBefore = function (index) {
+            return (index === 0) ? 0 : _this.getCumulativeHeightAt(index - 1);
+        };
+        this.getCumulativeHeightAt = function (index) {
+            if (_this.numRows === 0) {
+                return _this.ghostHeight * index;
+            }
+            else if (index >= _this.numRows) {
+                return _this.cumulativeRowHeights[_this.numRows - 1] + _this.ghostHeight * (index - _this.numRows + 1);
+            }
+            else {
+                return _this.cumulativeRowHeights[index];
+            }
+        };
+        this.columnWidths = columnWidths;
+        this.rowHeights = rowHeights;
+        this.cumulativeColumnWidths = utils_1.Utils.accumulate(columnWidths);
+        this.cumulativeRowHeights = utils_1.Utils.accumulate(rowHeights);
+        this.numCols = columnWidths.length;
+        this.numRows = rowHeights.length;
+        this.bleed = bleed;
+        this.ghostHeight = ghostHeight;
+        this.ghostWidth = ghostWidth;
+    }
+    /**
+     * Returns the `Rect` bounds of a cell in scrollpane client space.
+     *
+     * Scrollpane client coordinate space uses the origin of the scrollpane
+     * client (the inside part that you're moving around).
+     *
+     * For example, let's say you're scrolling around a block of 1000 x 1000
+     * cells. Regardless where you've scrolled, the first cell is always at
+     * 0,0 in scrollpane client space. the cell to the right of it is always
+     * at, e.g., 100,0.
+     */
+    Grid.prototype.getCellRect = function (rowIndex, columnIndex) {
+        var height = this.rowHeights[rowIndex];
+        var top = this.cumulativeRowHeights[rowIndex] - height;
+        var width = this.columnWidths[columnIndex];
+        var left = this.cumulativeColumnWidths[columnIndex] - width;
+        return new rect_1.Rect(left, top, width, height);
+    };
+    /**
+     * Returns the `Rect` bounds of a cell in scrollpane client space.
+     *
+     * If the cell is beyond the bounds of the user-defined table cells, it is
+     * considered a "ghost" cell. If a width/height is not defined for that
+     * row/column, we use the default width/height.
+     */
+    Grid.prototype.getGhostCellRect = function (rowIndex, columnIndex) {
+        var left = 0;
+        var top = 0;
+        var width = 0;
+        var height = 0;
+        if (rowIndex >= this.rowHeights.length) {
+            height = this.ghostHeight;
+            top = this.getHeight() + this.ghostHeight * (rowIndex - this.numRows);
+        }
+        else {
+            height = this.rowHeights[rowIndex];
+            top = this.cumulativeRowHeights[rowIndex] - height;
+        }
+        if (columnIndex >= this.columnWidths.length) {
+            width = this.ghostWidth;
+            left = this.getWidth() + this.ghostWidth * (columnIndex - this.numCols);
+        }
+        else {
+            width = this.columnWidths[columnIndex];
+            left = this.cumulativeColumnWidths[columnIndex] - width;
+        }
+        return new rect_1.Rect(left, top, width, height);
+    };
+    /**
+     * Returns the `Rect` with the base coordinate and height of the specified row.
+     */
+    Grid.prototype.getRowRect = function (rowIndex) {
+        var height = this.rowHeights[rowIndex];
+        var top = this.cumulativeRowHeights[rowIndex] - height;
+        return new rect_1.Rect(0, top, this.getWidth(), height);
+    };
+    /**
+     * Returns the `Rect` with the base coordinate and width of the specified column.
+     */
+    Grid.prototype.getColumnRect = function (columnIndex) {
+        var width = this.columnWidths[columnIndex];
+        var left = this.cumulativeColumnWidths[columnIndex] - width;
+        return new rect_1.Rect(left, 0, width, this.getHeight());
+    };
+    /**
+     * Returns the total width of the entire grid
+     */
+    Grid.prototype.getWidth = function () {
+        return this.numCols === 0 ? 0 : this.cumulativeColumnWidths[this.numCols - 1];
+    };
+    /**
+     * Returns the total width of the entire grid
+     */
+    Grid.prototype.getHeight = function () {
+        return this.numRows === 0 ? 0 : this.cumulativeRowHeights[this.numRows - 1];
+    };
+    /**
+     * Returns the `Rect` bounds of entire grid
+     */
+    Grid.prototype.getRect = function () {
+        return new rect_1.Rect(0, 0, this.getWidth(), this.getHeight());
+    };
+    /**
+     * Maps each cell that intersects with the given `Rect` argument. The
+     * indices of iteration are extended in both directions by the integer
+     * `bleed` class property, then are clamped between 0 and the number of
+     * rows/columns.
+     *
+     * Uses a binary search for each of the 4 edges of the bounds, resulting
+     * in a runtime of `O(log(rows) + log(cols))` plus the `O(irows * icols)`
+     * iteration of intersecting cells.
+     */
+    Grid.prototype.mapCellsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
+        var _b = this.getColumnIndicesInRect(rect), columnIndexStart = _b.columnIndexStart, columnIndexEnd = _b.columnIndexEnd;
+        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
+            for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
+                results.push(callback(rowIndex, columnIndex));
+            }
+        }
+        return results;
+    };
+    /**
+     * Maps each row that intersects with the given `Rect` argument.
+     *
+     * See Grid.mapCellsInRect for more details.
+     */
+    Grid.prototype.mapRowsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getRowIndicesInRect(rect), rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd;
+        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
+            results.push(callback(rowIndex));
+        }
+        return results;
+    };
+    /**
+     * Maps each column that intersects with the given `Rect` argument.
+     *
+     * See Grid.mapCellsInRect for more details.
+     */
+    Grid.prototype.mapColumnsInRect = function (rect, callback) {
+        var results = [];
+        if (rect == null) {
+            return results;
+        }
+        var _a = this.getColumnIndicesInRect(rect), columnIndexStart = _a.columnIndexStart, columnIndexEnd = _a.columnIndexEnd;
+        for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
+            results.push(callback(columnIndex));
+        }
+        return results;
+    };
+    /**
+     * Returns the start and end indices of rows that intersect with the given
+     * `Rect` argument.
+     */
+    Grid.prototype.getRowIndicesInRect = function (rect, includeGhostCells, limit) {
+        if (includeGhostCells === void 0) { includeGhostCells = false; }
+        if (limit === void 0) { limit = Grid.DEFAULT_MAX_ROWS; }
+        if (rect == null) {
+            return { rowIndexEnd: 0, rowIndexStart: 0 };
+        }
+        var searchEnd = includeGhostCells ? Math.max(this.numRows, Grid.DEFAULT_MAX_ROWS) : this.numRows;
+        var _a = this.getIndicesInInterval(rect.top, rect.top + rect.height, searchEnd, !includeGhostCells, this.getCumulativeHeightAt), start = _a.start, end = _a.end;
+        var rowIndexEnd = (limit > 0 && end - start > limit)
+            ? start + limit
+            : end;
+        return {
+            rowIndexEnd: rowIndexEnd,
+            rowIndexStart: start,
+        };
+    };
+    /**
+     * Returns the start and end indices of columns that intersect with the
+     * given `Rect` argument.
+     */
+    Grid.prototype.getColumnIndicesInRect = function (rect, includeGhostCells, limit) {
+        if (includeGhostCells === void 0) { includeGhostCells = false; }
+        if (limit === void 0) { limit = Grid.DEFAULT_MAX_COLUMNS; }
+        if (rect == null) {
+            return { columnIndexEnd: 0, columnIndexStart: 0 };
+        }
+        var searchEnd = includeGhostCells ? Math.max(this.numCols, Grid.DEFAULT_MAX_COLUMNS) : this.numCols;
+        var _a = this.getIndicesInInterval(rect.left, rect.left + rect.width, searchEnd, !includeGhostCells, this.getCumulativeWidthAt), start = _a.start, end = _a.end;
+        var columnIndexEnd = (limit > 0 && end - start > limit)
+            ? start + limit
+            : end;
+        return {
+            columnIndexEnd: columnIndexEnd,
+            columnIndexStart: start,
+        };
+    };
+    Grid.prototype.isGhostIndex = function (rowIndex, columnIndex) {
+        return (rowIndex >= this.numRows || columnIndex >= this.numCols);
+    };
+    Grid.prototype.getExtremaClasses = function (rowIndex, columnIndex, rowEnd, columnEnd) {
+        if (rowIndex === rowEnd && columnIndex === columnEnd) {
+            return [Classes.TABLE_LAST_IN_COLUMN, Classes.TABLE_LAST_IN_ROW];
+        }
+        if (rowIndex === rowEnd) {
+            return [Classes.TABLE_LAST_IN_COLUMN];
+        }
+        if (columnIndex === columnEnd) {
+            return [Classes.TABLE_LAST_IN_ROW];
+        }
+        return [];
+    };
+    Grid.prototype.getRegionStyle = function (region) {
+        var cardinality = regions_1.Regions.getRegionCardinality(region);
+        switch (cardinality) {
+            case regions_1.RegionCardinality.CELLS: {
+                var _a = region.rows, rowStart = _a[0], rowEnd = _a[1];
+                var _b = region.cols, colStart = _b[0], colEnd = _b[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(rowStart, colStart) || this.isGhostIndex(rowEnd, colEnd)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(rowStart, colStart);
+                var cellRect1 = this.getCellRect(rowEnd, colEnd);
+                var offsetLeft = colStart === 0 ? 0 : 1;
+                var offsetTop = rowStart === 0 ? 0 : 1;
+                var rect = cellRect0.union(cellRect1);
+                rect.height += offsetTop;
+                rect.left -= offsetLeft;
+                rect.width += offsetLeft;
+                rect.top -= offsetTop;
+                return tslib_1.__assign({}, rect.style(), { display: "block" });
+            }
+            case regions_1.RegionCardinality.FULL_COLUMNS: {
+                var _c = region.cols, colStart = _c[0], colEnd = _c[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(0, colStart) || this.isGhostIndex(0, colEnd)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(0, colStart);
+                var cellRect1 = this.getCellRect(0, colEnd);
+                var rect = cellRect0.union(cellRect1);
+                var offsetLeft = colStart === 0 ? 0 : 1;
+                return {
+                    bottom: 0,
+                    display: "block",
+                    left: rect.left - offsetLeft,
+                    top: 0,
+                    width: rect.width + offsetLeft,
+                };
+            }
+            case regions_1.RegionCardinality.FULL_ROWS: {
+                var _d = region.rows, rowStart = _d[0], rowEnd = _d[1];
+                // if the region is outside the bounds of the table, don't display it
+                if (this.isGhostIndex(rowStart, 0) || this.isGhostIndex(rowEnd, 0)) {
+                    return { display: "none" };
+                }
+                var cellRect0 = this.getCellRect(rowStart, 0);
+                var cellRect1 = this.getCellRect(rowEnd, 0);
+                var rect = cellRect0.union(cellRect1);
+                var offsetTop = rowStart === 0 ? 0 : 1;
+                return {
+                    display: "block",
+                    height: rect.height + offsetTop,
+                    left: 0,
+                    right: 0,
+                    top: rect.top - offsetTop,
+                };
+            }
+            case regions_1.RegionCardinality.FULL_TABLE:
+                return {
+                    bottom: 0,
+                    display: "block",
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                };
+            default: return { display: "none" };
+        }
+    };
+    Grid.prototype.getIndicesInInterval = function (min, max, count, useEndBleed, lookup) {
+        var start = utils_1.Utils.binarySearch(min, count - 1, lookup);
+        var end = utils_1.Utils.binarySearch(max, count - 1, lookup);
+        // correct exact pixel alignment
+        if (start >= 0 && min === lookup(start)) {
+            start += 1;
+        }
+        // apply bounded bleeds
+        start = Math.max(0, start - this.bleed);
+        if (useEndBleed) {
+            end = Math.min(count - 1, end + this.bleed);
+        }
+        else {
+            end = Math.min(count - 1, end);
+        }
+        return { start: start, end: end };
+    };
+    return Grid;
+}());
+Grid.DEFAULT_BLEED = 3;
+Grid.DEFAULT_MAX_COLUMNS = 50;
+Grid.DEFAULT_MAX_ROWS = 200;
+Grid.DEFAULT_GHOST_HEIGHT = 20;
+Grid.DEFAULT_GHOST_WIDTH = 150;
+exports.Grid = Grid;
+
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(133));
+__export(__webpack_require__(134));
+
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ns = "[Blueprint Table]";
+var deprec = ns + " DEPRECATION:";
+exports.COLUMN_HEADER_CELL_MENU_DEPRECATED = deprec + " <ColumnHeaderCell> menu is deprecated. Use renderMenu instead.";
+exports.ROW_HEADER_CELL_MENU_DEPRECATED = deprec + " <RowHeaderCell> menu is deprecated. Use renderMenu instead.";
+
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(7);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var HeaderCell = (function (_super) {
+    tslib_1.__extends(HeaderCell, _super);
+    function HeaderCell() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            isActive: false,
+        };
+        return _this;
+    }
+    HeaderCell.prototype.shouldComponentUpdate = function (nextProps) {
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
+            || !utils_1.Utils.deepCompareKeys(this.props, nextProps, ["style"]);
+    };
+    HeaderCell.prototype.renderContextMenu = function (_event) {
+        var renderMenu = this.props.renderMenu;
+        if (core_1.Utils.isFunction(renderMenu)) {
+            // the preferred way (a consistent function instance that won't cause as many re-renders)
+            return renderMenu(this.props.index);
+        }
+        else {
+            // the deprecated way (leads to lots of unnecessary re-renders because of menu-item
+            // callbacks needing access to the index of the right-clicked cell, which demands that
+            // new callback functions and JSX elements be recreated on each render of the parent)
+            return this.props.menu;
+        }
+    };
+    HeaderCell.prototype.render = function () {
+        var classes = classNames(Classes.TABLE_HEADER, (_a = {},
+            _a[Classes.TABLE_HEADER_ACTIVE] = this.props.isActive || this.state.isActive,
+            _a[Classes.TABLE_HEADER_SELECTED] = this.props.isSelected,
+            _a[core_1.Classes.LOADING] = this.props.loading,
+            _a), this.props.className);
+        return (React.createElement("div", { className: classes, style: this.props.style }, this.props.children));
+        var _a;
+    };
+    return HeaderCell;
+}(React.Component));
+HeaderCell = tslib_1.__decorate([
+    core_1.ContextMenuTarget
+], HeaderCell);
+exports.HeaderCell = HeaderCell;
+
+
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var core_1 = __webpack_require__(7);
+var Classes = __webpack_require__(6);
+var Errors = __webpack_require__(68);
+var loadableContent_1 = __webpack_require__(35);
+var headerCell_1 = __webpack_require__(69);
+var RowHeaderCell = (function (_super) {
+    tslib_1.__extends(RowHeaderCell, _super);
+    function RowHeaderCell() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    RowHeaderCell.prototype.render = function () {
+        var loadableContentDivClasses = classNames(Classes.TABLE_ROW_NAME_TEXT, Classes.TABLE_TRUNCATED_TEXT);
+        var _a = this.props, 
+        // from IRowHeaderCellProps
+        isRowReorderable = _a.isRowReorderable, isRowSelected = _a.isRowSelected, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["isRowReorderable", "isRowSelected"]);
+        return (React.createElement(headerCell_1.HeaderCell, tslib_1.__assign({ isReorderable: this.props.isRowReorderable, isSelected: this.props.isRowSelected }, spreadableProps),
+            React.createElement("div", { className: Classes.TABLE_ROW_NAME },
+                React.createElement(loadableContent_1.LoadableContent, { loading: spreadableProps.loading },
+                    React.createElement("div", { className: loadableContentDivClasses }, spreadableProps.name))),
+            this.props.children,
+            spreadableProps.loading ? undefined : spreadableProps.resizeHandle));
+    };
+    RowHeaderCell.prototype.validateProps = function (nextProps) {
+        if (nextProps.menu != null) {
+            // throw this warning from the publicly exported, higher-order *HeaderCell components
+            // rather than HeaderCell, so consumers know exactly which components are receiving the
+            // offending prop
+            console.warn(Errors.ROW_HEADER_CELL_MENU_DEPRECATED);
+        }
+    };
+    return RowHeaderCell;
+}(core_1.AbstractComponent));
+exports.RowHeaderCell = RowHeaderCell;
+
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var batcher_1 = __webpack_require__(72);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var reorderable_1 = __webpack_require__(139);
+var resizable_1 = __webpack_require__(140);
+var selectable_1 = __webpack_require__(38);
+var regions_1 = __webpack_require__(11);
+var RESET_CELL_KEYS_BLACKLIST = [
+    "endIndex",
+    "startIndex",
+    "viewportRect",
+];
+var Header = (function (_super) {
+    tslib_1.__extends(Header, _super);
+    function Header(props, context) {
+        var _this = _super.call(this, props, context) || this;
+        _this.state = {
+            hasSelectionEnded: false,
+        };
+        _this.batcher = new batcher_1.Batcher();
+        _this.locateClick = function (event) {
+            var coord = _this.props.getMouseCoordinate(event);
+            _this.activationIndex = _this.props.convertPointToIndex(coord);
+            return _this.props.toRegion(_this.activationIndex);
+        };
+        _this.locateDragForSelection = function (_event, coords) {
+            var coord = _this.props.getDragCoordinate(coords.current);
+            var startIndex = _this.activationIndex;
+            var endIndex = _this.props.convertPointToIndex(coord);
+            return _this.props.toRegion(startIndex, endIndex);
+        };
+        _this.locateDragForReordering = function (_event, coords) {
+            var coord = _this.props.getDragCoordinate(coords.current);
+            var guideIndex = _this.props.convertPointToIndex(coord, true);
+            return (guideIndex < 0) ? undefined : guideIndex;
+        };
+        _this.renderCells = function () {
+            var startIndex = _this.props.startIndex;
+            var endIndex = _this.props.endIndex;
+            _this.batcher.startNewBatch();
+            for (var index = startIndex; index <= endIndex; index++) {
+                _this.batcher.addArgsToBatch(index);
+            }
+            _this.batcher.removeOldAddNew(_this.renderNewCell);
+            if (!_this.batcher.isDone()) {
+                _this.batcher.idleCallback(function () { return _this.forceUpdate(); });
+            }
+            return _this.batcher.getList();
+        };
+        _this.renderNewCell = function (index) {
+            var extremaClasses = _this.props.getCellExtremaClasses(index, _this.props.endIndex);
+            var renderer = _this.props.isGhostIndex(index)
+                ? _this.props.renderGhostCell
+                : _this.renderCell;
+            return renderer(index, extremaClasses);
+        };
+        _this.renderCell = function (index, extremaClasses) {
+            var _a = _this.props, getIndexClass = _a.getIndexClass, onSelection = _a.onSelection, selectedRegions = _a.selectedRegions;
+            var cell = _this.props.renderHeaderCell(index);
+            var isLoading = cell.props.loading != null ? cell.props.loading : _this.props.loading;
+            var isSelected = _this.props.isCellSelected(index);
+            var isEntireCellTargetReorderable = _this.isEntireCellTargetReorderable(cell, isSelected);
+            var className = classNames(extremaClasses, (_b = {},
+                _b[Classes.TABLE_DRAGGABLE] = onSelection != null,
+                _b[Classes.TABLE_HEADER_REORDERABLE] = isEntireCellTargetReorderable,
+                _b), _this.props.getCellIndexClass(index), cell.props.className);
+            var cellProps = (_c = {
+                    className: className,
+                    index: index
+                },
+                _c[_this.props.headerCellIsSelectedPropName] = isSelected,
+                _c[_this.props.headerCellIsReorderablePropName] = isEntireCellTargetReorderable,
+                _c.loading = isLoading,
+                _c.reorderHandle = _this.maybeRenderReorderHandle(cell, index),
+                _c);
+            var modifiedHandleSizeChanged = function (size) { return _this.props.handleSizeChanged(index, size); };
+            var modifiedHandleResizeEnd = function (size) { return _this.props.handleResizeEnd(index, size); };
+            var modifiedHandleResizeHandleDoubleClick = function () { return _this.props.handleResizeDoubleClick(index); };
+            var baseChildren = (React.createElement(selectable_1.DragSelectable, { allowMultipleSelection: _this.props.allowMultipleSelection, disabled: isEntireCellTargetReorderable, ignoredSelectors: ["." + Classes.TABLE_REORDER_HANDLE], key: getIndexClass(index), locateClick: _this.locateClick, locateDrag: _this.locateDragForSelection, onFocus: _this.props.onFocus, onSelection: _this.handleDragSelectableSelection, onSelectionEnd: _this.handleDragSelectableSelectionEnd, selectedRegions: selectedRegions, selectedRegionTransform: _this.props.selectedRegionTransform },
+                React.createElement(resizable_1.Resizable, { isResizable: _this.props.isResizable, maxSize: _this.props.maxSize, minSize: _this.props.minSize, onDoubleClick: modifiedHandleResizeHandleDoubleClick, onLayoutLock: _this.props.onLayoutLock, onResizeEnd: modifiedHandleResizeEnd, onSizeChanged: modifiedHandleSizeChanged, orientation: _this.props.resizeOrientation, size: _this.props.getCellSize(index) }, React.cloneElement(cell, cellProps))));
+            return _this.isReorderHandleEnabled(cell)
+                ? baseChildren // reordering will be handled by interacting with the reorder handle
+                : _this.wrapInDragReorderable(index, baseChildren, !isEntireCellTargetReorderable);
+            var _b, _c;
+        };
+        _this.handleDragSelectableSelection = function (selectedRegions) {
+            _this.props.onSelection(selectedRegions);
+            _this.setState({ hasSelectionEnded: false });
+        };
+        _this.handleDragSelectableSelectionEnd = function () {
+            _this.activationIndex = null; // not strictly required, but good practice
+            _this.setState({ hasSelectionEnded: true });
+        };
+        _this.isEntireCellTargetReorderable = function (cell, isSelected) {
+            var selectedRegions = _this.props.selectedRegions;
+            // although reordering may be generally enabled for this row/column (via props.isReorderable), the
+            // row/column shouldn't actually become reorderable from a user perspective until a few other
+            // conditions are true:
+            return _this.props.isReorderable
+                && isSelected
+                && _this.state.hasSelectionEnded
+                && regions_1.Regions.getRegionCardinality(selectedRegions[0]) === _this.props.fullRegionCardinality
+                && selectedRegions.length === 1
+                && !_this.isReorderHandleEnabled(cell);
+        };
+        return _this;
+    }
+    Header.prototype.componentDidMount = function () {
+        if (this.props.selectedRegions != null && this.props.selectedRegions.length > 0) {
+            // we already have a selection defined, so we'll want to enable reordering interactions
+            // right away if other criteria are satisfied too.
+            this.setState({ hasSelectionEnded: true });
+        }
+    };
+    Header.prototype.componentWillUnmount = function () {
+        this.batcher.cancelOutstandingCallback();
+    };
+    Header.prototype.componentWillReceiveProps = function (nextProps) {
+        if (nextProps.selectedRegions != null && nextProps.selectedRegions.length > 0) {
+            this.setState({ hasSelectionEnded: true });
+        }
+        else {
+            this.setState({ hasSelectionEnded: false });
+        }
+    };
+    Header.prototype.componentWillUpdate = function (nextProps, nextState) {
+        var resetKeysBlacklist = { exclude: RESET_CELL_KEYS_BLACKLIST };
+        var shouldResetBatcher = !utils_1.Utils.shallowCompareKeys(this.props, nextProps, resetKeysBlacklist);
+        shouldResetBatcher = shouldResetBatcher || !utils_1.Utils.shallowCompareKeys(this.state, nextState);
+        if (shouldResetBatcher) {
+            this.batcher.reset();
+        }
+    };
+    Header.prototype.render = function () {
+        return this.props.wrapCells(this.renderCells());
+    };
+    Header.prototype.isReorderHandleEnabled = function (cell) {
+        // the reorder handle can only appear in the column interaction bar
+        return this.isColumnHeader() && cell.props.useInteractionBar && this.props.isReorderable;
+    };
+    Header.prototype.maybeRenderReorderHandle = function (cell, index) {
+        return !this.isReorderHandleEnabled(cell)
+            ? undefined
+            : this.wrapInDragReorderable(index, React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE_TARGET },
+                React.createElement("div", { className: Classes.TABLE_REORDER_HANDLE },
+                    React.createElement("span", { className: classNames(core_1.Classes.ICON_STANDARD, core_1.IconClasses.DRAG_HANDLE_VERTICAL) }))));
+    };
+    Header.prototype.isColumnHeader = function () {
+        return this.props.fullRegionCardinality === regions_1.RegionCardinality.FULL_COLUMNS;
+    };
+    Header.prototype.wrapInDragReorderable = function (index, children, disabled) {
+        return (React.createElement(reorderable_1.DragReorderable, { disabled: disabled, key: this.props.getIndexClass(index), locateClick: this.locateClick, locateDrag: this.locateDragForReordering, onReordered: this.props.onReordered, onReordering: this.props.onReordering, onSelection: this.props.onSelection, selectedRegions: this.props.selectedRegions, toRegion: this.props.toRegion }, children));
+    };
+    return Header;
+}(React.Component));
+exports.Header = Header;
+/**
+ * In the current architecture, ColumnHeaderCell and RowHeaderCell each need to include this same
+ * shouldComponentUpdate code at their level. To avoid writing the same code in two places, we
+ * expose this utility for each higher-level component to leverage in their own respective
+ * shouldComponentUpdate functions.
+ *
+ * (See: https://github.com/palantir/blueprint/issues/1214)
+ *
+ * @param props - the current props
+ * @param nextProps - the next props
+ */
+function shouldHeaderComponentUpdate(props, nextProps, isSelectedRegionRelevant) {
+    if (!utils_1.Utils.shallowCompareKeys(props, nextProps, { exclude: ["selectedRegions"] })) {
+        return true;
+    }
+    var relevantSelectedRegions = props.selectedRegions.filter(isSelectedRegionRelevant);
+    var nextRelevantSelectedRegions = nextProps.selectedRegions.filter(isSelectedRegionRelevant);
+    // ignore selection changes that didn't involve any relevant selected regions (FULL_COLUMNS
+    // for column headers, or FULL_ROWS for row headers)
+    if (relevantSelectedRegions.length > 0 || nextRelevantSelectedRegions.length > 0) {
+        return !utils_1.Utils.deepCompareKeys(relevantSelectedRegions, nextRelevantSelectedRegions);
+    }
+    return false;
+}
+exports.shouldHeaderComponentUpdate = shouldHeaderComponentUpdate;
+
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(7);
+var requestIdleCallback_1 = __webpack_require__(138);
+/**
+ * This class helps batch updates to large lists.
+ *
+ * For example, if your React component has many children, updating them all at
+ * once may cause jank when reconciling the DOM. This class helps you update
+ * only a few children per frame.
+ *
+ * A typical usage would be:
+ *
+ * ```tsx
+ * public renderChildren = (allChildrenKeys: string[]) => {
+ *
+ *     batcher.startNewBatch();
+ *
+ *     allChildrenKeys.forEach((prop1: string, index: number) => {
+ *         batcher.addArgsToBatch(prop1, "prop2", index);
+ *     });
+ *
+ *     batcher.removeOldAddNew((prop1: string, prop2: string, other: number) => {
+ *         return <Child prop1={prop1} prop2={prop2} other={other} />;
+ *     });
+ *
+ *     if (!batcher.isDone()) {
+ *         batcher.idleCallback(this.forceUpdate());
+ *     }
+ *
+ *     const currentChildren = batcher.getList();
+ *     return currentChildren;
+ * }
+ *
+ * ```
+ */
+var Batcher = (function () {
+    function Batcher() {
+        var _this = this;
+        this.currentObjects = {};
+        this.oldObjects = {};
+        this.batchArgs = {};
+        this.done = true;
+        this.handleIdleCallback = function () {
+            var callback = _this.callback;
+            delete _this.callback;
+            core_1.Utils.safeInvoke(callback);
+        };
+        this.mapCurrentObjectKey = function (key) {
+            return _this.currentObjects[key];
+        };
+    }
+    /**
+     * Resets the "batch" and "current" sets. This essentially clears the cache
+     * and prevents accidental re-use of "current" objects.
+     */
+    Batcher.prototype.reset = function () {
+        this.batchArgs = {};
+        this.oldObjects = this.currentObjects;
+        this.currentObjects = {};
+    };
+    /**
+     * Starts a new "batch" argument set
+     */
+    Batcher.prototype.startNewBatch = function () {
+        this.batchArgs = {};
+    };
+    /**
+     * Stores the variadic arguments to be later batched together.
+     *
+     * The arguments must be simple stringifyable objects.
+     */
+    Batcher.prototype.addArgsToBatch = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.batchArgs[args.join(Batcher.ARG_DELIMITER)] = args;
+    };
+    /**
+     * Compares the set of "batch" arguments to the "current" set. Creates any
+     * new objects using the callback as a factory. Removes old objects.
+     *
+     * Arguments that are in the "current" set but were not part of the last
+     * "batch" set are considered candidates for removal. Similarly, Arguments
+     * that are part of the "batch" set but not the "current" set are candidates
+     * for addition.
+     *
+     * The number of objects added and removed may be limited with the
+     * `...Limit` parameters.
+     *
+     * Finally, the batcher determines if the batching is complete if the
+     * "current" arguments match the "batch" arguments.
+     */
+    Batcher.prototype.removeOldAddNew = function (callback, addNewLimit, removeOldLimit, updateLimit) {
+        var _this = this;
+        if (addNewLimit === void 0) { addNewLimit = Batcher.DEFAULT_ADD_LIMIT; }
+        if (removeOldLimit === void 0) { removeOldLimit = Batcher.DEFAULT_REMOVE_LIMIT; }
+        if (updateLimit === void 0) { updateLimit = Batcher.DEFAULT_UPDATE_LIMIT; }
+        // remove old
+        var keysToRemove = this.setKeysDifference(this.currentObjects, this.batchArgs, removeOldLimit);
+        keysToRemove.forEach(function (key) { return delete _this.currentObjects[key]; });
+        // remove ALL old objects not in batch
+        var keysToRemoveOld = this.setKeysDifference(this.oldObjects, this.batchArgs, -1);
+        keysToRemoveOld.forEach(function (key) { return delete _this.oldObjects[key]; });
+        // copy ALL old objects into current objects if not defined
+        var keysToShallowCopy = Object.keys(this.oldObjects);
+        keysToShallowCopy.forEach(function (key) {
+            if (_this.currentObjects[key] == null) {
+                _this.currentObjects[key] = _this.oldObjects[key];
+            }
+        });
+        // update old objects with factory
+        var keysToUpdate = this.setKeysIntersection(this.oldObjects, this.currentObjects, updateLimit);
+        keysToUpdate.forEach(function (key) {
+            delete _this.oldObjects[key];
+            _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]);
+        });
+        // add new objects with factory
+        var keysToAdd = this.setKeysDifference(this.batchArgs, this.currentObjects, addNewLimit);
+        keysToAdd.forEach(function (key) { return _this.currentObjects[key] = callback.apply(undefined, _this.batchArgs[key]); });
+        // set `done` to true of sets match exactly after add/remove and there
+        // are no "old objects" remaining
+        this.done = this.setHasSameKeys(this.batchArgs, this.currentObjects)
+            && Object.keys(this.oldObjects).length === 0;
+    };
+    /**
+     * Returns true of the "current" set matches the "batch" set.
+     */
+    Batcher.prototype.isDone = function () {
+        return this.done;
+    };
+    /**
+     * Returns all the objects in the "current" set.
+     */
+    Batcher.prototype.getList = function () {
+        return Object.keys(this.currentObjects).map(this.mapCurrentObjectKey);
+    };
+    /**
+     * Registers a callback to be invoked on the next idle frame. If a callback
+     * has already been registered, we do not register a new one.
+     */
+    Batcher.prototype.idleCallback = function (callback) {
+        if (!this.callback) {
+            this.callback = callback;
+            requestIdleCallback_1.requestIdleCallback(this.handleIdleCallback);
+        }
+    };
+    Batcher.prototype.cancelOutstandingCallback = function () {
+        delete this.callback;
+    };
+    Batcher.prototype.setKeysDifference = function (a, b, limit) {
+        return this.setKeysOperation(a, b, "difference", limit);
+    };
+    Batcher.prototype.setKeysIntersection = function (a, b, limit) {
+        return this.setKeysOperation(a, b, "intersect", limit);
+    };
+    /**
+     * Compares the keys of A from B -- and performs an "intersection" or
+     * "difference" operation on the keys.
+     *
+     * Note that the order of operands A and B matters for the "difference"
+     * operation.
+     *
+     * Returns an array of at most `limit` keys.
+     */
+    Batcher.prototype.setKeysOperation = function (a, b, operation, limit) {
+        var result = [];
+        var aKeys = Object.keys(a);
+        for (var i = 0; i < aKeys.length && (limit < 0 || result.length < limit); i++) {
+            var key = aKeys[i];
+            if ((operation === "difference" && a[key] && !b[key]) ||
+                (operation === "intersect" && a[key] && b[key])) {
+                result.push(key);
+            }
+        }
+        return result;
+    };
+    /**
+     * Returns true of objects `a` and `b` have exactly the same keys.
+     */
+    Batcher.prototype.setHasSameKeys = function (a, b) {
+        var aKeys = Object.keys(a);
+        var bKeys = Object.keys(b);
+        if (aKeys.length !== bKeys.length) {
+            return false;
+        }
+        for (var _i = 0, aKeys_1 = aKeys; _i < aKeys_1.length; _i++) {
+            var aKey = aKeys_1[_i];
+            if (b[aKey] === undefined) {
+                return false;
+            }
+        }
+        return true;
+    };
+    return Batcher;
+}());
+Batcher.DEFAULT_ADD_LIMIT = 20;
+Batcher.DEFAULT_UPDATE_LIMIT = 20;
+Batcher.DEFAULT_REMOVE_LIMIT = 20;
+Batcher.ARG_DELIMITER = "|";
+exports.Batcher = Batcher;
+
+
+
+/***/ }),
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var Hello_1 = __webpack_require__(51);
+var ReactDOM = __webpack_require__(12);
+var Hello_1 = __webpack_require__(74);
 ReactDOM.render(React.createElement(Hello_1.Hello, { compiler: "TypeScript", framework: "React" }), document.getElementById("example"));
 
 
 /***/ }),
-/* 51 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4557,7 +7928,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var core_1 = __webpack_require__(52);
+var core_1 = __webpack_require__(7);
+var table_1 = __webpack_require__(127);
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
 var Hello = (function (_super) {
@@ -4586,51 +7958,30 @@ var DialogExample = (function (_super) {
     function DialogExample() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.state = { isOpen: false };
+        _this.renderCell = function (rowIndex) {
+            return React.createElement(table_1.Cell, null, "$" + (rowIndex * 10).toFixed(2));
+        };
         _this.toggleDialog = function () { return _this.setState({ isOpen: !_this.state.isOpen }); };
         return _this;
     }
     DialogExample.prototype.render = function () {
-        return (React.createElement("div", null,
+        return (React.createElement("div", { style: { padding: '10%' } },
             React.createElement(core_1.Button, { onClick: this.toggleDialog, text: "Show dialog" }),
             React.createElement(core_1.Dialog, { iconName: "inbox", isOpen: this.state.isOpen, onClose: this.toggleDialog, title: "Dialog header" },
                 React.createElement("div", { className: "pt-dialog-body" }, "Some content"),
                 React.createElement("div", { className: "pt-dialog-footer" },
                     React.createElement("div", { className: "pt-dialog-footer-actions" },
                         React.createElement(core_1.Button, { text: "Secondary" }),
-                        React.createElement(core_1.Button, { intent: core_1.Intent.PRIMARY, onClick: this.toggleDialog, text: "Primary" }))))));
+                        React.createElement(core_1.Button, { intent: core_1.Intent.PRIMARY, onClick: this.toggleDialog, text: "Primary" })))),
+            React.createElement(table_1.Table, { numRows: 10 },
+                React.createElement(table_1.Column, { name: "Dollars", renderCell: this.renderCell }))));
     };
     return DialogExample;
 }(React.Component));
 
 
 /***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Copyright 2015 Palantir Technologies, Inc. All rights reserved.
- * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
- * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
- * and https://github.com/palantir/blueprint/blob/master/PATENTS
- */
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(53));
-__export(__webpack_require__(12));
-__export(__webpack_require__(29));
-var iconClasses_1 = __webpack_require__(103);
-exports.IconClasses = iconClasses_1.IconClasses;
-var iconStrings_1 = __webpack_require__(104);
-exports.IconContents = iconStrings_1.IconContents;
-
-
-
-/***/ }),
-/* 53 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4645,12 +7996,12 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(54));
+__export(__webpack_require__(76));
 
 
 
 /***/ }),
-/* 54 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4662,7 +8013,7 @@ __export(__webpack_require__(54));
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var interactionMode_1 = __webpack_require__(55);
+var interactionMode_1 = __webpack_require__(77);
 exports.FOCUS_DISABLED_CLASS = "pt-focus-disabled";
 /* istanbul ignore next */
 var fakeFocusEngine = {
@@ -4685,7 +8036,7 @@ exports.FocusStyleManager = {
 
 
 /***/ }),
-/* 55 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4749,7 +8100,7 @@ exports.InteractionModeEngine = InteractionModeEngine;
 
 
 /***/ }),
-/* 56 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4854,7 +8205,7 @@ exports.Colors = {
 
 
 /***/ }),
-/* 57 */
+/* 79 */
 /***/ (function(module, exports) {
 
 /*!
@@ -5842,7 +9193,7 @@ THE SOFTWARE.
 }(self));
 
 /***/ }),
-/* 58 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5915,7 +9266,7 @@ function shallowEqual(objA, objB) {
 module.exports = shallowEqual;
 
 /***/ }),
-/* 59 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! tether 1.4.0 */
@@ -7736,7 +11087,7 @@ return Tether;
 
 
 /***/ }),
-/* 60 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7751,11 +11102,11 @@ return Tether;
 
 
 
-module.exports = __webpack_require__(61);
+module.exports = __webpack_require__(83);
 
 
 /***/ }),
-/* 61 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7769,19 +11120,19 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(16);
+var _propTypes = __webpack_require__(22);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _TransitionGroup = __webpack_require__(65);
+var _TransitionGroup = __webpack_require__(87);
 
 var _TransitionGroup2 = _interopRequireDefault(_TransitionGroup);
 
-var _CSSTransitionGroupChild = __webpack_require__(69);
+var _CSSTransitionGroupChild = __webpack_require__(91);
 
 var _CSSTransitionGroupChild2 = _interopRequireDefault(_CSSTransitionGroupChild);
 
-var _PropTypes = __webpack_require__(32);
+var _PropTypes = __webpack_require__(45);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7853,10 +11204,10 @@ CSSTransitionGroup.defaultProps = defaultProps;
 
 exports.default = CSSTransitionGroup;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 62 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7871,12 +11222,12 @@ module.exports = exports['default'];
 
 
 
-var emptyFunction = __webpack_require__(20);
-var invariant = __webpack_require__(21);
-var warning = __webpack_require__(19);
+var emptyFunction = __webpack_require__(28);
+var invariant = __webpack_require__(29);
+var warning = __webpack_require__(27);
 
-var ReactPropTypesSecret = __webpack_require__(22);
-var checkPropTypes = __webpack_require__(63);
+var ReactPropTypesSecret = __webpack_require__(30);
+var checkPropTypes = __webpack_require__(85);
 
 module.exports = function(isValidElement, throwOnDirectAccess) {
   /* global Symbol */
@@ -8373,10 +11724,10 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 63 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8392,9 +11743,9 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
 
 if (process.env.NODE_ENV !== 'production') {
-  var invariant = __webpack_require__(21);
-  var warning = __webpack_require__(19);
-  var ReactPropTypesSecret = __webpack_require__(22);
+  var invariant = __webpack_require__(29);
+  var warning = __webpack_require__(27);
+  var ReactPropTypesSecret = __webpack_require__(30);
   var loggedTypeFailures = {};
 }
 
@@ -8442,10 +11793,10 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 64 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8460,9 +11811,9 @@ module.exports = checkPropTypes;
 
 
 
-var emptyFunction = __webpack_require__(20);
-var invariant = __webpack_require__(21);
-var ReactPropTypesSecret = __webpack_require__(22);
+var emptyFunction = __webpack_require__(28);
+var invariant = __webpack_require__(29);
+var ReactPropTypesSecret = __webpack_require__(30);
 
 module.exports = function() {
   function shim(props, propName, componentName, location, propFullName, secret) {
@@ -8511,7 +11862,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 65 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8521,7 +11872,7 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _chainFunction = __webpack_require__(66);
+var _chainFunction = __webpack_require__(88);
 
 var _chainFunction2 = _interopRequireDefault(_chainFunction);
 
@@ -8529,15 +11880,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(16);
+var _propTypes = __webpack_require__(22);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _warning = __webpack_require__(67);
+var _warning = __webpack_require__(89);
 
 var _warning2 = _interopRequireDefault(_warning);
 
-var _ChildMapping = __webpack_require__(68);
+var _ChildMapping = __webpack_require__(90);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8784,10 +12135,10 @@ TransitionGroup.defaultProps = defaultProps;
 
 exports.default = TransitionGroup;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 66 */
+/* 88 */
 /***/ (function(module, exports) {
 
 
@@ -8813,7 +12164,7 @@ module.exports = function chain(){
 
 
 /***/ }),
-/* 67 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8878,10 +12229,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 68 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8978,7 +12329,7 @@ function mergeChildMappings(prev, next) {
 }
 
 /***/ }),
-/* 69 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8988,31 +12339,31 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _addClass = __webpack_require__(70);
+var _addClass = __webpack_require__(92);
 
 var _addClass2 = _interopRequireDefault(_addClass);
 
-var _removeClass = __webpack_require__(72);
+var _removeClass = __webpack_require__(94);
 
 var _removeClass2 = _interopRequireDefault(_removeClass);
 
-var _requestAnimationFrame = __webpack_require__(73);
+var _requestAnimationFrame = __webpack_require__(95);
 
 var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
 
-var _properties = __webpack_require__(74);
+var _properties = __webpack_require__(96);
 
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = __webpack_require__(16);
+var _propTypes = __webpack_require__(22);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _reactDom = __webpack_require__(9);
+var _reactDom = __webpack_require__(12);
 
-var _PropTypes = __webpack_require__(32);
+var _PropTypes = __webpack_require__(45);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9211,10 +12562,10 @@ CSSTransitionGroupChild.propTypes = process.env.NODE_ENV !== "production" ? prop
 
 exports.default = CSSTransitionGroupChild;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 70 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9225,7 +12576,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = addClass;
 
-var _hasClass = __webpack_require__(71);
+var _hasClass = __webpack_require__(93);
 
 var _hasClass2 = _interopRequireDefault(_hasClass);
 
@@ -9237,7 +12588,7 @@ function addClass(element, className) {
 module.exports = exports['default'];
 
 /***/ }),
-/* 71 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9253,7 +12604,7 @@ function hasClass(element, className) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 72 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9264,7 +12615,7 @@ module.exports = function removeClass(element, className) {
 };
 
 /***/ }),
-/* 73 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9274,7 +12625,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _inDOM = __webpack_require__(31);
+var _inDOM = __webpack_require__(44);
 
 var _inDOM2 = _interopRequireDefault(_inDOM);
 
@@ -9323,7 +12674,7 @@ exports.default = compatRaf;
 module.exports = exports['default'];
 
 /***/ }),
-/* 74 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9334,7 +12685,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.animationEnd = exports.animationDelay = exports.animationTiming = exports.animationDuration = exports.animationName = exports.transitionEnd = exports.transitionDuration = exports.transitionDelay = exports.transitionTiming = exports.transitionProperty = exports.transform = undefined;
 
-var _inDOM = __webpack_require__(31);
+var _inDOM = __webpack_require__(44);
 
 var _inDOM2 = _interopRequireDefault(_inDOM);
 
@@ -9439,13 +12790,13 @@ function getTransitionProperties() {
 }
 
 /***/ }),
-/* 75 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var position_1 = __webpack_require__(10);
+var position_1 = __webpack_require__(14);
 // this value causes popover and target edges to line up on 50px targets
 exports.MIN_ARROW_SPACING = 18;
 function computeArrowOffset(sideLength, arrowSize, minimum) {
@@ -9521,7 +12872,7 @@ exports.getArrowPositionStyles = getArrowPositionStyles;
 
 
 /***/ }),
-/* 76 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9534,12 +12885,12 @@ exports.getArrowPositionStyles = getArrowPositionStyles;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var common_1 = __webpack_require__(12);
-var errors_1 = __webpack_require__(7);
-var buttons_1 = __webpack_require__(17);
-var dialog_1 = __webpack_require__(34);
+var common_1 = __webpack_require__(16);
+var errors_1 = __webpack_require__(9);
+var buttons_1 = __webpack_require__(23);
+var dialog_1 = __webpack_require__(47);
 var Alert = (function (_super) {
     tslib_1.__extends(Alert, _super);
     function Alert() {
@@ -9588,7 +12939,7 @@ exports.Alert = Alert;
 
 
 /***/ }),
-/* 77 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9601,12 +12952,12 @@ exports.Alert = Alert;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var Keys = __webpack_require__(11);
-var utils_1 = __webpack_require__(4);
-var spinner_1 = __webpack_require__(24);
+var Classes = __webpack_require__(3);
+var Keys = __webpack_require__(15);
+var utils_1 = __webpack_require__(5);
+var spinner_1 = __webpack_require__(32);
 var AbstractButton = (function (_super) {
     tslib_1.__extends(AbstractButton, _super);
     function AbstractButton() {
@@ -9689,7 +13040,7 @@ function isKeyboardClick(keyCode) {
 
 
 /***/ }),
-/* 78 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9701,9 +13052,9 @@ function isKeyboardClick(keyCode) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 exports.Breadcrumb = function (breadcrumbProps) {
     var classes = classNames(Classes.BREADCRUMB, (_a = {},
         _a[Classes.DISABLED] = breadcrumbProps.disabled,
@@ -9715,7 +13066,7 @@ exports.Breadcrumb = function (breadcrumbProps) {
 
 
 /***/ }),
-/* 79 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9728,14 +13079,14 @@ exports.Breadcrumb = function (breadcrumbProps) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var position_1 = __webpack_require__(10);
-var menu_1 = __webpack_require__(25);
-var menuItem_1 = __webpack_require__(36);
-var popover_1 = __webpack_require__(14);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var position_1 = __webpack_require__(14);
+var menu_1 = __webpack_require__(33);
+var menuItem_1 = __webpack_require__(49);
+var popover_1 = __webpack_require__(18);
 var CollapseFrom;
 (function (CollapseFrom) {
     CollapseFrom[CollapseFrom["START"] = 0] = "START";
@@ -9807,7 +13158,7 @@ exports.CollapsibleListFactory = React.createFactory(CollapsibleList);
 
 
 /***/ }),
-/* 80 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9820,9 +13171,9 @@ exports.CollapsibleListFactory = React.createFactory(CollapsibleList);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var errors_1 = __webpack_require__(7);
-var utils_1 = __webpack_require__(4);
-var ContextMenu = __webpack_require__(30);
+var errors_1 = __webpack_require__(9);
+var utils_1 = __webpack_require__(5);
+var ContextMenu = __webpack_require__(43);
 function ContextMenuTarget(constructor) {
     var _a = constructor.prototype, render = _a.render, renderContextMenu = _a.renderContextMenu, onContextMenuClose = _a.onContextMenuClose;
     if (!utils_1.isFunction(renderContextMenu)) {
@@ -9863,7 +13214,7 @@ exports.ContextMenuTarget = ContextMenuTarget;
 
 
 /***/ }),
-/* 81 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9876,14 +13227,14 @@ exports.ContextMenuTarget = ContextMenuTarget;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Keys = __webpack_require__(11);
-var utils_1 = __webpack_require__(4);
-var compatibility_1 = __webpack_require__(82);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Keys = __webpack_require__(15);
+var utils_1 = __webpack_require__(5);
+var compatibility_1 = __webpack_require__(104);
 var BUFFER_WIDTH_EDGE = 5;
 var BUFFER_WIDTH_IE = 30;
 var EditableText = (function (_super) {
@@ -10134,7 +13485,7 @@ exports.EditableTextFactory = React.createFactory(EditableText);
 
 
 /***/ }),
-/* 82 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10149,12 +13500,12 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(83));
+__export(__webpack_require__(105));
 
 
 
 /***/ }),
-/* 83 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10181,7 +13532,7 @@ exports.Browser = {
 
 
 /***/ }),
-/* 84 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10194,13 +13545,13 @@ exports.Browser = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var common_1 = __webpack_require__(12);
-var Errors = __webpack_require__(7);
-var buttons_1 = __webpack_require__(17);
-var inputGroup_1 = __webpack_require__(38);
+var common_1 = __webpack_require__(16);
+var Errors = __webpack_require__(9);
+var buttons_1 = __webpack_require__(23);
+var inputGroup_1 = __webpack_require__(51);
 var IncrementDirection;
 (function (IncrementDirection) {
     IncrementDirection[IncrementDirection["DOWN"] = -1] = "DOWN";
@@ -10574,7 +13925,7 @@ var NumericInput_1;
 
 
 /***/ }),
-/* 85 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10588,10 +13939,10 @@ var NumericInput_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var controls_1 = __webpack_require__(37);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var controls_1 = __webpack_require__(50);
 var counter = 0;
 function nextName() { return RadioGroup.displayName + "-" + counter++; }
 var RadioGroup = (function (_super) {
@@ -10650,7 +14001,7 @@ function isRadio(child) {
 
 
 /***/ }),
-/* 86 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10663,8 +14014,8 @@ function isRadio(child) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-var utils_1 = __webpack_require__(4);
-var hotkeysEvents_1 = __webpack_require__(87);
+var utils_1 = __webpack_require__(5);
+var hotkeysEvents_1 = __webpack_require__(109);
 function HotkeysTarget(constructor) {
     var _a = constructor.prototype, componentWillMount = _a.componentWillMount, componentDidMount = _a.componentDidMount, componentWillUnmount = _a.componentWillUnmount, render = _a.render, renderHotkeys = _a.renderHotkeys;
     if (!utils_1.isFunction(renderHotkeys)) {
@@ -10729,7 +14080,7 @@ exports.HotkeysTarget = HotkeysTarget;
 
 
 /***/ }),
-/* 87 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10742,10 +14093,10 @@ exports.HotkeysTarget = HotkeysTarget;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __webpack_require__(0);
-var utils_1 = __webpack_require__(4);
-var hotkey_1 = __webpack_require__(18);
-var hotkeyParser_1 = __webpack_require__(26);
-var hotkeysDialog_1 = __webpack_require__(41);
+var utils_1 = __webpack_require__(5);
+var hotkey_1 = __webpack_require__(24);
+var hotkeyParser_1 = __webpack_require__(34);
+var hotkeysDialog_1 = __webpack_require__(54);
 var SHOW_DIALOG_KEY = "?";
 var HotkeyScope;
 (function (HotkeyScope) {
@@ -10852,7 +14203,7 @@ exports.HotkeysEvents = HotkeysEvents;
 
 
 /***/ }),
-/* 88 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10865,9 +14216,9 @@ exports.HotkeysEvents = HotkeysEvents;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var MenuDivider = (function (_super) {
     tslib_1.__extends(MenuDivider, _super);
     function MenuDivider() {
@@ -10894,7 +14245,7 @@ exports.MenuDividerFactory = React.createFactory(MenuDivider);
 
 
 /***/ }),
-/* 89 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10907,10 +14258,10 @@ exports.MenuDividerFactory = React.createFactory(MenuDivider);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var NonIdealState = (function (_super) {
     tslib_1.__extends(NonIdealState, _super);
     function NonIdealState() {
@@ -10965,7 +14316,7 @@ exports.NonIdealStateFactory = React.createFactory(NonIdealState);
 
 
 /***/ }),
-/* 90 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10978,10 +14329,10 @@ exports.NonIdealStateFactory = React.createFactory(NonIdealState);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var Text = (function (_super) {
     tslib_1.__extends(Text, _super);
     function Text() {
@@ -11025,7 +14376,7 @@ exports.Text = Text;
 
 
 /***/ }),
-/* 91 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11039,7 +14390,7 @@ exports.Text = Text;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var popover_1 = __webpack_require__(14);
+var popover_1 = __webpack_require__(18);
 var SVGPopover = (function (_super) {
     tslib_1.__extends(SVGPopover, _super);
     function SVGPopover() {
@@ -11056,7 +14407,7 @@ exports.SVGPopoverFactory = React.createFactory(SVGPopover);
 
 
 /***/ }),
-/* 92 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11069,11 +14420,11 @@ exports.SVGPopoverFactory = React.createFactory(SVGPopover);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
 var ProgressBar = (function (_super) {
     tslib_1.__extends(ProgressBar, _super);
     function ProgressBar() {
@@ -11099,7 +14450,7 @@ exports.ProgressBarFactory = React.createFactory(ProgressBar);
 
 
 /***/ }),
-/* 93 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11113,7 +14464,7 @@ exports.ProgressBarFactory = React.createFactory(ProgressBar);
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var tooltip_1 = __webpack_require__(23);
+var tooltip_1 = __webpack_require__(31);
 var SVGTooltip = (function (_super) {
     tslib_1.__extends(SVGTooltip, _super);
     function SVGTooltip() {
@@ -11130,7 +14481,7 @@ exports.SVGTooltipFactory = React.createFactory(SVGTooltip);
 
 
 /***/ }),
-/* 94 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11143,13 +14494,13 @@ exports.SVGTooltipFactory = React.createFactory(SVGTooltip);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var utils_1 = __webpack_require__(4);
-var coreSlider_1 = __webpack_require__(42);
-var handle_1 = __webpack_require__(43);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var utils_1 = __webpack_require__(5);
+var coreSlider_1 = __webpack_require__(55);
+var handle_1 = __webpack_require__(56);
 var RangeEnd;
 (function (RangeEnd) {
     RangeEnd[RangeEnd["LEFT"] = 0] = "LEFT";
@@ -11250,7 +14601,7 @@ exports.RangeSliderFactory = React.createFactory(RangeSlider);
 
 
 /***/ }),
-/* 95 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11264,10 +14615,10 @@ exports.RangeSliderFactory = React.createFactory(RangeSlider);
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
-var coreSlider_1 = __webpack_require__(42);
-var handle_1 = __webpack_require__(43);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
+var coreSlider_1 = __webpack_require__(55);
+var handle_1 = __webpack_require__(56);
 var Slider = (function (_super) {
     tslib_1.__extends(Slider, _super);
     function Slider() {
@@ -11319,7 +14670,7 @@ exports.SliderFactory = React.createFactory(Slider);
 
 
 /***/ }),
-/* 96 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11332,11 +14683,11 @@ exports.SliderFactory = React.createFactory(Slider);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 // import * to avoid "cannot be named" error on factory
-var spinner = __webpack_require__(24);
+var spinner = __webpack_require__(32);
 var SVGSpinner = (function (_super) {
     tslib_1.__extends(SVGSpinner, _super);
     function SVGSpinner() {
@@ -11354,7 +14705,7 @@ exports.SVGSpinnerFactory = React.createFactory(SVGSpinner);
 
 
 /***/ }),
-/* 97 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11367,18 +14718,18 @@ exports.SVGSpinnerFactory = React.createFactory(SVGSpinner);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var react_dom_1 = __webpack_require__(9);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Errors = __webpack_require__(7);
-var Keys = __webpack_require__(11);
-var Utils = __webpack_require__(4);
-var tab_1 = __webpack_require__(44);
-var tabList_1 = __webpack_require__(45);
-var tabPanel_1 = __webpack_require__(46);
+var react_dom_1 = __webpack_require__(12);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Errors = __webpack_require__(9);
+var Keys = __webpack_require__(15);
+var Utils = __webpack_require__(5);
+var tab_1 = __webpack_require__(57);
+var tabList_1 = __webpack_require__(58);
+var tabPanel_1 = __webpack_require__(59);
 var TAB_CSS_SELECTOR = "li[role=tab]";
 var Tabs = (function (_super) {
     tslib_1.__extends(Tabs, _super);
@@ -11664,7 +15015,7 @@ exports.TabsFactory = React.createFactory(Tabs);
 
 
 /***/ }),
-/* 98 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11677,15 +15028,15 @@ exports.TabsFactory = React.createFactory(Tabs);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var Keys = __webpack_require__(11);
-var utils_1 = __webpack_require__(4);
-var tab2_1 = __webpack_require__(47);
-var tabTitle_1 = __webpack_require__(99);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var Keys = __webpack_require__(15);
+var utils_1 = __webpack_require__(5);
+var tab2_1 = __webpack_require__(60);
+var tabTitle_1 = __webpack_require__(121);
 exports.Expander = function () { return React.createElement("div", { className: "pt-flex-expander" }); };
 var TAB_SELECTOR = "." + Classes.TAB;
 var Tabs2 = (function (_super) {
@@ -11861,7 +15212,7 @@ function isTab(child) {
 
 
 /***/ }),
-/* 99 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11874,10 +15225,10 @@ function isTab(child) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
+var Classes = __webpack_require__(3);
 var TabTitle = (function (_super) {
     tslib_1.__extends(TabTitle, _super);
     function TabTitle() {
@@ -11910,7 +15261,7 @@ exports.generateTabTitleId = generateTabTitleId;
 
 
 /***/ }),
-/* 100 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11923,12 +15274,12 @@ exports.generateTabTitleId = generateTabTitleId;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var common_1 = __webpack_require__(12);
-var props_1 = __webpack_require__(13);
-var Classes = __webpack_require__(2);
+var common_1 = __webpack_require__(16);
+var props_1 = __webpack_require__(17);
+var Classes = __webpack_require__(3);
 var Tag = (function (_super) {
     tslib_1.__extends(Tag, _super);
     function Tag() {
@@ -11964,7 +15315,7 @@ exports.TagFactory = React.createFactory(Tag);
 
 
 /***/ }),
-/* 101 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11977,18 +15328,18 @@ exports.TagFactory = React.createFactory(Tag);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
-var PureRender = __webpack_require__(5);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(9);
-var abstractComponent_1 = __webpack_require__(6);
-var Classes = __webpack_require__(2);
-var errors_1 = __webpack_require__(7);
-var keys_1 = __webpack_require__(11);
-var position_1 = __webpack_require__(10);
-var utils_1 = __webpack_require__(4);
-var overlay_1 = __webpack_require__(15);
-var toast_1 = __webpack_require__(48);
+var ReactDOM = __webpack_require__(12);
+var abstractComponent_1 = __webpack_require__(8);
+var Classes = __webpack_require__(3);
+var errors_1 = __webpack_require__(9);
+var keys_1 = __webpack_require__(15);
+var position_1 = __webpack_require__(14);
+var utils_1 = __webpack_require__(5);
+var overlay_1 = __webpack_require__(21);
+var toast_1 = __webpack_require__(61);
 var Toaster = Toaster_1 = (function (_super) {
     tslib_1.__extends(Toaster, _super);
     function Toaster() {
@@ -12097,7 +15448,7 @@ var Toaster_1;
 
 
 /***/ }),
-/* 102 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12110,11 +15461,11 @@ var Toaster_1;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(1);
-var classNames = __webpack_require__(3);
+var classNames = __webpack_require__(2);
 var React = __webpack_require__(0);
-var Classes = __webpack_require__(2);
-var utils_1 = __webpack_require__(4);
-var treeNode_1 = __webpack_require__(49);
+var Classes = __webpack_require__(3);
+var utils_1 = __webpack_require__(5);
+var treeNode_1 = __webpack_require__(62);
 var Tree = (function (_super) {
     tslib_1.__extends(Tree, _super);
     function Tree() {
@@ -12190,7 +15541,7 @@ exports.TreeFactory = React.createFactory(Tree);
 
 
 /***/ }),
-/* 103 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12615,7 +15966,7 @@ exports.IconClasses = {
 
 
 /***/ }),
-/* 104 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13036,6 +16387,6275 @@ exports.IconContents = {
     PRESCRIPTION: "\ue78a",
     NEW_PRESCRIPTION: "\ue78b",
 };
+
+
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(128);
+var cell_1 = __webpack_require__(25);
+exports.Cell = cell_1.Cell;
+var editableCell_1 = __webpack_require__(130);
+exports.EditableCell = editableCell_1.EditableCell;
+var jsonFormat_1 = __webpack_require__(131);
+exports.JSONFormat = jsonFormat_1.JSONFormat;
+var truncatedFormat_1 = __webpack_require__(64);
+exports.TruncatedPopoverMode = truncatedFormat_1.TruncatedPopoverMode;
+exports.TruncatedFormat = truncatedFormat_1.TruncatedFormat;
+var column_1 = __webpack_require__(65);
+exports.Column = column_1.Column;
+var index_1 = __webpack_require__(36);
+exports.Clipboard = index_1.Clipboard;
+exports.Grid = index_1.Grid;
+exports.Rect = index_1.Rect;
+exports.Utils = index_1.Utils;
+var draggable_1 = __webpack_require__(19);
+exports.Draggable = draggable_1.Draggable;
+var menus_1 = __webpack_require__(67);
+exports.CopyCellsMenuItem = menus_1.CopyCellsMenuItem;
+var resizeHandle_1 = __webpack_require__(26);
+exports.Orientation = resizeHandle_1.Orientation;
+exports.ResizeHandle = resizeHandle_1.ResizeHandle;
+var selectable_1 = __webpack_require__(38);
+exports.DragSelectable = selectable_1.DragSelectable;
+var columnHeaderCell_1 = __webpack_require__(39);
+exports.ColumnHeaderCell = columnHeaderCell_1.ColumnHeaderCell;
+exports.HorizontalCellDivider = columnHeaderCell_1.HorizontalCellDivider;
+var rowHeaderCell_1 = __webpack_require__(70);
+exports.RowHeaderCell = rowHeaderCell_1.RowHeaderCell;
+var editableName_1 = __webpack_require__(135);
+exports.EditableName = editableName_1.EditableName;
+var regions_1 = __webpack_require__(11);
+exports.ColumnLoadingOption = regions_1.ColumnLoadingOption;
+exports.RegionCardinality = regions_1.RegionCardinality;
+exports.Regions = regions_1.Regions;
+exports.RowLoadingOption = regions_1.RowLoadingOption;
+exports.SelectionModes = regions_1.SelectionModes;
+exports.TableLoadingOption = regions_1.TableLoadingOption;
+var table_1 = __webpack_require__(136);
+exports.Table = table_1.Table;
+
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__; /*!
+  * https://github.com/paulmillr/es6-shim
+  * @license es6-shim Copyright 2013-2016 by Paul Miller (http://paulmillr.com)
+  *   and contributors,  MIT License
+  * es6-shim: v0.35.1
+  * see https://github.com/paulmillr/es6-shim/blob/0.35.1/LICENSE
+  * Details and documentation:
+  * https://github.com/paulmillr/es6-shim/
+  */
+
+// UMD (Universal Module Definition)
+// see https://github.com/umdjs/umd/blob/master/returnExports.js
+(function (root, factory) {
+  /*global define, module, exports */
+  if (true) {
+    // AMD. Register as an anonymous module.
+    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    // Browser globals (root is window)
+    root.returnExports = factory();
+  }
+}(this, function () {
+  'use strict';
+
+  var _apply = Function.call.bind(Function.apply);
+  var _call = Function.call.bind(Function.call);
+  var isArray = Array.isArray;
+  var keys = Object.keys;
+
+  var not = function notThunker(func) {
+    return function notThunk() {
+      return !_apply(func, this, arguments);
+    };
+  };
+  var throwsError = function (func) {
+    try {
+      func();
+      return false;
+    } catch (e) {
+      return true;
+    }
+  };
+  var valueOrFalseIfThrows = function valueOrFalseIfThrows(func) {
+    try {
+      return func();
+    } catch (e) {
+      return false;
+    }
+  };
+
+  var isCallableWithoutNew = not(throwsError);
+  var arePropertyDescriptorsSupported = function () {
+    // if Object.defineProperty exists but throws, it's IE 8
+    return !throwsError(function () {
+      Object.defineProperty({}, 'x', { get: function () {} });
+    });
+  };
+  var supportsDescriptors = !!Object.defineProperty && arePropertyDescriptorsSupported();
+  var functionsHaveNames = (function foo() {}).name === 'foo'; // eslint-disable-line no-extra-parens
+
+  var _forEach = Function.call.bind(Array.prototype.forEach);
+  var _reduce = Function.call.bind(Array.prototype.reduce);
+  var _filter = Function.call.bind(Array.prototype.filter);
+  var _some = Function.call.bind(Array.prototype.some);
+
+  var defineProperty = function (object, name, value, force) {
+    if (!force && name in object) { return; }
+    if (supportsDescriptors) {
+      Object.defineProperty(object, name, {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: value
+      });
+    } else {
+      object[name] = value;
+    }
+  };
+
+  // Define configurable, writable and non-enumerable props
+  // if they don’t exist.
+  var defineProperties = function (object, map, forceOverride) {
+    _forEach(keys(map), function (name) {
+      var method = map[name];
+      defineProperty(object, name, method, !!forceOverride);
+    });
+  };
+
+  var _toString = Function.call.bind(Object.prototype.toString);
+  var isCallable =  false ? function IsCallableSlow(x) {
+    // Some old browsers (IE, FF) say that typeof /abc/ === 'function'
+    return typeof x === 'function' && _toString(x) === '[object Function]';
+  } : function IsCallableFast(x) { return typeof x === 'function'; };
+
+  var Value = {
+    getter: function (object, name, getter) {
+      if (!supportsDescriptors) {
+        throw new TypeError('getters require true ES5 support');
+      }
+      Object.defineProperty(object, name, {
+        configurable: true,
+        enumerable: false,
+        get: getter
+      });
+    },
+    proxy: function (originalObject, key, targetObject) {
+      if (!supportsDescriptors) {
+        throw new TypeError('getters require true ES5 support');
+      }
+      var originalDescriptor = Object.getOwnPropertyDescriptor(originalObject, key);
+      Object.defineProperty(targetObject, key, {
+        configurable: originalDescriptor.configurable,
+        enumerable: originalDescriptor.enumerable,
+        get: function getKey() { return originalObject[key]; },
+        set: function setKey(value) { originalObject[key] = value; }
+      });
+    },
+    redefine: function (object, property, newValue) {
+      if (supportsDescriptors) {
+        var descriptor = Object.getOwnPropertyDescriptor(object, property);
+        descriptor.value = newValue;
+        Object.defineProperty(object, property, descriptor);
+      } else {
+        object[property] = newValue;
+      }
+    },
+    defineByDescriptor: function (object, property, descriptor) {
+      if (supportsDescriptors) {
+        Object.defineProperty(object, property, descriptor);
+      } else if ('value' in descriptor) {
+        object[property] = descriptor.value;
+      }
+    },
+    preserveToString: function (target, source) {
+      if (source && isCallable(source.toString)) {
+        defineProperty(target, 'toString', source.toString.bind(source), true);
+      }
+    }
+  };
+
+  // Simple shim for Object.create on ES3 browsers
+  // (unlike real shim, no attempt to support `prototype === null`)
+  var create = Object.create || function (prototype, properties) {
+    var Prototype = function Prototype() {};
+    Prototype.prototype = prototype;
+    var object = new Prototype();
+    if (typeof properties !== 'undefined') {
+      keys(properties).forEach(function (key) {
+        Value.defineByDescriptor(object, key, properties[key]);
+      });
+    }
+    return object;
+  };
+
+  var supportsSubclassing = function (C, f) {
+    if (!Object.setPrototypeOf) { return false; /* skip test on IE < 11 */ }
+    return valueOrFalseIfThrows(function () {
+      var Sub = function Subclass(arg) {
+        var o = new C(arg);
+        Object.setPrototypeOf(o, Subclass.prototype);
+        return o;
+      };
+      Object.setPrototypeOf(Sub, C);
+      Sub.prototype = create(C.prototype, {
+        constructor: { value: Sub }
+      });
+      return f(Sub);
+    });
+  };
+
+  var getGlobal = function () {
+    /* global self, window, global */
+    // the only reliable means to get the global object is
+    // `Function('return this')()`
+    // However, this causes CSP violations in Chrome apps.
+    if (typeof self !== 'undefined') { return self; }
+    if (typeof window !== 'undefined') { return window; }
+    if (typeof global !== 'undefined') { return global; }
+    throw new Error('unable to locate global object');
+  };
+
+  var globals = getGlobal();
+  var globalIsFinite = globals.isFinite;
+  var _indexOf = Function.call.bind(String.prototype.indexOf);
+  var _arrayIndexOfApply = Function.apply.bind(Array.prototype.indexOf);
+  var _concat = Function.call.bind(Array.prototype.concat);
+  // var _sort = Function.call.bind(Array.prototype.sort);
+  var _strSlice = Function.call.bind(String.prototype.slice);
+  var _push = Function.call.bind(Array.prototype.push);
+  var _pushApply = Function.apply.bind(Array.prototype.push);
+  var _shift = Function.call.bind(Array.prototype.shift);
+  var _max = Math.max;
+  var _min = Math.min;
+  var _floor = Math.floor;
+  var _abs = Math.abs;
+  var _exp = Math.exp;
+  var _log = Math.log;
+  var _sqrt = Math.sqrt;
+  var _hasOwnProperty = Function.call.bind(Object.prototype.hasOwnProperty);
+  var ArrayIterator; // make our implementation private
+  var noop = function () {};
+
+  var OrigMap = globals.Map;
+  var origMapDelete = OrigMap && OrigMap.prototype['delete'];
+  var origMapGet = OrigMap && OrigMap.prototype.get;
+  var origMapHas = OrigMap && OrigMap.prototype.has;
+  var origMapSet = OrigMap && OrigMap.prototype.set;
+
+  var Symbol = globals.Symbol || {};
+  var symbolSpecies = Symbol.species || '@@species';
+
+  var numberIsNaN = Number.isNaN || function isNaN(value) {
+    // NaN !== NaN, but they are identical.
+    // NaNs are the only non-reflexive value, i.e., if x !== x,
+    // then x is NaN.
+    // isNaN is broken: it converts its argument to number, so
+    // isNaN('foo') => true
+    return value !== value;
+  };
+  var numberIsFinite = Number.isFinite || function isFinite(value) {
+    return typeof value === 'number' && globalIsFinite(value);
+  };
+  var _sign = isCallable(Math.sign) ? Math.sign : function sign(value) {
+    var number = Number(value);
+    if (number === 0) { return number; }
+    if (numberIsNaN(number)) { return number; }
+    return number < 0 ? -1 : 1;
+  };
+
+  // taken directly from https://github.com/ljharb/is-arguments/blob/master/index.js
+  // can be replaced with require('is-arguments') if we ever use a build process instead
+  var isStandardArguments = function isArguments(value) {
+    return _toString(value) === '[object Arguments]';
+  };
+  var isLegacyArguments = function isArguments(value) {
+    return value !== null &&
+      typeof value === 'object' &&
+      typeof value.length === 'number' &&
+      value.length >= 0 &&
+      _toString(value) !== '[object Array]' &&
+      _toString(value.callee) === '[object Function]';
+  };
+  var isArguments = isStandardArguments(arguments) ? isStandardArguments : isLegacyArguments;
+
+  var Type = {
+    primitive: function (x) { return x === null || (typeof x !== 'function' && typeof x !== 'object'); },
+    string: function (x) { return _toString(x) === '[object String]'; },
+    regex: function (x) { return _toString(x) === '[object RegExp]'; },
+    symbol: function (x) {
+      return typeof globals.Symbol === 'function' && typeof x === 'symbol';
+    }
+  };
+
+  var overrideNative = function overrideNative(object, property, replacement) {
+    var original = object[property];
+    defineProperty(object, property, replacement, true);
+    Value.preserveToString(object[property], original);
+  };
+
+  // eslint-disable-next-line no-restricted-properties
+  var hasSymbols = typeof Symbol === 'function' && typeof Symbol['for'] === 'function' && Type.symbol(Symbol());
+
+  // This is a private name in the es6 spec, equal to '[Symbol.iterator]'
+  // we're going to use an arbitrary _-prefixed name to make our shims
+  // work properly with each other, even though we don't have full Iterator
+  // support.  That is, `Array.from(map.keys())` will work, but we don't
+  // pretend to export a "real" Iterator interface.
+  var $iterator$ = Type.symbol(Symbol.iterator) ? Symbol.iterator : '_es6-shim iterator_';
+  // Firefox ships a partial implementation using the name @@iterator.
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=907077#c14
+  // So use that name if we detect it.
+  if (globals.Set && typeof new globals.Set()['@@iterator'] === 'function') {
+    $iterator$ = '@@iterator';
+  }
+
+  // Reflect
+  if (!globals.Reflect) {
+    defineProperty(globals, 'Reflect', {}, true);
+  }
+  var Reflect = globals.Reflect;
+
+  var $String = String;
+
+  /* global document */
+  var domAll = (typeof document === 'undefined' || !document) ? null : document.all;
+  /* jshint eqnull:true */
+  var isNullOrUndefined = domAll == null ? function isNullOrUndefined(x) {
+    /* jshint eqnull:true */
+    return x == null;
+  } : function isNullOrUndefinedAndNotDocumentAll(x) {
+    /* jshint eqnull:true */
+    return x == null && x !== domAll;
+  };
+
+  var ES = {
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-call
+    Call: function Call(F, V) {
+      var args = arguments.length > 2 ? arguments[2] : [];
+      if (!ES.IsCallable(F)) {
+        throw new TypeError(F + ' is not a function');
+      }
+      return _apply(F, V, args);
+    },
+
+    RequireObjectCoercible: function (x, optMessage) {
+      if (isNullOrUndefined(x)) {
+        throw new TypeError(optMessage || 'Cannot call method on ' + x);
+      }
+      return x;
+    },
+
+    // This might miss the "(non-standard exotic and does not implement
+    // [[Call]])" case from
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-typeof-operator-runtime-semantics-evaluation
+    // but we can't find any evidence these objects exist in practice.
+    // If we find some in the future, you could test `Object(x) === x`,
+    // which is reliable according to
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-toobject
+    // but is not well optimized by runtimes and creates an object
+    // whenever it returns false, and thus is very slow.
+    TypeIsObject: function (x) {
+      if (x === void 0 || x === null || x === true || x === false) {
+        return false;
+      }
+      return typeof x === 'function' || typeof x === 'object' || x === domAll;
+    },
+
+    ToObject: function (o, optMessage) {
+      return Object(ES.RequireObjectCoercible(o, optMessage));
+    },
+
+    IsCallable: isCallable,
+
+    IsConstructor: function (x) {
+      // We can't tell callables from constructors in ES5
+      return ES.IsCallable(x);
+    },
+
+    ToInt32: function (x) {
+      return ES.ToNumber(x) >> 0;
+    },
+
+    ToUint32: function (x) {
+      return ES.ToNumber(x) >>> 0;
+    },
+
+    ToNumber: function (value) {
+      if (_toString(value) === '[object Symbol]') {
+        throw new TypeError('Cannot convert a Symbol value to a number');
+      }
+      return +value;
+    },
+
+    ToInteger: function (value) {
+      var number = ES.ToNumber(value);
+      if (numberIsNaN(number)) { return 0; }
+      if (number === 0 || !numberIsFinite(number)) { return number; }
+      return (number > 0 ? 1 : -1) * _floor(_abs(number));
+    },
+
+    ToLength: function (value) {
+      var len = ES.ToInteger(value);
+      if (len <= 0) { return 0; } // includes converting -0 to +0
+      if (len > Number.MAX_SAFE_INTEGER) { return Number.MAX_SAFE_INTEGER; }
+      return len;
+    },
+
+    SameValue: function (a, b) {
+      if (a === b) {
+        // 0 === -0, but they are not identical.
+        if (a === 0) { return 1 / a === 1 / b; }
+        return true;
+      }
+      return numberIsNaN(a) && numberIsNaN(b);
+    },
+
+    SameValueZero: function (a, b) {
+      // same as SameValue except for SameValueZero(+0, -0) == true
+      return (a === b) || (numberIsNaN(a) && numberIsNaN(b));
+    },
+
+    IsIterable: function (o) {
+      return ES.TypeIsObject(o) && (typeof o[$iterator$] !== 'undefined' || isArguments(o));
+    },
+
+    GetIterator: function (o) {
+      if (isArguments(o)) {
+        // special case support for `arguments`
+        return new ArrayIterator(o, 'value');
+      }
+      var itFn = ES.GetMethod(o, $iterator$);
+      if (!ES.IsCallable(itFn)) {
+        // Better diagnostics if itFn is null or undefined
+        throw new TypeError('value is not an iterable');
+      }
+      var it = ES.Call(itFn, o);
+      if (!ES.TypeIsObject(it)) {
+        throw new TypeError('bad iterator');
+      }
+      return it;
+    },
+
+    GetMethod: function (o, p) {
+      var func = ES.ToObject(o)[p];
+      if (isNullOrUndefined(func)) {
+        return void 0;
+      }
+      if (!ES.IsCallable(func)) {
+        throw new TypeError('Method not callable: ' + p);
+      }
+      return func;
+    },
+
+    IteratorComplete: function (iterResult) {
+      return !!iterResult.done;
+    },
+
+    IteratorClose: function (iterator, completionIsThrow) {
+      var returnMethod = ES.GetMethod(iterator, 'return');
+      if (returnMethod === void 0) {
+        return;
+      }
+      var innerResult, innerException;
+      try {
+        innerResult = ES.Call(returnMethod, iterator);
+      } catch (e) {
+        innerException = e;
+      }
+      if (completionIsThrow) {
+        return;
+      }
+      if (innerException) {
+        throw innerException;
+      }
+      if (!ES.TypeIsObject(innerResult)) {
+        throw new TypeError("Iterator's return method returned a non-object.");
+      }
+    },
+
+    IteratorNext: function (it) {
+      var result = arguments.length > 1 ? it.next(arguments[1]) : it.next();
+      if (!ES.TypeIsObject(result)) {
+        throw new TypeError('bad iterator');
+      }
+      return result;
+    },
+
+    IteratorStep: function (it) {
+      var result = ES.IteratorNext(it);
+      var done = ES.IteratorComplete(result);
+      return done ? false : result;
+    },
+
+    Construct: function (C, args, newTarget, isES6internal) {
+      var target = typeof newTarget === 'undefined' ? C : newTarget;
+
+      if (!isES6internal && Reflect.construct) {
+        // Try to use Reflect.construct if available
+        return Reflect.construct(C, args, target);
+      }
+      // OK, we have to fake it.  This will only work if the
+      // C.[[ConstructorKind]] == "base" -- but that's the only
+      // kind we can make in ES5 code anyway.
+
+      // OrdinaryCreateFromConstructor(target, "%ObjectPrototype%")
+      var proto = target.prototype;
+      if (!ES.TypeIsObject(proto)) {
+        proto = Object.prototype;
+      }
+      var obj = create(proto);
+      // Call the constructor.
+      var result = ES.Call(C, obj, args);
+      return ES.TypeIsObject(result) ? result : obj;
+    },
+
+    SpeciesConstructor: function (O, defaultConstructor) {
+      var C = O.constructor;
+      if (C === void 0) {
+        return defaultConstructor;
+      }
+      if (!ES.TypeIsObject(C)) {
+        throw new TypeError('Bad constructor');
+      }
+      var S = C[symbolSpecies];
+      if (isNullOrUndefined(S)) {
+        return defaultConstructor;
+      }
+      if (!ES.IsConstructor(S)) {
+        throw new TypeError('Bad @@species');
+      }
+      return S;
+    },
+
+    CreateHTML: function (string, tag, attribute, value) {
+      var S = ES.ToString(string);
+      var p1 = '<' + tag;
+      if (attribute !== '') {
+        var V = ES.ToString(value);
+        var escapedV = V.replace(/"/g, '&quot;');
+        p1 += ' ' + attribute + '="' + escapedV + '"';
+      }
+      var p2 = p1 + '>';
+      var p3 = p2 + S;
+      return p3 + '</' + tag + '>';
+    },
+
+    IsRegExp: function IsRegExp(argument) {
+      if (!ES.TypeIsObject(argument)) {
+        return false;
+      }
+      var isRegExp = argument[Symbol.match];
+      if (typeof isRegExp !== 'undefined') {
+        return !!isRegExp;
+      }
+      return Type.regex(argument);
+    },
+
+    ToString: function ToString(string) {
+      return $String(string);
+    }
+  };
+
+  // Well-known Symbol shims
+  if (supportsDescriptors && hasSymbols) {
+    var defineWellKnownSymbol = function defineWellKnownSymbol(name) {
+      if (Type.symbol(Symbol[name])) {
+        return Symbol[name];
+      }
+      // eslint-disable-next-line no-restricted-properties
+      var sym = Symbol['for']('Symbol.' + name);
+      Object.defineProperty(Symbol, name, {
+        configurable: false,
+        enumerable: false,
+        writable: false,
+        value: sym
+      });
+      return sym;
+    };
+    if (!Type.symbol(Symbol.search)) {
+      var symbolSearch = defineWellKnownSymbol('search');
+      var originalSearch = String.prototype.search;
+      defineProperty(RegExp.prototype, symbolSearch, function search(string) {
+        return ES.Call(originalSearch, string, [this]);
+      });
+      var searchShim = function search(regexp) {
+        var O = ES.RequireObjectCoercible(this);
+        if (!isNullOrUndefined(regexp)) {
+          var searcher = ES.GetMethod(regexp, symbolSearch);
+          if (typeof searcher !== 'undefined') {
+            return ES.Call(searcher, regexp, [O]);
+          }
+        }
+        return ES.Call(originalSearch, O, [ES.ToString(regexp)]);
+      };
+      overrideNative(String.prototype, 'search', searchShim);
+    }
+    if (!Type.symbol(Symbol.replace)) {
+      var symbolReplace = defineWellKnownSymbol('replace');
+      var originalReplace = String.prototype.replace;
+      defineProperty(RegExp.prototype, symbolReplace, function replace(string, replaceValue) {
+        return ES.Call(originalReplace, string, [this, replaceValue]);
+      });
+      var replaceShim = function replace(searchValue, replaceValue) {
+        var O = ES.RequireObjectCoercible(this);
+        if (!isNullOrUndefined(searchValue)) {
+          var replacer = ES.GetMethod(searchValue, symbolReplace);
+          if (typeof replacer !== 'undefined') {
+            return ES.Call(replacer, searchValue, [O, replaceValue]);
+          }
+        }
+        return ES.Call(originalReplace, O, [ES.ToString(searchValue), replaceValue]);
+      };
+      overrideNative(String.prototype, 'replace', replaceShim);
+    }
+    if (!Type.symbol(Symbol.split)) {
+      var symbolSplit = defineWellKnownSymbol('split');
+      var originalSplit = String.prototype.split;
+      defineProperty(RegExp.prototype, symbolSplit, function split(string, limit) {
+        return ES.Call(originalSplit, string, [this, limit]);
+      });
+      var splitShim = function split(separator, limit) {
+        var O = ES.RequireObjectCoercible(this);
+        if (!isNullOrUndefined(separator)) {
+          var splitter = ES.GetMethod(separator, symbolSplit);
+          if (typeof splitter !== 'undefined') {
+            return ES.Call(splitter, separator, [O, limit]);
+          }
+        }
+        return ES.Call(originalSplit, O, [ES.ToString(separator), limit]);
+      };
+      overrideNative(String.prototype, 'split', splitShim);
+    }
+    var symbolMatchExists = Type.symbol(Symbol.match);
+    var stringMatchIgnoresSymbolMatch = symbolMatchExists && (function () {
+      // Firefox 41, through Nightly 45 has Symbol.match, but String#match ignores it.
+      // Firefox 40 and below have Symbol.match but String#match works fine.
+      var o = {};
+      o[Symbol.match] = function () { return 42; };
+      return 'a'.match(o) !== 42;
+    }());
+    if (!symbolMatchExists || stringMatchIgnoresSymbolMatch) {
+      var symbolMatch = defineWellKnownSymbol('match');
+
+      var originalMatch = String.prototype.match;
+      defineProperty(RegExp.prototype, symbolMatch, function match(string) {
+        return ES.Call(originalMatch, string, [this]);
+      });
+
+      var matchShim = function match(regexp) {
+        var O = ES.RequireObjectCoercible(this);
+        if (!isNullOrUndefined(regexp)) {
+          var matcher = ES.GetMethod(regexp, symbolMatch);
+          if (typeof matcher !== 'undefined') {
+            return ES.Call(matcher, regexp, [O]);
+          }
+        }
+        return ES.Call(originalMatch, O, [ES.ToString(regexp)]);
+      };
+      overrideNative(String.prototype, 'match', matchShim);
+    }
+  }
+
+  var wrapConstructor = function wrapConstructor(original, replacement, keysToSkip) {
+    Value.preserveToString(replacement, original);
+    if (Object.setPrototypeOf) {
+      // sets up proper prototype chain where possible
+      Object.setPrototypeOf(original, replacement);
+    }
+    if (supportsDescriptors) {
+      _forEach(Object.getOwnPropertyNames(original), function (key) {
+        if (key in noop || keysToSkip[key]) { return; }
+        Value.proxy(original, key, replacement);
+      });
+    } else {
+      _forEach(Object.keys(original), function (key) {
+        if (key in noop || keysToSkip[key]) { return; }
+        replacement[key] = original[key];
+      });
+    }
+    replacement.prototype = original.prototype;
+    Value.redefine(original.prototype, 'constructor', replacement);
+  };
+
+  var defaultSpeciesGetter = function () { return this; };
+  var addDefaultSpecies = function (C) {
+    if (supportsDescriptors && !_hasOwnProperty(C, symbolSpecies)) {
+      Value.getter(C, symbolSpecies, defaultSpeciesGetter);
+    }
+  };
+
+  var addIterator = function (prototype, impl) {
+    var implementation = impl || function iterator() { return this; };
+    defineProperty(prototype, $iterator$, implementation);
+    if (!prototype[$iterator$] && Type.symbol($iterator$)) {
+      // implementations are buggy when $iterator$ is a Symbol
+      prototype[$iterator$] = implementation;
+    }
+  };
+
+  var createDataProperty = function createDataProperty(object, name, value) {
+    if (supportsDescriptors) {
+      Object.defineProperty(object, name, {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: value
+      });
+    } else {
+      object[name] = value;
+    }
+  };
+  var createDataPropertyOrThrow = function createDataPropertyOrThrow(object, name, value) {
+    createDataProperty(object, name, value);
+    if (!ES.SameValue(object[name], value)) {
+      throw new TypeError('property is nonconfigurable');
+    }
+  };
+
+  var emulateES6construct = function (o, defaultNewTarget, defaultProto, slots) {
+    // This is an es5 approximation to es6 construct semantics.  in es6,
+    // 'new Foo' invokes Foo.[[Construct]] which (for almost all objects)
+    // just sets the internal variable NewTarget (in es6 syntax `new.target`)
+    // to Foo and then returns Foo().
+
+    // Many ES6 object then have constructors of the form:
+    // 1. If NewTarget is undefined, throw a TypeError exception
+    // 2. Let xxx by OrdinaryCreateFromConstructor(NewTarget, yyy, zzz)
+
+    // So we're going to emulate those first two steps.
+    if (!ES.TypeIsObject(o)) {
+      throw new TypeError('Constructor requires `new`: ' + defaultNewTarget.name);
+    }
+    var proto = defaultNewTarget.prototype;
+    if (!ES.TypeIsObject(proto)) {
+      proto = defaultProto;
+    }
+    var obj = create(proto);
+    for (var name in slots) {
+      if (_hasOwnProperty(slots, name)) {
+        var value = slots[name];
+        defineProperty(obj, name, value, true);
+      }
+    }
+    return obj;
+  };
+
+  // Firefox 31 reports this function's length as 0
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=1062484
+  if (String.fromCodePoint && String.fromCodePoint.length !== 1) {
+    var originalFromCodePoint = String.fromCodePoint;
+    overrideNative(String, 'fromCodePoint', function fromCodePoint(codePoints) {
+      return ES.Call(originalFromCodePoint, this, arguments);
+    });
+  }
+
+  var StringShims = {
+    fromCodePoint: function fromCodePoint(codePoints) {
+      var result = [];
+      var next;
+      for (var i = 0, length = arguments.length; i < length; i++) {
+        next = Number(arguments[i]);
+        if (!ES.SameValue(next, ES.ToInteger(next)) || next < 0 || next > 0x10FFFF) {
+          throw new RangeError('Invalid code point ' + next);
+        }
+
+        if (next < 0x10000) {
+          _push(result, String.fromCharCode(next));
+        } else {
+          next -= 0x10000;
+          _push(result, String.fromCharCode((next >> 10) + 0xD800));
+          _push(result, String.fromCharCode((next % 0x400) + 0xDC00));
+        }
+      }
+      return result.join('');
+    },
+
+    raw: function raw(callSite) {
+      var cooked = ES.ToObject(callSite, 'bad callSite');
+      var rawString = ES.ToObject(cooked.raw, 'bad raw value');
+      var len = rawString.length;
+      var literalsegments = ES.ToLength(len);
+      if (literalsegments <= 0) {
+        return '';
+      }
+
+      var stringElements = [];
+      var nextIndex = 0;
+      var nextKey, next, nextSeg, nextSub;
+      while (nextIndex < literalsegments) {
+        nextKey = ES.ToString(nextIndex);
+        nextSeg = ES.ToString(rawString[nextKey]);
+        _push(stringElements, nextSeg);
+        if (nextIndex + 1 >= literalsegments) {
+          break;
+        }
+        next = nextIndex + 1 < arguments.length ? arguments[nextIndex + 1] : '';
+        nextSub = ES.ToString(next);
+        _push(stringElements, nextSub);
+        nextIndex += 1;
+      }
+      return stringElements.join('');
+    }
+  };
+  if (String.raw && String.raw({ raw: { 0: 'x', 1: 'y', length: 2 } }) !== 'xy') {
+    // IE 11 TP has a broken String.raw implementation
+    overrideNative(String, 'raw', StringShims.raw);
+  }
+  defineProperties(String, StringShims);
+
+  // Fast repeat, uses the `Exponentiation by squaring` algorithm.
+  // Perf: http://jsperf.com/string-repeat2/2
+  var stringRepeat = function repeat(s, times) {
+    if (times < 1) { return ''; }
+    if (times % 2) { return repeat(s, times - 1) + s; }
+    var half = repeat(s, times / 2);
+    return half + half;
+  };
+  var stringMaxLength = Infinity;
+
+  var StringPrototypeShims = {
+    repeat: function repeat(times) {
+      var thisStr = ES.ToString(ES.RequireObjectCoercible(this));
+      var numTimes = ES.ToInteger(times);
+      if (numTimes < 0 || numTimes >= stringMaxLength) {
+        throw new RangeError('repeat count must be less than infinity and not overflow maximum string size');
+      }
+      return stringRepeat(thisStr, numTimes);
+    },
+
+    startsWith: function startsWith(searchString) {
+      var S = ES.ToString(ES.RequireObjectCoercible(this));
+      if (ES.IsRegExp(searchString)) {
+        throw new TypeError('Cannot call method "startsWith" with a regex');
+      }
+      var searchStr = ES.ToString(searchString);
+      var position;
+      if (arguments.length > 1) {
+        position = arguments[1];
+      }
+      var start = _max(ES.ToInteger(position), 0);
+      return _strSlice(S, start, start + searchStr.length) === searchStr;
+    },
+
+    endsWith: function endsWith(searchString) {
+      var S = ES.ToString(ES.RequireObjectCoercible(this));
+      if (ES.IsRegExp(searchString)) {
+        throw new TypeError('Cannot call method "endsWith" with a regex');
+      }
+      var searchStr = ES.ToString(searchString);
+      var len = S.length;
+      var endPosition;
+      if (arguments.length > 1) {
+        endPosition = arguments[1];
+      }
+      var pos = typeof endPosition === 'undefined' ? len : ES.ToInteger(endPosition);
+      var end = _min(_max(pos, 0), len);
+      return _strSlice(S, end - searchStr.length, end) === searchStr;
+    },
+
+    includes: function includes(searchString) {
+      if (ES.IsRegExp(searchString)) {
+        throw new TypeError('"includes" does not accept a RegExp');
+      }
+      var searchStr = ES.ToString(searchString);
+      var position;
+      if (arguments.length > 1) {
+        position = arguments[1];
+      }
+      // Somehow this trick makes method 100% compat with the spec.
+      return _indexOf(this, searchStr, position) !== -1;
+    },
+
+    codePointAt: function codePointAt(pos) {
+      var thisStr = ES.ToString(ES.RequireObjectCoercible(this));
+      var position = ES.ToInteger(pos);
+      var length = thisStr.length;
+      if (position >= 0 && position < length) {
+        var first = thisStr.charCodeAt(position);
+        var isEnd = position + 1 === length;
+        if (first < 0xD800 || first > 0xDBFF || isEnd) { return first; }
+        var second = thisStr.charCodeAt(position + 1);
+        if (second < 0xDC00 || second > 0xDFFF) { return first; }
+        return ((first - 0xD800) * 1024) + (second - 0xDC00) + 0x10000;
+      }
+    }
+  };
+  if (String.prototype.includes && 'a'.includes('a', Infinity) !== false) {
+    overrideNative(String.prototype, 'includes', StringPrototypeShims.includes);
+  }
+
+  if (String.prototype.startsWith && String.prototype.endsWith) {
+    var startsWithRejectsRegex = throwsError(function () {
+      /* throws if spec-compliant */
+      '/a/'.startsWith(/a/);
+    });
+    var startsWithHandlesInfinity = valueOrFalseIfThrows(function () {
+      return 'abc'.startsWith('a', Infinity) === false;
+    });
+    if (!startsWithRejectsRegex || !startsWithHandlesInfinity) {
+      // Firefox (< 37?) and IE 11 TP have a noncompliant startsWith implementation
+      overrideNative(String.prototype, 'startsWith', StringPrototypeShims.startsWith);
+      overrideNative(String.prototype, 'endsWith', StringPrototypeShims.endsWith);
+    }
+  }
+  if (hasSymbols) {
+    var startsWithSupportsSymbolMatch = valueOrFalseIfThrows(function () {
+      var re = /a/;
+      re[Symbol.match] = false;
+      return '/a/'.startsWith(re);
+    });
+    if (!startsWithSupportsSymbolMatch) {
+      overrideNative(String.prototype, 'startsWith', StringPrototypeShims.startsWith);
+    }
+    var endsWithSupportsSymbolMatch = valueOrFalseIfThrows(function () {
+      var re = /a/;
+      re[Symbol.match] = false;
+      return '/a/'.endsWith(re);
+    });
+    if (!endsWithSupportsSymbolMatch) {
+      overrideNative(String.prototype, 'endsWith', StringPrototypeShims.endsWith);
+    }
+    var includesSupportsSymbolMatch = valueOrFalseIfThrows(function () {
+      var re = /a/;
+      re[Symbol.match] = false;
+      return '/a/'.includes(re);
+    });
+    if (!includesSupportsSymbolMatch) {
+      overrideNative(String.prototype, 'includes', StringPrototypeShims.includes);
+    }
+  }
+
+  defineProperties(String.prototype, StringPrototypeShims);
+
+  // whitespace from: http://es5.github.io/#x15.5.4.20
+  // implementation from https://github.com/es-shims/es5-shim/blob/v3.4.0/es5-shim.js#L1304-L1324
+  var ws = [
+    '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003',
+    '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028',
+    '\u2029\uFEFF'
+  ].join('');
+  var trimRegexp = new RegExp('(^[' + ws + ']+)|([' + ws + ']+$)', 'g');
+  var trimShim = function trim() {
+    return ES.ToString(ES.RequireObjectCoercible(this)).replace(trimRegexp, '');
+  };
+  var nonWS = ['\u0085', '\u200b', '\ufffe'].join('');
+  var nonWSregex = new RegExp('[' + nonWS + ']', 'g');
+  var isBadHexRegex = /^[-+]0x[0-9a-f]+$/i;
+  var hasStringTrimBug = nonWS.trim().length !== nonWS.length;
+  defineProperty(String.prototype, 'trim', trimShim, hasStringTrimBug);
+
+  // Given an argument x, it will return an IteratorResult object,
+  // with value set to x and done to false.
+  // Given no arguments, it will return an iterator completion object.
+  var iteratorResult = function (x) {
+    return { value: x, done: arguments.length === 0 };
+  };
+
+  // see http://www.ecma-international.org/ecma-262/6.0/#sec-string.prototype-@@iterator
+  var StringIterator = function (s) {
+    ES.RequireObjectCoercible(s);
+    this._s = ES.ToString(s);
+    this._i = 0;
+  };
+  StringIterator.prototype.next = function () {
+    var s = this._s;
+    var i = this._i;
+    if (typeof s === 'undefined' || i >= s.length) {
+      this._s = void 0;
+      return iteratorResult();
+    }
+    var first = s.charCodeAt(i);
+    var second, len;
+    if (first < 0xD800 || first > 0xDBFF || (i + 1) === s.length) {
+      len = 1;
+    } else {
+      second = s.charCodeAt(i + 1);
+      len = (second < 0xDC00 || second > 0xDFFF) ? 1 : 2;
+    }
+    this._i = i + len;
+    return iteratorResult(s.substr(i, len));
+  };
+  addIterator(StringIterator.prototype);
+  addIterator(String.prototype, function () {
+    return new StringIterator(this);
+  });
+
+  var ArrayShims = {
+    from: function from(items) {
+      var C = this;
+      var mapFn;
+      if (arguments.length > 1) {
+        mapFn = arguments[1];
+      }
+      var mapping, T;
+      if (typeof mapFn === 'undefined') {
+        mapping = false;
+      } else {
+        if (!ES.IsCallable(mapFn)) {
+          throw new TypeError('Array.from: when provided, the second argument must be a function');
+        }
+        if (arguments.length > 2) {
+          T = arguments[2];
+        }
+        mapping = true;
+      }
+
+      // Note that that Arrays will use ArrayIterator:
+      // https://bugs.ecmascript.org/show_bug.cgi?id=2416
+      var usingIterator = typeof (isArguments(items) || ES.GetMethod(items, $iterator$)) !== 'undefined';
+
+      var length, result, i;
+      if (usingIterator) {
+        result = ES.IsConstructor(C) ? Object(new C()) : [];
+        var iterator = ES.GetIterator(items);
+        var next, nextValue;
+
+        i = 0;
+        while (true) {
+          next = ES.IteratorStep(iterator);
+          if (next === false) {
+            break;
+          }
+          nextValue = next.value;
+          try {
+            if (mapping) {
+              nextValue = typeof T === 'undefined' ? mapFn(nextValue, i) : _call(mapFn, T, nextValue, i);
+            }
+            result[i] = nextValue;
+          } catch (e) {
+            ES.IteratorClose(iterator, true);
+            throw e;
+          }
+          i += 1;
+        }
+        length = i;
+      } else {
+        var arrayLike = ES.ToObject(items);
+        length = ES.ToLength(arrayLike.length);
+        result = ES.IsConstructor(C) ? Object(new C(length)) : new Array(length);
+        var value;
+        for (i = 0; i < length; ++i) {
+          value = arrayLike[i];
+          if (mapping) {
+            value = typeof T === 'undefined' ? mapFn(value, i) : _call(mapFn, T, value, i);
+          }
+          createDataPropertyOrThrow(result, i, value);
+        }
+      }
+
+      result.length = length;
+      return result;
+    },
+
+    of: function of() {
+      var len = arguments.length;
+      var C = this;
+      var A = isArray(C) || !ES.IsCallable(C) ? new Array(len) : ES.Construct(C, [len]);
+      for (var k = 0; k < len; ++k) {
+        createDataPropertyOrThrow(A, k, arguments[k]);
+      }
+      A.length = len;
+      return A;
+    }
+  };
+  defineProperties(Array, ArrayShims);
+  addDefaultSpecies(Array);
+
+  // Our ArrayIterator is private; see
+  // https://github.com/paulmillr/es6-shim/issues/252
+  ArrayIterator = function (array, kind) {
+    this.i = 0;
+    this.array = array;
+    this.kind = kind;
+  };
+
+  defineProperties(ArrayIterator.prototype, {
+    next: function () {
+      var i = this.i;
+      var array = this.array;
+      if (!(this instanceof ArrayIterator)) {
+        throw new TypeError('Not an ArrayIterator');
+      }
+      if (typeof array !== 'undefined') {
+        var len = ES.ToLength(array.length);
+        for (; i < len; i++) {
+          var kind = this.kind;
+          var retval;
+          if (kind === 'key') {
+            retval = i;
+          } else if (kind === 'value') {
+            retval = array[i];
+          } else if (kind === 'entry') {
+            retval = [i, array[i]];
+          }
+          this.i = i + 1;
+          return iteratorResult(retval);
+        }
+      }
+      this.array = void 0;
+      return iteratorResult();
+    }
+  });
+  addIterator(ArrayIterator.prototype);
+
+/*
+  var orderKeys = function orderKeys(a, b) {
+    var aNumeric = String(ES.ToInteger(a)) === a;
+    var bNumeric = String(ES.ToInteger(b)) === b;
+    if (aNumeric && bNumeric) {
+      return b - a;
+    } else if (aNumeric && !bNumeric) {
+      return -1;
+    } else if (!aNumeric && bNumeric) {
+      return 1;
+    } else {
+      return a.localeCompare(b);
+    }
+  };
+
+  var getAllKeys = function getAllKeys(object) {
+    var ownKeys = [];
+    var keys = [];
+
+    for (var key in object) {
+      _push(_hasOwnProperty(object, key) ? ownKeys : keys, key);
+    }
+    _sort(ownKeys, orderKeys);
+    _sort(keys, orderKeys);
+
+    return _concat(ownKeys, keys);
+  };
+  */
+
+  // note: this is positioned here because it depends on ArrayIterator
+  var arrayOfSupportsSubclassing = Array.of === ArrayShims.of || (function () {
+    // Detects a bug in Webkit nightly r181886
+    var Foo = function Foo(len) { this.length = len; };
+    Foo.prototype = [];
+    var fooArr = Array.of.apply(Foo, [1, 2]);
+    return fooArr instanceof Foo && fooArr.length === 2;
+  }());
+  if (!arrayOfSupportsSubclassing) {
+    overrideNative(Array, 'of', ArrayShims.of);
+  }
+
+  var ArrayPrototypeShims = {
+    copyWithin: function copyWithin(target, start) {
+      var o = ES.ToObject(this);
+      var len = ES.ToLength(o.length);
+      var relativeTarget = ES.ToInteger(target);
+      var relativeStart = ES.ToInteger(start);
+      var to = relativeTarget < 0 ? _max(len + relativeTarget, 0) : _min(relativeTarget, len);
+      var from = relativeStart < 0 ? _max(len + relativeStart, 0) : _min(relativeStart, len);
+      var end;
+      if (arguments.length > 2) {
+        end = arguments[2];
+      }
+      var relativeEnd = typeof end === 'undefined' ? len : ES.ToInteger(end);
+      var finalItem = relativeEnd < 0 ? _max(len + relativeEnd, 0) : _min(relativeEnd, len);
+      var count = _min(finalItem - from, len - to);
+      var direction = 1;
+      if (from < to && to < (from + count)) {
+        direction = -1;
+        from += count - 1;
+        to += count - 1;
+      }
+      while (count > 0) {
+        if (from in o) {
+          o[to] = o[from];
+        } else {
+          delete o[to];
+        }
+        from += direction;
+        to += direction;
+        count -= 1;
+      }
+      return o;
+    },
+
+    fill: function fill(value) {
+      var start;
+      if (arguments.length > 1) {
+        start = arguments[1];
+      }
+      var end;
+      if (arguments.length > 2) {
+        end = arguments[2];
+      }
+      var O = ES.ToObject(this);
+      var len = ES.ToLength(O.length);
+      start = ES.ToInteger(typeof start === 'undefined' ? 0 : start);
+      end = ES.ToInteger(typeof end === 'undefined' ? len : end);
+
+      var relativeStart = start < 0 ? _max(len + start, 0) : _min(start, len);
+      var relativeEnd = end < 0 ? len + end : end;
+
+      for (var i = relativeStart; i < len && i < relativeEnd; ++i) {
+        O[i] = value;
+      }
+      return O;
+    },
+
+    find: function find(predicate) {
+      var list = ES.ToObject(this);
+      var length = ES.ToLength(list.length);
+      if (!ES.IsCallable(predicate)) {
+        throw new TypeError('Array#find: predicate must be a function');
+      }
+      var thisArg = arguments.length > 1 ? arguments[1] : null;
+      for (var i = 0, value; i < length; i++) {
+        value = list[i];
+        if (thisArg) {
+          if (_call(predicate, thisArg, value, i, list)) {
+            return value;
+          }
+        } else if (predicate(value, i, list)) {
+          return value;
+        }
+      }
+    },
+
+    findIndex: function findIndex(predicate) {
+      var list = ES.ToObject(this);
+      var length = ES.ToLength(list.length);
+      if (!ES.IsCallable(predicate)) {
+        throw new TypeError('Array#findIndex: predicate must be a function');
+      }
+      var thisArg = arguments.length > 1 ? arguments[1] : null;
+      for (var i = 0; i < length; i++) {
+        if (thisArg) {
+          if (_call(predicate, thisArg, list[i], i, list)) {
+            return i;
+          }
+        } else if (predicate(list[i], i, list)) {
+          return i;
+        }
+      }
+      return -1;
+    },
+
+    keys: function keys() {
+      return new ArrayIterator(this, 'key');
+    },
+
+    values: function values() {
+      return new ArrayIterator(this, 'value');
+    },
+
+    entries: function entries() {
+      return new ArrayIterator(this, 'entry');
+    }
+  };
+  // Safari 7.1 defines Array#keys and Array#entries natively,
+  // but the resulting ArrayIterator objects don't have a "next" method.
+  if (Array.prototype.keys && !ES.IsCallable([1].keys().next)) {
+    delete Array.prototype.keys;
+  }
+  if (Array.prototype.entries && !ES.IsCallable([1].entries().next)) {
+    delete Array.prototype.entries;
+  }
+
+  // Chrome 38 defines Array#keys and Array#entries, and Array#@@iterator, but not Array#values
+  if (Array.prototype.keys && Array.prototype.entries && !Array.prototype.values && Array.prototype[$iterator$]) {
+    defineProperties(Array.prototype, {
+      values: Array.prototype[$iterator$]
+    });
+    if (Type.symbol(Symbol.unscopables)) {
+      Array.prototype[Symbol.unscopables].values = true;
+    }
+  }
+  // Chrome 40 defines Array#values with the incorrect name, although Array#{keys,entries} have the correct name
+  if (functionsHaveNames && Array.prototype.values && Array.prototype.values.name !== 'values') {
+    var originalArrayPrototypeValues = Array.prototype.values;
+    overrideNative(Array.prototype, 'values', function values() { return ES.Call(originalArrayPrototypeValues, this, arguments); });
+    defineProperty(Array.prototype, $iterator$, Array.prototype.values, true);
+  }
+  defineProperties(Array.prototype, ArrayPrototypeShims);
+
+  if (1 / [true].indexOf(true, -0) < 0) {
+    // indexOf when given a position arg of -0 should return +0.
+    // https://github.com/tc39/ecma262/pull/316
+    defineProperty(Array.prototype, 'indexOf', function indexOf(searchElement) {
+      var value = _arrayIndexOfApply(this, arguments);
+      if (value === 0 && (1 / value) < 0) {
+        return 0;
+      }
+      return value;
+    }, true);
+  }
+
+  addIterator(Array.prototype, function () { return this.values(); });
+  // Chrome defines keys/values/entries on Array, but doesn't give us
+  // any way to identify its iterator.  So add our own shimmed field.
+  if (Object.getPrototypeOf) {
+    addIterator(Object.getPrototypeOf([].values()));
+  }
+
+  // note: this is positioned here because it relies on Array#entries
+  var arrayFromSwallowsNegativeLengths = (function () {
+    // Detects a Firefox bug in v32
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1063993
+    return valueOrFalseIfThrows(function () {
+      return Array.from({ length: -1 }).length === 0;
+    });
+  }());
+  var arrayFromHandlesIterables = (function () {
+    // Detects a bug in Webkit nightly r181886
+    var arr = Array.from([0].entries());
+    return arr.length === 1 && isArray(arr[0]) && arr[0][0] === 0 && arr[0][1] === 0;
+  }());
+  if (!arrayFromSwallowsNegativeLengths || !arrayFromHandlesIterables) {
+    overrideNative(Array, 'from', ArrayShims.from);
+  }
+  var arrayFromHandlesUndefinedMapFunction = (function () {
+    // Microsoft Edge v0.11 throws if the mapFn argument is *provided* but undefined,
+    // but the spec doesn't care if it's provided or not - undefined doesn't throw.
+    return valueOrFalseIfThrows(function () {
+      return Array.from([0], void 0);
+    });
+  }());
+  if (!arrayFromHandlesUndefinedMapFunction) {
+    var origArrayFrom = Array.from;
+    overrideNative(Array, 'from', function from(items) {
+      if (arguments.length > 1 && typeof arguments[1] !== 'undefined') {
+        return ES.Call(origArrayFrom, this, arguments);
+      } else {
+        return _call(origArrayFrom, this, items);
+      }
+    });
+  }
+
+  var int32sAsOne = -(Math.pow(2, 32) - 1);
+  var toLengthsCorrectly = function (method, reversed) {
+    var obj = { length: int32sAsOne };
+    obj[reversed ? (obj.length >>> 0) - 1 : 0] = true;
+    return valueOrFalseIfThrows(function () {
+      _call(method, obj, function () {
+        // note: in nonconforming browsers, this will be called
+        // -1 >>> 0 times, which is 4294967295, so the throw matters.
+        throw new RangeError('should not reach here');
+      }, []);
+      return true;
+    });
+  };
+  if (!toLengthsCorrectly(Array.prototype.forEach)) {
+    var originalForEach = Array.prototype.forEach;
+    overrideNative(Array.prototype, 'forEach', function forEach(callbackFn) {
+      return ES.Call(originalForEach, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.map)) {
+    var originalMap = Array.prototype.map;
+    overrideNative(Array.prototype, 'map', function map(callbackFn) {
+      return ES.Call(originalMap, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.filter)) {
+    var originalFilter = Array.prototype.filter;
+    overrideNative(Array.prototype, 'filter', function filter(callbackFn) {
+      return ES.Call(originalFilter, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.some)) {
+    var originalSome = Array.prototype.some;
+    overrideNative(Array.prototype, 'some', function some(callbackFn) {
+      return ES.Call(originalSome, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.every)) {
+    var originalEvery = Array.prototype.every;
+    overrideNative(Array.prototype, 'every', function every(callbackFn) {
+      return ES.Call(originalEvery, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.reduce)) {
+    var originalReduce = Array.prototype.reduce;
+    overrideNative(Array.prototype, 'reduce', function reduce(callbackFn) {
+      return ES.Call(originalReduce, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+  if (!toLengthsCorrectly(Array.prototype.reduceRight, true)) {
+    var originalReduceRight = Array.prototype.reduceRight;
+    overrideNative(Array.prototype, 'reduceRight', function reduceRight(callbackFn) {
+      return ES.Call(originalReduceRight, this.length >= 0 ? this : [], arguments);
+    }, true);
+  }
+
+  var lacksOctalSupport = Number('0o10') !== 8;
+  var lacksBinarySupport = Number('0b10') !== 2;
+  var trimsNonWhitespace = _some(nonWS, function (c) {
+    return Number(c + 0 + c) === 0;
+  });
+  if (lacksOctalSupport || lacksBinarySupport || trimsNonWhitespace) {
+    var OrigNumber = Number;
+    var binaryRegex = /^0b[01]+$/i;
+    var octalRegex = /^0o[0-7]+$/i;
+    // Note that in IE 8, RegExp.prototype.test doesn't seem to exist: ie, "test" is an own property of regexes. wtf.
+    var isBinary = binaryRegex.test.bind(binaryRegex);
+    var isOctal = octalRegex.test.bind(octalRegex);
+    var toPrimitive = function (O) { // need to replace this with `es-to-primitive/es6`
+      var result;
+      if (typeof O.valueOf === 'function') {
+        result = O.valueOf();
+        if (Type.primitive(result)) {
+          return result;
+        }
+      }
+      if (typeof O.toString === 'function') {
+        result = O.toString();
+        if (Type.primitive(result)) {
+          return result;
+        }
+      }
+      throw new TypeError('No default value');
+    };
+    var hasNonWS = nonWSregex.test.bind(nonWSregex);
+    var isBadHex = isBadHexRegex.test.bind(isBadHexRegex);
+    var NumberShim = (function () {
+      // this is wrapped in an IIFE because of IE 6-8's wacky scoping issues with named function expressions.
+      var NumberShim = function Number(value) {
+        var primValue;
+        if (arguments.length > 0) {
+          primValue = Type.primitive(value) ? value : toPrimitive(value, 'number');
+        } else {
+          primValue = 0;
+        }
+        if (typeof primValue === 'string') {
+          primValue = ES.Call(trimShim, primValue);
+          if (isBinary(primValue)) {
+            primValue = parseInt(_strSlice(primValue, 2), 2);
+          } else if (isOctal(primValue)) {
+            primValue = parseInt(_strSlice(primValue, 2), 8);
+          } else if (hasNonWS(primValue) || isBadHex(primValue)) {
+            primValue = NaN;
+          }
+        }
+        var receiver = this;
+        var valueOfSucceeds = valueOrFalseIfThrows(function () {
+          OrigNumber.prototype.valueOf.call(receiver);
+          return true;
+        });
+        if (receiver instanceof NumberShim && !valueOfSucceeds) {
+          return new OrigNumber(primValue);
+        }
+        /* jshint newcap: false */
+        return OrigNumber(primValue);
+        /* jshint newcap: true */
+      };
+      return NumberShim;
+    }());
+    wrapConstructor(OrigNumber, NumberShim, {});
+    // this is necessary for ES3 browsers, where these properties are non-enumerable.
+    defineProperties(NumberShim, {
+      NaN: OrigNumber.NaN,
+      MAX_VALUE: OrigNumber.MAX_VALUE,
+      MIN_VALUE: OrigNumber.MIN_VALUE,
+      NEGATIVE_INFINITY: OrigNumber.NEGATIVE_INFINITY,
+      POSITIVE_INFINITY: OrigNumber.POSITIVE_INFINITY
+    });
+    /* globals Number: true */
+    /* eslint-disable no-undef, no-global-assign */
+    /* jshint -W020 */
+    Number = NumberShim;
+    Value.redefine(globals, 'Number', NumberShim);
+    /* jshint +W020 */
+    /* eslint-enable no-undef, no-global-assign */
+    /* globals Number: false */
+  }
+
+  var maxSafeInteger = Math.pow(2, 53) - 1;
+  defineProperties(Number, {
+    MAX_SAFE_INTEGER: maxSafeInteger,
+    MIN_SAFE_INTEGER: -maxSafeInteger,
+    EPSILON: 2.220446049250313e-16,
+
+    parseInt: globals.parseInt,
+    parseFloat: globals.parseFloat,
+
+    isFinite: numberIsFinite,
+
+    isInteger: function isInteger(value) {
+      return numberIsFinite(value) && ES.ToInteger(value) === value;
+    },
+
+    isSafeInteger: function isSafeInteger(value) {
+      return Number.isInteger(value) && _abs(value) <= Number.MAX_SAFE_INTEGER;
+    },
+
+    isNaN: numberIsNaN
+  });
+  // Firefox 37 has a conforming Number.parseInt, but it's not === to the global parseInt (fixed in v40)
+  defineProperty(Number, 'parseInt', globals.parseInt, Number.parseInt !== globals.parseInt);
+
+  // Work around bugs in Array#find and Array#findIndex -- early
+  // implementations skipped holes in sparse arrays. (Note that the
+  // implementations of find/findIndex indirectly use shimmed
+  // methods of Number, so this test has to happen down here.)
+  /*jshint elision: true */
+  /* eslint-disable no-sparse-arrays */
+  if ([, 1].find(function () { return true; }) === 1) {
+    overrideNative(Array.prototype, 'find', ArrayPrototypeShims.find);
+  }
+  if ([, 1].findIndex(function () { return true; }) !== 0) {
+    overrideNative(Array.prototype, 'findIndex', ArrayPrototypeShims.findIndex);
+  }
+  /* eslint-enable no-sparse-arrays */
+  /*jshint elision: false */
+
+  var isEnumerableOn = Function.bind.call(Function.bind, Object.prototype.propertyIsEnumerable);
+  var ensureEnumerable = function ensureEnumerable(obj, prop) {
+    if (supportsDescriptors && isEnumerableOn(obj, prop)) {
+      Object.defineProperty(obj, prop, { enumerable: false });
+    }
+  };
+  var sliceArgs = function sliceArgs() {
+    // per https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
+    // and https://gist.github.com/WebReflection/4327762cb87a8c634a29
+    var initial = Number(this);
+    var len = arguments.length;
+    var desiredArgCount = len - initial;
+    var args = new Array(desiredArgCount < 0 ? 0 : desiredArgCount);
+    for (var i = initial; i < len; ++i) {
+      args[i - initial] = arguments[i];
+    }
+    return args;
+  };
+  var assignTo = function assignTo(source) {
+    return function assignToSource(target, key) {
+      target[key] = source[key];
+      return target;
+    };
+  };
+  var assignReducer = function (target, source) {
+    var sourceKeys = keys(Object(source));
+    var symbols;
+    if (ES.IsCallable(Object.getOwnPropertySymbols)) {
+      symbols = _filter(Object.getOwnPropertySymbols(Object(source)), isEnumerableOn(source));
+    }
+    return _reduce(_concat(sourceKeys, symbols || []), assignTo(source), target);
+  };
+
+  var ObjectShims = {
+    // 19.1.3.1
+    assign: function (target, source) {
+      var to = ES.ToObject(target, 'Cannot convert undefined or null to object');
+      return _reduce(ES.Call(sliceArgs, 1, arguments), assignReducer, to);
+    },
+
+    // Added in WebKit in https://bugs.webkit.org/show_bug.cgi?id=143865
+    is: function is(a, b) {
+      return ES.SameValue(a, b);
+    }
+  };
+  var assignHasPendingExceptions = Object.assign && Object.preventExtensions && (function () {
+    // Firefox 37 still has "pending exception" logic in its Object.assign implementation,
+    // which is 72% slower than our shim, and Firefox 40's native implementation.
+    var thrower = Object.preventExtensions({ 1: 2 });
+    try {
+      Object.assign(thrower, 'xy');
+    } catch (e) {
+      return thrower[1] === 'y';
+    }
+  }());
+  if (assignHasPendingExceptions) {
+    overrideNative(Object, 'assign', ObjectShims.assign);
+  }
+  defineProperties(Object, ObjectShims);
+
+  if (supportsDescriptors) {
+    var ES5ObjectShims = {
+      // 19.1.3.9
+      // shim from https://gist.github.com/WebReflection/5593554
+      setPrototypeOf: (function (Object, magic) {
+        var set;
+
+        var checkArgs = function (O, proto) {
+          if (!ES.TypeIsObject(O)) {
+            throw new TypeError('cannot set prototype on a non-object');
+          }
+          if (!(proto === null || ES.TypeIsObject(proto))) {
+            throw new TypeError('can only set prototype to an object or null' + proto);
+          }
+        };
+
+        var setPrototypeOf = function (O, proto) {
+          checkArgs(O, proto);
+          _call(set, O, proto);
+          return O;
+        };
+
+        try {
+          // this works already in Firefox and Safari
+          set = Object.getOwnPropertyDescriptor(Object.prototype, magic).set;
+          _call(set, {}, null);
+        } catch (e) {
+          if (Object.prototype !== {}[magic]) {
+            // IE < 11 cannot be shimmed
+            return;
+          }
+          // probably Chrome or some old Mobile stock browser
+          set = function (proto) {
+            this[magic] = proto;
+          };
+          // please note that this will **not** work
+          // in those browsers that do not inherit
+          // __proto__ by mistake from Object.prototype
+          // in these cases we should probably throw an error
+          // or at least be informed about the issue
+          setPrototypeOf.polyfill = setPrototypeOf(
+            setPrototypeOf({}, null),
+            Object.prototype
+          ) instanceof Object;
+          // setPrototypeOf.polyfill === true means it works as meant
+          // setPrototypeOf.polyfill === false means it's not 100% reliable
+          // setPrototypeOf.polyfill === undefined
+          // or
+          // setPrototypeOf.polyfill ==  null means it's not a polyfill
+          // which means it works as expected
+          // we can even delete Object.prototype.__proto__;
+        }
+        return setPrototypeOf;
+      }(Object, '__proto__'))
+    };
+
+    defineProperties(Object, ES5ObjectShims);
+  }
+
+  // Workaround bug in Opera 12 where setPrototypeOf(x, null) doesn't work,
+  // but Object.create(null) does.
+  if (Object.setPrototypeOf && Object.getPrototypeOf &&
+      Object.getPrototypeOf(Object.setPrototypeOf({}, null)) !== null &&
+      Object.getPrototypeOf(Object.create(null)) === null) {
+    (function () {
+      var FAKENULL = Object.create(null);
+      var gpo = Object.getPrototypeOf;
+      var spo = Object.setPrototypeOf;
+      Object.getPrototypeOf = function (o) {
+        var result = gpo(o);
+        return result === FAKENULL ? null : result;
+      };
+      Object.setPrototypeOf = function (o, p) {
+        var proto = p === null ? FAKENULL : p;
+        return spo(o, proto);
+      };
+      Object.setPrototypeOf.polyfill = false;
+    }());
+  }
+
+  var objectKeysAcceptsPrimitives = !throwsError(function () { Object.keys('foo'); });
+  if (!objectKeysAcceptsPrimitives) {
+    var originalObjectKeys = Object.keys;
+    overrideNative(Object, 'keys', function keys(value) {
+      return originalObjectKeys(ES.ToObject(value));
+    });
+    keys = Object.keys;
+  }
+  var objectKeysRejectsRegex = throwsError(function () { Object.keys(/a/g); });
+  if (objectKeysRejectsRegex) {
+    var regexRejectingObjectKeys = Object.keys;
+    overrideNative(Object, 'keys', function keys(value) {
+      if (Type.regex(value)) {
+        var regexKeys = [];
+        for (var k in value) {
+          if (_hasOwnProperty(value, k)) {
+            _push(regexKeys, k);
+          }
+        }
+        return regexKeys;
+      }
+      return regexRejectingObjectKeys(value);
+    });
+    keys = Object.keys;
+  }
+
+  if (Object.getOwnPropertyNames) {
+    var objectGOPNAcceptsPrimitives = !throwsError(function () { Object.getOwnPropertyNames('foo'); });
+    if (!objectGOPNAcceptsPrimitives) {
+      var cachedWindowNames = typeof window === 'object' ? Object.getOwnPropertyNames(window) : [];
+      var originalObjectGetOwnPropertyNames = Object.getOwnPropertyNames;
+      overrideNative(Object, 'getOwnPropertyNames', function getOwnPropertyNames(value) {
+        var val = ES.ToObject(value);
+        if (_toString(val) === '[object Window]') {
+          try {
+            return originalObjectGetOwnPropertyNames(val);
+          } catch (e) {
+            // IE bug where layout engine calls userland gOPN for cross-domain `window` objects
+            return _concat([], cachedWindowNames);
+          }
+        }
+        return originalObjectGetOwnPropertyNames(val);
+      });
+    }
+  }
+  if (Object.getOwnPropertyDescriptor) {
+    var objectGOPDAcceptsPrimitives = !throwsError(function () { Object.getOwnPropertyDescriptor('foo', 'bar'); });
+    if (!objectGOPDAcceptsPrimitives) {
+      var originalObjectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+      overrideNative(Object, 'getOwnPropertyDescriptor', function getOwnPropertyDescriptor(value, property) {
+        return originalObjectGetOwnPropertyDescriptor(ES.ToObject(value), property);
+      });
+    }
+  }
+  if (Object.seal) {
+    var objectSealAcceptsPrimitives = !throwsError(function () { Object.seal('foo'); });
+    if (!objectSealAcceptsPrimitives) {
+      var originalObjectSeal = Object.seal;
+      overrideNative(Object, 'seal', function seal(value) {
+        if (!ES.TypeIsObject(value)) { return value; }
+        return originalObjectSeal(value);
+      });
+    }
+  }
+  if (Object.isSealed) {
+    var objectIsSealedAcceptsPrimitives = !throwsError(function () { Object.isSealed('foo'); });
+    if (!objectIsSealedAcceptsPrimitives) {
+      var originalObjectIsSealed = Object.isSealed;
+      overrideNative(Object, 'isSealed', function isSealed(value) {
+        if (!ES.TypeIsObject(value)) { return true; }
+        return originalObjectIsSealed(value);
+      });
+    }
+  }
+  if (Object.freeze) {
+    var objectFreezeAcceptsPrimitives = !throwsError(function () { Object.freeze('foo'); });
+    if (!objectFreezeAcceptsPrimitives) {
+      var originalObjectFreeze = Object.freeze;
+      overrideNative(Object, 'freeze', function freeze(value) {
+        if (!ES.TypeIsObject(value)) { return value; }
+        return originalObjectFreeze(value);
+      });
+    }
+  }
+  if (Object.isFrozen) {
+    var objectIsFrozenAcceptsPrimitives = !throwsError(function () { Object.isFrozen('foo'); });
+    if (!objectIsFrozenAcceptsPrimitives) {
+      var originalObjectIsFrozen = Object.isFrozen;
+      overrideNative(Object, 'isFrozen', function isFrozen(value) {
+        if (!ES.TypeIsObject(value)) { return true; }
+        return originalObjectIsFrozen(value);
+      });
+    }
+  }
+  if (Object.preventExtensions) {
+    var objectPreventExtensionsAcceptsPrimitives = !throwsError(function () { Object.preventExtensions('foo'); });
+    if (!objectPreventExtensionsAcceptsPrimitives) {
+      var originalObjectPreventExtensions = Object.preventExtensions;
+      overrideNative(Object, 'preventExtensions', function preventExtensions(value) {
+        if (!ES.TypeIsObject(value)) { return value; }
+        return originalObjectPreventExtensions(value);
+      });
+    }
+  }
+  if (Object.isExtensible) {
+    var objectIsExtensibleAcceptsPrimitives = !throwsError(function () { Object.isExtensible('foo'); });
+    if (!objectIsExtensibleAcceptsPrimitives) {
+      var originalObjectIsExtensible = Object.isExtensible;
+      overrideNative(Object, 'isExtensible', function isExtensible(value) {
+        if (!ES.TypeIsObject(value)) { return false; }
+        return originalObjectIsExtensible(value);
+      });
+    }
+  }
+  if (Object.getPrototypeOf) {
+    var objectGetProtoAcceptsPrimitives = !throwsError(function () { Object.getPrototypeOf('foo'); });
+    if (!objectGetProtoAcceptsPrimitives) {
+      var originalGetProto = Object.getPrototypeOf;
+      overrideNative(Object, 'getPrototypeOf', function getPrototypeOf(value) {
+        return originalGetProto(ES.ToObject(value));
+      });
+    }
+  }
+
+  var hasFlags = supportsDescriptors && (function () {
+    var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, 'flags');
+    return desc && ES.IsCallable(desc.get);
+  }());
+  if (supportsDescriptors && !hasFlags) {
+    var regExpFlagsGetter = function flags() {
+      if (!ES.TypeIsObject(this)) {
+        throw new TypeError('Method called on incompatible type: must be an object.');
+      }
+      var result = '';
+      if (this.global) {
+        result += 'g';
+      }
+      if (this.ignoreCase) {
+        result += 'i';
+      }
+      if (this.multiline) {
+        result += 'm';
+      }
+      if (this.unicode) {
+        result += 'u';
+      }
+      if (this.sticky) {
+        result += 'y';
+      }
+      return result;
+    };
+
+    Value.getter(RegExp.prototype, 'flags', regExpFlagsGetter);
+  }
+
+  var regExpSupportsFlagsWithRegex = supportsDescriptors && valueOrFalseIfThrows(function () {
+    return String(new RegExp(/a/g, 'i')) === '/a/i';
+  });
+  var regExpNeedsToSupportSymbolMatch = hasSymbols && supportsDescriptors && (function () {
+    // Edge 0.12 supports flags fully, but does not support Symbol.match
+    var regex = /./;
+    regex[Symbol.match] = false;
+    return RegExp(regex) === regex;
+  }());
+
+  var regexToStringIsGeneric = valueOrFalseIfThrows(function () {
+    return RegExp.prototype.toString.call({ source: 'abc' }) === '/abc/';
+  });
+  var regexToStringSupportsGenericFlags = regexToStringIsGeneric && valueOrFalseIfThrows(function () {
+    return RegExp.prototype.toString.call({ source: 'a', flags: 'b' }) === '/a/b';
+  });
+  if (!regexToStringIsGeneric || !regexToStringSupportsGenericFlags) {
+    var origRegExpToString = RegExp.prototype.toString;
+    defineProperty(RegExp.prototype, 'toString', function toString() {
+      var R = ES.RequireObjectCoercible(this);
+      if (Type.regex(R)) {
+        return _call(origRegExpToString, R);
+      }
+      var pattern = $String(R.source);
+      var flags = $String(R.flags);
+      return '/' + pattern + '/' + flags;
+    }, true);
+    Value.preserveToString(RegExp.prototype.toString, origRegExpToString);
+  }
+
+  if (supportsDescriptors && (!regExpSupportsFlagsWithRegex || regExpNeedsToSupportSymbolMatch)) {
+    var flagsGetter = Object.getOwnPropertyDescriptor(RegExp.prototype, 'flags').get;
+    var sourceDesc = Object.getOwnPropertyDescriptor(RegExp.prototype, 'source') || {};
+    var legacySourceGetter = function () {
+      // prior to it being a getter, it's own + nonconfigurable
+      return this.source;
+    };
+    var sourceGetter = ES.IsCallable(sourceDesc.get) ? sourceDesc.get : legacySourceGetter;
+
+    var OrigRegExp = RegExp;
+    var RegExpShim = (function () {
+      return function RegExp(pattern, flags) {
+        var patternIsRegExp = ES.IsRegExp(pattern);
+        var calledWithNew = this instanceof RegExp;
+        if (!calledWithNew && patternIsRegExp && typeof flags === 'undefined' && pattern.constructor === RegExp) {
+          return pattern;
+        }
+
+        var P = pattern;
+        var F = flags;
+        if (Type.regex(pattern)) {
+          P = ES.Call(sourceGetter, pattern);
+          F = typeof flags === 'undefined' ? ES.Call(flagsGetter, pattern) : flags;
+          return new RegExp(P, F);
+        } else if (patternIsRegExp) {
+          P = pattern.source;
+          F = typeof flags === 'undefined' ? pattern.flags : flags;
+        }
+        return new OrigRegExp(pattern, flags);
+      };
+    }());
+    wrapConstructor(OrigRegExp, RegExpShim, {
+      $input: true // Chrome < v39 & Opera < 26 have a nonstandard "$input" property
+    });
+    /* globals RegExp: true */
+    /* eslint-disable no-undef, no-global-assign */
+    /* jshint -W020 */
+    RegExp = RegExpShim;
+    Value.redefine(globals, 'RegExp', RegExpShim);
+    /* jshint +W020 */
+    /* eslint-enable no-undef, no-global-assign */
+    /* globals RegExp: false */
+  }
+
+  if (supportsDescriptors) {
+    var regexGlobals = {
+      input: '$_',
+      lastMatch: '$&',
+      lastParen: '$+',
+      leftContext: '$`',
+      rightContext: '$\''
+    };
+    _forEach(keys(regexGlobals), function (prop) {
+      if (prop in RegExp && !(regexGlobals[prop] in RegExp)) {
+        Value.getter(RegExp, regexGlobals[prop], function get() {
+          return RegExp[prop];
+        });
+      }
+    });
+  }
+  addDefaultSpecies(RegExp);
+
+  var inverseEpsilon = 1 / Number.EPSILON;
+  var roundTiesToEven = function roundTiesToEven(n) {
+    // Even though this reduces down to `return n`, it takes advantage of built-in rounding.
+    return (n + inverseEpsilon) - inverseEpsilon;
+  };
+  var BINARY_32_EPSILON = Math.pow(2, -23);
+  var BINARY_32_MAX_VALUE = Math.pow(2, 127) * (2 - BINARY_32_EPSILON);
+  var BINARY_32_MIN_VALUE = Math.pow(2, -126);
+  var E = Math.E;
+  var LOG2E = Math.LOG2E;
+  var LOG10E = Math.LOG10E;
+  var numberCLZ = Number.prototype.clz;
+  delete Number.prototype.clz; // Safari 8 has Number#clz
+
+  var MathShims = {
+    acosh: function acosh(value) {
+      var x = Number(value);
+      if (numberIsNaN(x) || value < 1) { return NaN; }
+      if (x === 1) { return 0; }
+      if (x === Infinity) { return x; }
+      return _log((x / E) + (_sqrt(x + 1) * _sqrt(x - 1) / E)) + 1;
+    },
+
+    asinh: function asinh(value) {
+      var x = Number(value);
+      if (x === 0 || !globalIsFinite(x)) {
+        return x;
+      }
+      return x < 0 ? -asinh(-x) : _log(x + _sqrt((x * x) + 1));
+    },
+
+    atanh: function atanh(value) {
+      var x = Number(value);
+      if (numberIsNaN(x) || x < -1 || x > 1) {
+        return NaN;
+      }
+      if (x === -1) { return -Infinity; }
+      if (x === 1) { return Infinity; }
+      if (x === 0) { return x; }
+      return 0.5 * _log((1 + x) / (1 - x));
+    },
+
+    cbrt: function cbrt(value) {
+      var x = Number(value);
+      if (x === 0) { return x; }
+      var negate = x < 0;
+      var result;
+      if (negate) { x = -x; }
+      if (x === Infinity) {
+        result = Infinity;
+      } else {
+        result = _exp(_log(x) / 3);
+        // from http://en.wikipedia.org/wiki/Cube_root#Numerical_methods
+        result = ((x / (result * result)) + (2 * result)) / 3;
+      }
+      return negate ? -result : result;
+    },
+
+    clz32: function clz32(value) {
+      // See https://bugs.ecmascript.org/show_bug.cgi?id=2465
+      var x = Number(value);
+      var number = ES.ToUint32(x);
+      if (number === 0) {
+        return 32;
+      }
+      return numberCLZ ? ES.Call(numberCLZ, number) : 31 - _floor(_log(number + 0.5) * LOG2E);
+    },
+
+    cosh: function cosh(value) {
+      var x = Number(value);
+      if (x === 0) { return 1; } // +0 or -0
+      if (numberIsNaN(x)) { return NaN; }
+      if (!globalIsFinite(x)) { return Infinity; }
+      if (x < 0) { x = -x; }
+      if (x > 21) { return _exp(x) / 2; }
+      return (_exp(x) + _exp(-x)) / 2;
+    },
+
+    expm1: function expm1(value) {
+      var x = Number(value);
+      if (x === -Infinity) { return -1; }
+      if (!globalIsFinite(x) || x === 0) { return x; }
+      if (_abs(x) > 0.5) {
+        return _exp(x) - 1;
+      }
+      // A more precise approximation using Taylor series expansion
+      // from https://github.com/paulmillr/es6-shim/issues/314#issuecomment-70293986
+      var t = x;
+      var sum = 0;
+      var n = 1;
+      while (sum + t !== sum) {
+        sum += t;
+        n += 1;
+        t *= x / n;
+      }
+      return sum;
+    },
+
+    hypot: function hypot(x, y) {
+      var result = 0;
+      var largest = 0;
+      for (var i = 0; i < arguments.length; ++i) {
+        var value = _abs(Number(arguments[i]));
+        if (largest < value) {
+          result *= (largest / value) * (largest / value);
+          result += 1;
+          largest = value;
+        } else {
+          result += value > 0 ? (value / largest) * (value / largest) : value;
+        }
+      }
+      return largest === Infinity ? Infinity : largest * _sqrt(result);
+    },
+
+    log2: function log2(value) {
+      return _log(value) * LOG2E;
+    },
+
+    log10: function log10(value) {
+      return _log(value) * LOG10E;
+    },
+
+    log1p: function log1p(value) {
+      var x = Number(value);
+      if (x < -1 || numberIsNaN(x)) { return NaN; }
+      if (x === 0 || x === Infinity) { return x; }
+      if (x === -1) { return -Infinity; }
+
+      return (1 + x) - 1 === 0 ? x : x * (_log(1 + x) / ((1 + x) - 1));
+    },
+
+    sign: _sign,
+
+    sinh: function sinh(value) {
+      var x = Number(value);
+      if (!globalIsFinite(x) || x === 0) { return x; }
+
+      if (_abs(x) < 1) {
+        return (Math.expm1(x) - Math.expm1(-x)) / 2;
+      }
+      return (_exp(x - 1) - _exp(-x - 1)) * E / 2;
+    },
+
+    tanh: function tanh(value) {
+      var x = Number(value);
+      if (numberIsNaN(x) || x === 0) { return x; }
+      // can exit early at +-20 as JS loses precision for true value at this integer
+      if (x >= 20) { return 1; }
+      if (x <= -20) { return -1; }
+
+      return (Math.expm1(x) - Math.expm1(-x)) / (_exp(x) + _exp(-x));
+    },
+
+    trunc: function trunc(value) {
+      var x = Number(value);
+      return x < 0 ? -_floor(-x) : _floor(x);
+    },
+
+    imul: function imul(x, y) {
+      // taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul
+      var a = ES.ToUint32(x);
+      var b = ES.ToUint32(y);
+      var ah = (a >>> 16) & 0xffff;
+      var al = a & 0xffff;
+      var bh = (b >>> 16) & 0xffff;
+      var bl = b & 0xffff;
+      // the shift by 0 fixes the sign on the high part
+      // the final |0 converts the unsigned value into a signed value
+      return (al * bl) + ((((ah * bl) + (al * bh)) << 16) >>> 0) | 0;
+    },
+
+    fround: function fround(x) {
+      var v = Number(x);
+      if (v === 0 || v === Infinity || v === -Infinity || numberIsNaN(v)) {
+        return v;
+      }
+      var sign = _sign(v);
+      var abs = _abs(v);
+      if (abs < BINARY_32_MIN_VALUE) {
+        return sign * roundTiesToEven(
+          abs / BINARY_32_MIN_VALUE / BINARY_32_EPSILON
+        ) * BINARY_32_MIN_VALUE * BINARY_32_EPSILON;
+      }
+      // Veltkamp's splitting (?)
+      var a = (1 + (BINARY_32_EPSILON / Number.EPSILON)) * abs;
+      var result = a - (a - abs);
+      if (result > BINARY_32_MAX_VALUE || numberIsNaN(result)) {
+        return sign * Infinity;
+      }
+      return sign * result;
+    }
+  };
+  defineProperties(Math, MathShims);
+  // IE 11 TP has an imprecise log1p: reports Math.log1p(-1e-17) as 0
+  defineProperty(Math, 'log1p', MathShims.log1p, Math.log1p(-1e-17) !== -1e-17);
+  // IE 11 TP has an imprecise asinh: reports Math.asinh(-1e7) as not exactly equal to -Math.asinh(1e7)
+  defineProperty(Math, 'asinh', MathShims.asinh, Math.asinh(-1e7) !== -Math.asinh(1e7));
+  // Chrome 40 has an imprecise Math.tanh with very small numbers
+  defineProperty(Math, 'tanh', MathShims.tanh, Math.tanh(-2e-17) !== -2e-17);
+  // Chrome 40 loses Math.acosh precision with high numbers
+  defineProperty(Math, 'acosh', MathShims.acosh, Math.acosh(Number.MAX_VALUE) === Infinity);
+  // Firefox 38 on Windows
+  defineProperty(Math, 'cbrt', MathShims.cbrt, Math.abs(1 - (Math.cbrt(1e-300) / 1e-100)) / Number.EPSILON > 8);
+  // node 0.11 has an imprecise Math.sinh with very small numbers
+  defineProperty(Math, 'sinh', MathShims.sinh, Math.sinh(-2e-17) !== -2e-17);
+  // FF 35 on Linux reports 22025.465794806725 for Math.expm1(10)
+  var expm1OfTen = Math.expm1(10);
+  defineProperty(Math, 'expm1', MathShims.expm1, expm1OfTen > 22025.465794806719 || expm1OfTen < 22025.4657948067165168);
+
+  var origMathRound = Math.round;
+  // breaks in e.g. Safari 8, Internet Explorer 11, Opera 12
+  var roundHandlesBoundaryConditions = Math.round(0.5 - (Number.EPSILON / 4)) === 0 &&
+    Math.round(-0.5 + (Number.EPSILON / 3.99)) === 1;
+
+  // When engines use Math.floor(x + 0.5) internally, Math.round can be buggy for large integers.
+  // This behavior should be governed by "round to nearest, ties to even mode"
+  // see http://www.ecma-international.org/ecma-262/6.0/#sec-terms-and-definitions-number-type
+  // These are the boundary cases where it breaks.
+  var smallestPositiveNumberWhereRoundBreaks = inverseEpsilon + 1;
+  var largestPositiveNumberWhereRoundBreaks = (2 * inverseEpsilon) - 1;
+  var roundDoesNotIncreaseIntegers = [
+    smallestPositiveNumberWhereRoundBreaks,
+    largestPositiveNumberWhereRoundBreaks
+  ].every(function (num) {
+    return Math.round(num) === num;
+  });
+  defineProperty(Math, 'round', function round(x) {
+    var floor = _floor(x);
+    var ceil = floor === -1 ? -0 : floor + 1;
+    return x - floor < 0.5 ? floor : ceil;
+  }, !roundHandlesBoundaryConditions || !roundDoesNotIncreaseIntegers);
+  Value.preserveToString(Math.round, origMathRound);
+
+  var origImul = Math.imul;
+  if (Math.imul(0xffffffff, 5) !== -5) {
+    // Safari 6.1, at least, reports "0" for this value
+    Math.imul = MathShims.imul;
+    Value.preserveToString(Math.imul, origImul);
+  }
+  if (Math.imul.length !== 2) {
+    // Safari 8.0.4 has a length of 1
+    // fixed in https://bugs.webkit.org/show_bug.cgi?id=143658
+    overrideNative(Math, 'imul', function imul(x, y) {
+      return ES.Call(origImul, Math, arguments);
+    });
+  }
+
+  // Promises
+  // Simplest possible implementation; use a 3rd-party library if you
+  // want the best possible speed and/or long stack traces.
+  var PromiseShim = (function () {
+    var setTimeout = globals.setTimeout;
+    // some environments don't have setTimeout - no way to shim here.
+    if (typeof setTimeout !== 'function' && typeof setTimeout !== 'object') { return; }
+
+    ES.IsPromise = function (promise) {
+      if (!ES.TypeIsObject(promise)) {
+        return false;
+      }
+      if (typeof promise._promise === 'undefined') {
+        return false; // uninitialized, or missing our hidden field.
+      }
+      return true;
+    };
+
+    // "PromiseCapability" in the spec is what most promise implementations
+    // call a "deferred".
+    var PromiseCapability = function (C) {
+      if (!ES.IsConstructor(C)) {
+        throw new TypeError('Bad promise constructor');
+      }
+      var capability = this;
+      var resolver = function (resolve, reject) {
+        if (capability.resolve !== void 0 || capability.reject !== void 0) {
+          throw new TypeError('Bad Promise implementation!');
+        }
+        capability.resolve = resolve;
+        capability.reject = reject;
+      };
+      // Initialize fields to inform optimizers about the object shape.
+      capability.resolve = void 0;
+      capability.reject = void 0;
+      capability.promise = new C(resolver);
+      if (!(ES.IsCallable(capability.resolve) && ES.IsCallable(capability.reject))) {
+        throw new TypeError('Bad promise constructor');
+      }
+    };
+
+    // find an appropriate setImmediate-alike
+    var makeZeroTimeout;
+    /*global window */
+    if (typeof window !== 'undefined' && ES.IsCallable(window.postMessage)) {
+      makeZeroTimeout = function () {
+        // from http://dbaron.org/log/20100309-faster-timeouts
+        var timeouts = [];
+        var messageName = 'zero-timeout-message';
+        var setZeroTimeout = function (fn) {
+          _push(timeouts, fn);
+          window.postMessage(messageName, '*');
+        };
+        var handleMessage = function (event) {
+          if (event.source === window && event.data === messageName) {
+            event.stopPropagation();
+            if (timeouts.length === 0) { return; }
+            var fn = _shift(timeouts);
+            fn();
+          }
+        };
+        window.addEventListener('message', handleMessage, true);
+        return setZeroTimeout;
+      };
+    }
+    var makePromiseAsap = function () {
+      // An efficient task-scheduler based on a pre-existing Promise
+      // implementation, which we can use even if we override the
+      // global Promise below (in order to workaround bugs)
+      // https://github.com/Raynos/observ-hash/issues/2#issuecomment-35857671
+      var P = globals.Promise;
+      var pr = P && P.resolve && P.resolve();
+      return pr && function (task) {
+        return pr.then(task);
+      };
+    };
+    /*global process */
+    /* jscs:disable disallowMultiLineTernary */
+    var enqueue = ES.IsCallable(globals.setImmediate) ?
+      globals.setImmediate :
+      typeof process === 'object' && process.nextTick ? process.nextTick :
+      makePromiseAsap() ||
+      (ES.IsCallable(makeZeroTimeout) ? makeZeroTimeout() :
+      function (task) { setTimeout(task, 0); }); // fallback
+    /* jscs:enable disallowMultiLineTernary */
+
+    // Constants for Promise implementation
+    var PROMISE_IDENTITY = function (x) { return x; };
+    var PROMISE_THROWER = function (e) { throw e; };
+    var PROMISE_PENDING = 0;
+    var PROMISE_FULFILLED = 1;
+    var PROMISE_REJECTED = 2;
+    // We store fulfill/reject handlers and capabilities in a single array.
+    var PROMISE_FULFILL_OFFSET = 0;
+    var PROMISE_REJECT_OFFSET = 1;
+    var PROMISE_CAPABILITY_OFFSET = 2;
+    // This is used in an optimization for chaining promises via then.
+    var PROMISE_FAKE_CAPABILITY = {};
+
+    var enqueuePromiseReactionJob = function (handler, capability, argument) {
+      enqueue(function () {
+        promiseReactionJob(handler, capability, argument);
+      });
+    };
+
+    var promiseReactionJob = function (handler, promiseCapability, argument) {
+      var handlerResult, f;
+      if (promiseCapability === PROMISE_FAKE_CAPABILITY) {
+        // Fast case, when we don't actually need to chain through to a
+        // (real) promiseCapability.
+        return handler(argument);
+      }
+      try {
+        handlerResult = handler(argument);
+        f = promiseCapability.resolve;
+      } catch (e) {
+        handlerResult = e;
+        f = promiseCapability.reject;
+      }
+      f(handlerResult);
+    };
+
+    var fulfillPromise = function (promise, value) {
+      var _promise = promise._promise;
+      var length = _promise.reactionLength;
+      if (length > 0) {
+        enqueuePromiseReactionJob(
+          _promise.fulfillReactionHandler0,
+          _promise.reactionCapability0,
+          value
+        );
+        _promise.fulfillReactionHandler0 = void 0;
+        _promise.rejectReactions0 = void 0;
+        _promise.reactionCapability0 = void 0;
+        if (length > 1) {
+          for (var i = 1, idx = 0; i < length; i++, idx += 3) {
+            enqueuePromiseReactionJob(
+              _promise[idx + PROMISE_FULFILL_OFFSET],
+              _promise[idx + PROMISE_CAPABILITY_OFFSET],
+              value
+            );
+            promise[idx + PROMISE_FULFILL_OFFSET] = void 0;
+            promise[idx + PROMISE_REJECT_OFFSET] = void 0;
+            promise[idx + PROMISE_CAPABILITY_OFFSET] = void 0;
+          }
+        }
+      }
+      _promise.result = value;
+      _promise.state = PROMISE_FULFILLED;
+      _promise.reactionLength = 0;
+    };
+
+    var rejectPromise = function (promise, reason) {
+      var _promise = promise._promise;
+      var length = _promise.reactionLength;
+      if (length > 0) {
+        enqueuePromiseReactionJob(
+          _promise.rejectReactionHandler0,
+          _promise.reactionCapability0,
+          reason
+        );
+        _promise.fulfillReactionHandler0 = void 0;
+        _promise.rejectReactions0 = void 0;
+        _promise.reactionCapability0 = void 0;
+        if (length > 1) {
+          for (var i = 1, idx = 0; i < length; i++, idx += 3) {
+            enqueuePromiseReactionJob(
+              _promise[idx + PROMISE_REJECT_OFFSET],
+              _promise[idx + PROMISE_CAPABILITY_OFFSET],
+              reason
+            );
+            promise[idx + PROMISE_FULFILL_OFFSET] = void 0;
+            promise[idx + PROMISE_REJECT_OFFSET] = void 0;
+            promise[idx + PROMISE_CAPABILITY_OFFSET] = void 0;
+          }
+        }
+      }
+      _promise.result = reason;
+      _promise.state = PROMISE_REJECTED;
+      _promise.reactionLength = 0;
+    };
+
+    var createResolvingFunctions = function (promise) {
+      var alreadyResolved = false;
+      var resolve = function (resolution) {
+        var then;
+        if (alreadyResolved) { return; }
+        alreadyResolved = true;
+        if (resolution === promise) {
+          return rejectPromise(promise, new TypeError('Self resolution'));
+        }
+        if (!ES.TypeIsObject(resolution)) {
+          return fulfillPromise(promise, resolution);
+        }
+        try {
+          then = resolution.then;
+        } catch (e) {
+          return rejectPromise(promise, e);
+        }
+        if (!ES.IsCallable(then)) {
+          return fulfillPromise(promise, resolution);
+        }
+        enqueue(function () {
+          promiseResolveThenableJob(promise, resolution, then);
+        });
+      };
+      var reject = function (reason) {
+        if (alreadyResolved) { return; }
+        alreadyResolved = true;
+        return rejectPromise(promise, reason);
+      };
+      return { resolve: resolve, reject: reject };
+    };
+
+    var optimizedThen = function (then, thenable, resolve, reject) {
+      // Optimization: since we discard the result, we can pass our
+      // own then implementation a special hint to let it know it
+      // doesn't have to create it.  (The PROMISE_FAKE_CAPABILITY
+      // object is local to this implementation and unforgeable outside.)
+      if (then === Promise$prototype$then) {
+        _call(then, thenable, resolve, reject, PROMISE_FAKE_CAPABILITY);
+      } else {
+        _call(then, thenable, resolve, reject);
+      }
+    };
+    var promiseResolveThenableJob = function (promise, thenable, then) {
+      var resolvingFunctions = createResolvingFunctions(promise);
+      var resolve = resolvingFunctions.resolve;
+      var reject = resolvingFunctions.reject;
+      try {
+        optimizedThen(then, thenable, resolve, reject);
+      } catch (e) {
+        reject(e);
+      }
+    };
+
+    var Promise$prototype, Promise$prototype$then;
+    var Promise = (function () {
+      var PromiseShim = function Promise(resolver) {
+        if (!(this instanceof PromiseShim)) {
+          throw new TypeError('Constructor Promise requires "new"');
+        }
+        if (this && this._promise) {
+          throw new TypeError('Bad construction');
+        }
+        // see https://bugs.ecmascript.org/show_bug.cgi?id=2482
+        if (!ES.IsCallable(resolver)) {
+          throw new TypeError('not a valid resolver');
+        }
+        var promise = emulateES6construct(this, PromiseShim, Promise$prototype, {
+          _promise: {
+            result: void 0,
+            state: PROMISE_PENDING,
+            // The first member of the "reactions" array is inlined here,
+            // since most promises only have one reaction.
+            // We've also exploded the 'reaction' object to inline the
+            // "handler" and "capability" fields, since both fulfill and
+            // reject reactions share the same capability.
+            reactionLength: 0,
+            fulfillReactionHandler0: void 0,
+            rejectReactionHandler0: void 0,
+            reactionCapability0: void 0
+          }
+        });
+        var resolvingFunctions = createResolvingFunctions(promise);
+        var reject = resolvingFunctions.reject;
+        try {
+          resolver(resolvingFunctions.resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+        return promise;
+      };
+      return PromiseShim;
+    }());
+    Promise$prototype = Promise.prototype;
+
+    var _promiseAllResolver = function (index, values, capability, remaining) {
+      var alreadyCalled = false;
+      return function (x) {
+        if (alreadyCalled) { return; }
+        alreadyCalled = true;
+        values[index] = x;
+        if ((--remaining.count) === 0) {
+          var resolve = capability.resolve;
+          resolve(values); // call w/ this===undefined
+        }
+      };
+    };
+
+    var performPromiseAll = function (iteratorRecord, C, resultCapability) {
+      var it = iteratorRecord.iterator;
+      var values = [];
+      var remaining = { count: 1 };
+      var next, nextValue;
+      var index = 0;
+      while (true) {
+        try {
+          next = ES.IteratorStep(it);
+          if (next === false) {
+            iteratorRecord.done = true;
+            break;
+          }
+          nextValue = next.value;
+        } catch (e) {
+          iteratorRecord.done = true;
+          throw e;
+        }
+        values[index] = void 0;
+        var nextPromise = C.resolve(nextValue);
+        var resolveElement = _promiseAllResolver(
+          index, values, resultCapability, remaining
+        );
+        remaining.count += 1;
+        optimizedThen(nextPromise.then, nextPromise, resolveElement, resultCapability.reject);
+        index += 1;
+      }
+      if ((--remaining.count) === 0) {
+        var resolve = resultCapability.resolve;
+        resolve(values); // call w/ this===undefined
+      }
+      return resultCapability.promise;
+    };
+
+    var performPromiseRace = function (iteratorRecord, C, resultCapability) {
+      var it = iteratorRecord.iterator;
+      var next, nextValue, nextPromise;
+      while (true) {
+        try {
+          next = ES.IteratorStep(it);
+          if (next === false) {
+            // NOTE: If iterable has no items, resulting promise will never
+            // resolve; see:
+            // https://github.com/domenic/promises-unwrapping/issues/75
+            // https://bugs.ecmascript.org/show_bug.cgi?id=2515
+            iteratorRecord.done = true;
+            break;
+          }
+          nextValue = next.value;
+        } catch (e) {
+          iteratorRecord.done = true;
+          throw e;
+        }
+        nextPromise = C.resolve(nextValue);
+        optimizedThen(nextPromise.then, nextPromise, resultCapability.resolve, resultCapability.reject);
+      }
+      return resultCapability.promise;
+    };
+
+    defineProperties(Promise, {
+      all: function all(iterable) {
+        var C = this;
+        if (!ES.TypeIsObject(C)) {
+          throw new TypeError('Promise is not object');
+        }
+        var capability = new PromiseCapability(C);
+        var iterator, iteratorRecord;
+        try {
+          iterator = ES.GetIterator(iterable);
+          iteratorRecord = { iterator: iterator, done: false };
+          return performPromiseAll(iteratorRecord, C, capability);
+        } catch (e) {
+          var exception = e;
+          if (iteratorRecord && !iteratorRecord.done) {
+            try {
+              ES.IteratorClose(iterator, true);
+            } catch (ee) {
+              exception = ee;
+            }
+          }
+          var reject = capability.reject;
+          reject(exception);
+          return capability.promise;
+        }
+      },
+
+      race: function race(iterable) {
+        var C = this;
+        if (!ES.TypeIsObject(C)) {
+          throw new TypeError('Promise is not object');
+        }
+        var capability = new PromiseCapability(C);
+        var iterator, iteratorRecord;
+        try {
+          iterator = ES.GetIterator(iterable);
+          iteratorRecord = { iterator: iterator, done: false };
+          return performPromiseRace(iteratorRecord, C, capability);
+        } catch (e) {
+          var exception = e;
+          if (iteratorRecord && !iteratorRecord.done) {
+            try {
+              ES.IteratorClose(iterator, true);
+            } catch (ee) {
+              exception = ee;
+            }
+          }
+          var reject = capability.reject;
+          reject(exception);
+          return capability.promise;
+        }
+      },
+
+      reject: function reject(reason) {
+        var C = this;
+        if (!ES.TypeIsObject(C)) {
+          throw new TypeError('Bad promise constructor');
+        }
+        var capability = new PromiseCapability(C);
+        var rejectFunc = capability.reject;
+        rejectFunc(reason); // call with this===undefined
+        return capability.promise;
+      },
+
+      resolve: function resolve(v) {
+        // See https://esdiscuss.org/topic/fixing-promise-resolve for spec
+        var C = this;
+        if (!ES.TypeIsObject(C)) {
+          throw new TypeError('Bad promise constructor');
+        }
+        if (ES.IsPromise(v)) {
+          var constructor = v.constructor;
+          if (constructor === C) {
+            return v;
+          }
+        }
+        var capability = new PromiseCapability(C);
+        var resolveFunc = capability.resolve;
+        resolveFunc(v); // call with this===undefined
+        return capability.promise;
+      }
+    });
+
+    defineProperties(Promise$prototype, {
+      'catch': function (onRejected) {
+        return this.then(null, onRejected);
+      },
+
+      then: function then(onFulfilled, onRejected) {
+        var promise = this;
+        if (!ES.IsPromise(promise)) { throw new TypeError('not a promise'); }
+        var C = ES.SpeciesConstructor(promise, Promise);
+        var resultCapability;
+        var returnValueIsIgnored = arguments.length > 2 && arguments[2] === PROMISE_FAKE_CAPABILITY;
+        if (returnValueIsIgnored && C === Promise) {
+          resultCapability = PROMISE_FAKE_CAPABILITY;
+        } else {
+          resultCapability = new PromiseCapability(C);
+        }
+        // PerformPromiseThen(promise, onFulfilled, onRejected, resultCapability)
+        // Note that we've split the 'reaction' object into its two
+        // components, "capabilities" and "handler"
+        // "capabilities" is always equal to `resultCapability`
+        var fulfillReactionHandler = ES.IsCallable(onFulfilled) ? onFulfilled : PROMISE_IDENTITY;
+        var rejectReactionHandler = ES.IsCallable(onRejected) ? onRejected : PROMISE_THROWER;
+        var _promise = promise._promise;
+        var value;
+        if (_promise.state === PROMISE_PENDING) {
+          if (_promise.reactionLength === 0) {
+            _promise.fulfillReactionHandler0 = fulfillReactionHandler;
+            _promise.rejectReactionHandler0 = rejectReactionHandler;
+            _promise.reactionCapability0 = resultCapability;
+          } else {
+            var idx = 3 * (_promise.reactionLength - 1);
+            _promise[idx + PROMISE_FULFILL_OFFSET] = fulfillReactionHandler;
+            _promise[idx + PROMISE_REJECT_OFFSET] = rejectReactionHandler;
+            _promise[idx + PROMISE_CAPABILITY_OFFSET] = resultCapability;
+          }
+          _promise.reactionLength += 1;
+        } else if (_promise.state === PROMISE_FULFILLED) {
+          value = _promise.result;
+          enqueuePromiseReactionJob(
+            fulfillReactionHandler, resultCapability, value
+          );
+        } else if (_promise.state === PROMISE_REJECTED) {
+          value = _promise.result;
+          enqueuePromiseReactionJob(
+            rejectReactionHandler, resultCapability, value
+          );
+        } else {
+          throw new TypeError('unexpected Promise state');
+        }
+        return resultCapability.promise;
+      }
+    });
+    // This helps the optimizer by ensuring that methods which take
+    // capabilities aren't polymorphic.
+    PROMISE_FAKE_CAPABILITY = new PromiseCapability(Promise);
+    Promise$prototype$then = Promise$prototype.then;
+
+    return Promise;
+  }());
+
+  // Chrome's native Promise has extra methods that it shouldn't have. Let's remove them.
+  if (globals.Promise) {
+    delete globals.Promise.accept;
+    delete globals.Promise.defer;
+    delete globals.Promise.prototype.chain;
+  }
+
+  if (typeof PromiseShim === 'function') {
+    // export the Promise constructor.
+    defineProperties(globals, { Promise: PromiseShim });
+    // In Chrome 33 (and thereabouts) Promise is defined, but the
+    // implementation is buggy in a number of ways.  Let's check subclassing
+    // support to see if we have a buggy implementation.
+    var promiseSupportsSubclassing = supportsSubclassing(globals.Promise, function (S) {
+      return S.resolve(42).then(function () {}) instanceof S;
+    });
+    var promiseIgnoresNonFunctionThenCallbacks = !throwsError(function () {
+      globals.Promise.reject(42).then(null, 5).then(null, noop);
+    });
+    var promiseRequiresObjectContext = throwsError(function () { globals.Promise.call(3, noop); });
+    // Promise.resolve() was errata'ed late in the ES6 process.
+    // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1170742
+    //      https://code.google.com/p/v8/issues/detail?id=4161
+    // It serves as a proxy for a number of other bugs in early Promise
+    // implementations.
+    var promiseResolveBroken = (function (Promise) {
+      var p = Promise.resolve(5);
+      p.constructor = {};
+      var p2 = Promise.resolve(p);
+      try {
+        p2.then(null, noop).then(null, noop); // avoid "uncaught rejection" warnings in console
+      } catch (e) {
+        return true; // v8 native Promises break here https://code.google.com/p/chromium/issues/detail?id=575314
+      }
+      return p === p2; // This *should* be false!
+    }(globals.Promise));
+
+    // Chrome 46 (probably older too) does not retrieve a thenable's .then synchronously
+    var getsThenSynchronously = supportsDescriptors && (function () {
+      var count = 0;
+      var thenable = Object.defineProperty({}, 'then', { get: function () { count += 1; } });
+      Promise.resolve(thenable);
+      return count === 1;
+    }());
+
+    var BadResolverPromise = function BadResolverPromise(executor) {
+      var p = new Promise(executor);
+      executor(3, function () {});
+      this.then = p.then;
+      this.constructor = BadResolverPromise;
+    };
+    BadResolverPromise.prototype = Promise.prototype;
+    BadResolverPromise.all = Promise.all;
+    // Chrome Canary 49 (probably older too) has some implementation bugs
+    var hasBadResolverPromise = valueOrFalseIfThrows(function () {
+      return !!BadResolverPromise.all([1, 2]);
+    });
+
+    if (!promiseSupportsSubclassing || !promiseIgnoresNonFunctionThenCallbacks ||
+        !promiseRequiresObjectContext || promiseResolveBroken ||
+        !getsThenSynchronously || hasBadResolverPromise) {
+      /* globals Promise: true */
+      /* eslint-disable no-undef, no-global-assign */
+      /* jshint -W020 */
+      Promise = PromiseShim;
+      /* jshint +W020 */
+      /* eslint-enable no-undef, no-global-assign */
+      /* globals Promise: false */
+      overrideNative(globals, 'Promise', PromiseShim);
+    }
+    if (Promise.all.length !== 1) {
+      var origAll = Promise.all;
+      overrideNative(Promise, 'all', function all(iterable) {
+        return ES.Call(origAll, this, arguments);
+      });
+    }
+    if (Promise.race.length !== 1) {
+      var origRace = Promise.race;
+      overrideNative(Promise, 'race', function race(iterable) {
+        return ES.Call(origRace, this, arguments);
+      });
+    }
+    if (Promise.resolve.length !== 1) {
+      var origResolve = Promise.resolve;
+      overrideNative(Promise, 'resolve', function resolve(x) {
+        return ES.Call(origResolve, this, arguments);
+      });
+    }
+    if (Promise.reject.length !== 1) {
+      var origReject = Promise.reject;
+      overrideNative(Promise, 'reject', function reject(r) {
+        return ES.Call(origReject, this, arguments);
+      });
+    }
+    ensureEnumerable(Promise, 'all');
+    ensureEnumerable(Promise, 'race');
+    ensureEnumerable(Promise, 'resolve');
+    ensureEnumerable(Promise, 'reject');
+    addDefaultSpecies(Promise);
+  }
+
+  // Map and Set require a true ES5 environment
+  // Their fast path also requires that the environment preserve
+  // property insertion order, which is not guaranteed by the spec.
+  var testOrder = function (a) {
+    var b = keys(_reduce(a, function (o, k) {
+      o[k] = true;
+      return o;
+    }, {}));
+    return a.join(':') === b.join(':');
+  };
+  var preservesInsertionOrder = testOrder(['z', 'a', 'bb']);
+  // some engines (eg, Chrome) only preserve insertion order for string keys
+  var preservesNumericInsertionOrder = testOrder(['z', 1, 'a', '3', 2]);
+
+  if (supportsDescriptors) {
+
+    var fastkey = function fastkey(key, skipInsertionOrderCheck) {
+      if (!skipInsertionOrderCheck && !preservesInsertionOrder) {
+        return null;
+      }
+      if (isNullOrUndefined(key)) {
+        return '^' + ES.ToString(key);
+      } else if (typeof key === 'string') {
+        return '$' + key;
+      } else if (typeof key === 'number') {
+        // note that -0 will get coerced to "0" when used as a property key
+        if (!preservesNumericInsertionOrder) {
+          return 'n' + key;
+        }
+        return key;
+      } else if (typeof key === 'boolean') {
+        return 'b' + key;
+      }
+      return null;
+    };
+
+    var emptyObject = function emptyObject() {
+      // accomodate some older not-quite-ES5 browsers
+      return Object.create ? Object.create(null) : {};
+    };
+
+    var addIterableToMap = function addIterableToMap(MapConstructor, map, iterable) {
+      if (isArray(iterable) || Type.string(iterable)) {
+        _forEach(iterable, function (entry) {
+          if (!ES.TypeIsObject(entry)) {
+            throw new TypeError('Iterator value ' + entry + ' is not an entry object');
+          }
+          map.set(entry[0], entry[1]);
+        });
+      } else if (iterable instanceof MapConstructor) {
+        _call(MapConstructor.prototype.forEach, iterable, function (value, key) {
+          map.set(key, value);
+        });
+      } else {
+        var iter, adder;
+        if (!isNullOrUndefined(iterable)) {
+          adder = map.set;
+          if (!ES.IsCallable(adder)) { throw new TypeError('bad map'); }
+          iter = ES.GetIterator(iterable);
+        }
+        if (typeof iter !== 'undefined') {
+          while (true) {
+            var next = ES.IteratorStep(iter);
+            if (next === false) { break; }
+            var nextItem = next.value;
+            try {
+              if (!ES.TypeIsObject(nextItem)) {
+                throw new TypeError('Iterator value ' + nextItem + ' is not an entry object');
+              }
+              _call(adder, map, nextItem[0], nextItem[1]);
+            } catch (e) {
+              ES.IteratorClose(iter, true);
+              throw e;
+            }
+          }
+        }
+      }
+    };
+    var addIterableToSet = function addIterableToSet(SetConstructor, set, iterable) {
+      if (isArray(iterable) || Type.string(iterable)) {
+        _forEach(iterable, function (value) {
+          set.add(value);
+        });
+      } else if (iterable instanceof SetConstructor) {
+        _call(SetConstructor.prototype.forEach, iterable, function (value) {
+          set.add(value);
+        });
+      } else {
+        var iter, adder;
+        if (!isNullOrUndefined(iterable)) {
+          adder = set.add;
+          if (!ES.IsCallable(adder)) { throw new TypeError('bad set'); }
+          iter = ES.GetIterator(iterable);
+        }
+        if (typeof iter !== 'undefined') {
+          while (true) {
+            var next = ES.IteratorStep(iter);
+            if (next === false) { break; }
+            var nextValue = next.value;
+            try {
+              _call(adder, set, nextValue);
+            } catch (e) {
+              ES.IteratorClose(iter, true);
+              throw e;
+            }
+          }
+        }
+      }
+    };
+
+    var collectionShims = {
+      Map: (function () {
+
+        var empty = {};
+
+        var MapEntry = function MapEntry(key, value) {
+          this.key = key;
+          this.value = value;
+          this.next = null;
+          this.prev = null;
+        };
+
+        MapEntry.prototype.isRemoved = function isRemoved() {
+          return this.key === empty;
+        };
+
+        var isMap = function isMap(map) {
+          return !!map._es6map;
+        };
+
+        var requireMapSlot = function requireMapSlot(map, method) {
+          if (!ES.TypeIsObject(map) || !isMap(map)) {
+            throw new TypeError('Method Map.prototype.' + method + ' called on incompatible receiver ' + ES.ToString(map));
+          }
+        };
+
+        var MapIterator = function MapIterator(map, kind) {
+          requireMapSlot(map, '[[MapIterator]]');
+          this.head = map._head;
+          this.i = this.head;
+          this.kind = kind;
+        };
+
+        MapIterator.prototype = {
+          next: function next() {
+            var i = this.i;
+            var kind = this.kind;
+            var head = this.head;
+            if (typeof this.i === 'undefined') {
+              return iteratorResult();
+            }
+            while (i.isRemoved() && i !== head) {
+              // back up off of removed entries
+              i = i.prev;
+            }
+            // advance to next unreturned element.
+            var result;
+            while (i.next !== head) {
+              i = i.next;
+              if (!i.isRemoved()) {
+                if (kind === 'key') {
+                  result = i.key;
+                } else if (kind === 'value') {
+                  result = i.value;
+                } else {
+                  result = [i.key, i.value];
+                }
+                this.i = i;
+                return iteratorResult(result);
+              }
+            }
+            // once the iterator is done, it is done forever.
+            this.i = void 0;
+            return iteratorResult();
+          }
+        };
+        addIterator(MapIterator.prototype);
+
+        var Map$prototype;
+        var MapShim = function Map() {
+          if (!(this instanceof Map)) {
+            throw new TypeError('Constructor Map requires "new"');
+          }
+          if (this && this._es6map) {
+            throw new TypeError('Bad construction');
+          }
+          var map = emulateES6construct(this, Map, Map$prototype, {
+            _es6map: true,
+            _head: null,
+            _map: OrigMap ? new OrigMap() : null,
+            _size: 0,
+            _storage: emptyObject()
+          });
+
+          var head = new MapEntry(null, null);
+          // circular doubly-linked list.
+          /* eslint no-multi-assign: 1 */
+          head.next = head.prev = head;
+          map._head = head;
+
+          // Optionally initialize map from iterable
+          if (arguments.length > 0) {
+            addIterableToMap(Map, map, arguments[0]);
+          }
+          return map;
+        };
+        Map$prototype = MapShim.prototype;
+
+        Value.getter(Map$prototype, 'size', function () {
+          if (typeof this._size === 'undefined') {
+            throw new TypeError('size method called on incompatible Map');
+          }
+          return this._size;
+        });
+
+        defineProperties(Map$prototype, {
+          get: function get(key) {
+            requireMapSlot(this, 'get');
+            var entry;
+            var fkey = fastkey(key, true);
+            if (fkey !== null) {
+              // fast O(1) path
+              entry = this._storage[fkey];
+              if (entry) {
+                return entry.value;
+              } else {
+                return;
+              }
+            }
+            if (this._map) {
+              // fast object key path
+              entry = origMapGet.call(this._map, key);
+              if (entry) {
+                return entry.value;
+              } else {
+                return;
+              }
+            }
+            var head = this._head;
+            var i = head;
+            while ((i = i.next) !== head) {
+              if (ES.SameValueZero(i.key, key)) {
+                return i.value;
+              }
+            }
+          },
+
+          has: function has(key) {
+            requireMapSlot(this, 'has');
+            var fkey = fastkey(key, true);
+            if (fkey !== null) {
+              // fast O(1) path
+              return typeof this._storage[fkey] !== 'undefined';
+            }
+            if (this._map) {
+              // fast object key path
+              return origMapHas.call(this._map, key);
+            }
+            var head = this._head;
+            var i = head;
+            while ((i = i.next) !== head) {
+              if (ES.SameValueZero(i.key, key)) {
+                return true;
+              }
+            }
+            return false;
+          },
+
+          set: function set(key, value) {
+            requireMapSlot(this, 'set');
+            var head = this._head;
+            var i = head;
+            var entry;
+            var fkey = fastkey(key, true);
+            if (fkey !== null) {
+              // fast O(1) path
+              if (typeof this._storage[fkey] !== 'undefined') {
+                this._storage[fkey].value = value;
+                return this;
+              } else {
+                entry = this._storage[fkey] = new MapEntry(key, value); /* eslint no-multi-assign: 1 */
+                i = head.prev;
+                // fall through
+              }
+            } else if (this._map) {
+              // fast object key path
+              if (origMapHas.call(this._map, key)) {
+                origMapGet.call(this._map, key).value = value;
+              } else {
+                entry = new MapEntry(key, value);
+                origMapSet.call(this._map, key, entry);
+                i = head.prev;
+                // fall through
+              }
+            }
+            while ((i = i.next) !== head) {
+              if (ES.SameValueZero(i.key, key)) {
+                i.value = value;
+                return this;
+              }
+            }
+            entry = entry || new MapEntry(key, value);
+            if (ES.SameValue(-0, key)) {
+              entry.key = +0; // coerce -0 to +0 in entry
+            }
+            entry.next = this._head;
+            entry.prev = this._head.prev;
+            entry.prev.next = entry;
+            entry.next.prev = entry;
+            this._size += 1;
+            return this;
+          },
+
+          'delete': function (key) {
+            requireMapSlot(this, 'delete');
+            var head = this._head;
+            var i = head;
+            var fkey = fastkey(key, true);
+            if (fkey !== null) {
+              // fast O(1) path
+              if (typeof this._storage[fkey] === 'undefined') {
+                return false;
+              }
+              i = this._storage[fkey].prev;
+              delete this._storage[fkey];
+              // fall through
+            } else if (this._map) {
+              // fast object key path
+              if (!origMapHas.call(this._map, key)) {
+                return false;
+              }
+              i = origMapGet.call(this._map, key).prev;
+              origMapDelete.call(this._map, key);
+              // fall through
+            }
+            while ((i = i.next) !== head) {
+              if (ES.SameValueZero(i.key, key)) {
+                i.key = empty;
+                i.value = empty;
+                i.prev.next = i.next;
+                i.next.prev = i.prev;
+                this._size -= 1;
+                return true;
+              }
+            }
+            return false;
+          },
+
+          clear: function clear() {
+             /* eslint no-multi-assign: 1 */
+            requireMapSlot(this, 'clear');
+            this._map = OrigMap ? new OrigMap() : null;
+            this._size = 0;
+            this._storage = emptyObject();
+            var head = this._head;
+            var i = head;
+            var p = i.next;
+            while ((i = p) !== head) {
+              i.key = empty;
+              i.value = empty;
+              p = i.next;
+              i.next = i.prev = head;
+            }
+            head.next = head.prev = head;
+          },
+
+          keys: function keys() {
+            requireMapSlot(this, 'keys');
+            return new MapIterator(this, 'key');
+          },
+
+          values: function values() {
+            requireMapSlot(this, 'values');
+            return new MapIterator(this, 'value');
+          },
+
+          entries: function entries() {
+            requireMapSlot(this, 'entries');
+            return new MapIterator(this, 'key+value');
+          },
+
+          forEach: function forEach(callback) {
+            requireMapSlot(this, 'forEach');
+            var context = arguments.length > 1 ? arguments[1] : null;
+            var it = this.entries();
+            for (var entry = it.next(); !entry.done; entry = it.next()) {
+              if (context) {
+                _call(callback, context, entry.value[1], entry.value[0], this);
+              } else {
+                callback(entry.value[1], entry.value[0], this);
+              }
+            }
+          }
+        });
+        addIterator(Map$prototype, Map$prototype.entries);
+
+        return MapShim;
+      }()),
+
+      Set: (function () {
+        var isSet = function isSet(set) {
+          return set._es6set && typeof set._storage !== 'undefined';
+        };
+        var requireSetSlot = function requireSetSlot(set, method) {
+          if (!ES.TypeIsObject(set) || !isSet(set)) {
+            // https://github.com/paulmillr/es6-shim/issues/176
+            throw new TypeError('Set.prototype.' + method + ' called on incompatible receiver ' + ES.ToString(set));
+          }
+        };
+
+        // Creating a Map is expensive.  To speed up the common case of
+        // Sets containing only string or numeric keys, we use an object
+        // as backing storage and lazily create a full Map only when
+        // required.
+        var Set$prototype;
+        var SetShim = function Set() {
+          if (!(this instanceof Set)) {
+            throw new TypeError('Constructor Set requires "new"');
+          }
+          if (this && this._es6set) {
+            throw new TypeError('Bad construction');
+          }
+          var set = emulateES6construct(this, Set, Set$prototype, {
+            _es6set: true,
+            '[[SetData]]': null,
+            _storage: emptyObject()
+          });
+          if (!set._es6set) {
+            throw new TypeError('bad set');
+          }
+
+          // Optionally initialize Set from iterable
+          if (arguments.length > 0) {
+            addIterableToSet(Set, set, arguments[0]);
+          }
+          return set;
+        };
+        Set$prototype = SetShim.prototype;
+
+        var decodeKey = function (key) {
+          var k = key;
+          if (k === '^null') {
+            return null;
+          } else if (k === '^undefined') {
+            return void 0;
+          } else {
+            var first = k.charAt(0);
+            if (first === '$') {
+              return _strSlice(k, 1);
+            } else if (first === 'n') {
+              return +_strSlice(k, 1);
+            } else if (first === 'b') {
+              return k === 'btrue';
+            }
+          }
+          return +k;
+        };
+        // Switch from the object backing storage to a full Map.
+        var ensureMap = function ensureMap(set) {
+          if (!set['[[SetData]]']) {
+            var m = new collectionShims.Map();
+            set['[[SetData]]'] = m;
+            _forEach(keys(set._storage), function (key) {
+              var k = decodeKey(key);
+              m.set(k, k);
+            });
+            set['[[SetData]]'] = m;
+          }
+          set._storage = null; // free old backing storage
+        };
+
+        Value.getter(SetShim.prototype, 'size', function () {
+          requireSetSlot(this, 'size');
+          if (this._storage) {
+            return keys(this._storage).length;
+          }
+          ensureMap(this);
+          return this['[[SetData]]'].size;
+        });
+
+        defineProperties(SetShim.prototype, {
+          has: function has(key) {
+            requireSetSlot(this, 'has');
+            var fkey;
+            if (this._storage && (fkey = fastkey(key)) !== null) {
+              return !!this._storage[fkey];
+            }
+            ensureMap(this);
+            return this['[[SetData]]'].has(key);
+          },
+
+          add: function add(key) {
+            requireSetSlot(this, 'add');
+            var fkey;
+            if (this._storage && (fkey = fastkey(key)) !== null) {
+              this._storage[fkey] = true;
+              return this;
+            }
+            ensureMap(this);
+            this['[[SetData]]'].set(key, key);
+            return this;
+          },
+
+          'delete': function (key) {
+            requireSetSlot(this, 'delete');
+            var fkey;
+            if (this._storage && (fkey = fastkey(key)) !== null) {
+              var hasFKey = _hasOwnProperty(this._storage, fkey);
+              return (delete this._storage[fkey]) && hasFKey;
+            }
+            ensureMap(this);
+            return this['[[SetData]]']['delete'](key);
+          },
+
+          clear: function clear() {
+            requireSetSlot(this, 'clear');
+            if (this._storage) {
+              this._storage = emptyObject();
+            }
+            if (this['[[SetData]]']) {
+              this['[[SetData]]'].clear();
+            }
+          },
+
+          values: function values() {
+            requireSetSlot(this, 'values');
+            ensureMap(this);
+            return this['[[SetData]]'].values();
+          },
+
+          entries: function entries() {
+            requireSetSlot(this, 'entries');
+            ensureMap(this);
+            return this['[[SetData]]'].entries();
+          },
+
+          forEach: function forEach(callback) {
+            requireSetSlot(this, 'forEach');
+            var context = arguments.length > 1 ? arguments[1] : null;
+            var entireSet = this;
+            ensureMap(entireSet);
+            this['[[SetData]]'].forEach(function (value, key) {
+              if (context) {
+                _call(callback, context, key, key, entireSet);
+              } else {
+                callback(key, key, entireSet);
+              }
+            });
+          }
+        });
+        defineProperty(SetShim.prototype, 'keys', SetShim.prototype.values, true);
+        addIterator(SetShim.prototype, SetShim.prototype.values);
+
+        return SetShim;
+      }())
+    };
+
+    if (globals.Map || globals.Set) {
+      // Safari 8, for example, doesn't accept an iterable.
+      var mapAcceptsArguments = valueOrFalseIfThrows(function () { return new Map([[1, 2]]).get(1) === 2; });
+      if (!mapAcceptsArguments) {
+        globals.Map = function Map() {
+          if (!(this instanceof Map)) {
+            throw new TypeError('Constructor Map requires "new"');
+          }
+          var m = new OrigMap();
+          if (arguments.length > 0) {
+            addIterableToMap(Map, m, arguments[0]);
+          }
+          delete m.constructor;
+          Object.setPrototypeOf(m, globals.Map.prototype);
+          return m;
+        };
+        globals.Map.prototype = create(OrigMap.prototype);
+        defineProperty(globals.Map.prototype, 'constructor', globals.Map, true);
+        Value.preserveToString(globals.Map, OrigMap);
+      }
+      var testMap = new Map();
+      var mapUsesSameValueZero = (function () {
+        // Chrome 38-42, node 0.11/0.12, iojs 1/2 also have a bug when the Map has a size > 4
+        var m = new Map([[1, 0], [2, 0], [3, 0], [4, 0]]);
+        m.set(-0, m);
+        return m.get(0) === m && m.get(-0) === m && m.has(0) && m.has(-0);
+      }());
+      var mapSupportsChaining = testMap.set(1, 2) === testMap;
+      if (!mapUsesSameValueZero || !mapSupportsChaining) {
+        overrideNative(Map.prototype, 'set', function set(k, v) {
+          _call(origMapSet, this, k === 0 ? 0 : k, v);
+          return this;
+        });
+      }
+      if (!mapUsesSameValueZero) {
+        defineProperties(Map.prototype, {
+          get: function get(k) {
+            return _call(origMapGet, this, k === 0 ? 0 : k);
+          },
+          has: function has(k) {
+            return _call(origMapHas, this, k === 0 ? 0 : k);
+          }
+        }, true);
+        Value.preserveToString(Map.prototype.get, origMapGet);
+        Value.preserveToString(Map.prototype.has, origMapHas);
+      }
+      var testSet = new Set();
+      var setUsesSameValueZero = (function (s) {
+        s['delete'](0);
+        s.add(-0);
+        return !s.has(0);
+      }(testSet));
+      var setSupportsChaining = testSet.add(1) === testSet;
+      if (!setUsesSameValueZero || !setSupportsChaining) {
+        var origSetAdd = Set.prototype.add;
+        Set.prototype.add = function add(v) {
+          _call(origSetAdd, this, v === 0 ? 0 : v);
+          return this;
+        };
+        Value.preserveToString(Set.prototype.add, origSetAdd);
+      }
+      if (!setUsesSameValueZero) {
+        var origSetHas = Set.prototype.has;
+        Set.prototype.has = function has(v) {
+          return _call(origSetHas, this, v === 0 ? 0 : v);
+        };
+        Value.preserveToString(Set.prototype.has, origSetHas);
+        var origSetDel = Set.prototype['delete'];
+        Set.prototype['delete'] = function SetDelete(v) {
+          return _call(origSetDel, this, v === 0 ? 0 : v);
+        };
+        Value.preserveToString(Set.prototype['delete'], origSetDel);
+      }
+      var mapSupportsSubclassing = supportsSubclassing(globals.Map, function (M) {
+        var m = new M([]);
+        // Firefox 32 is ok with the instantiating the subclass but will
+        // throw when the map is used.
+        m.set(42, 42);
+        return m instanceof M;
+      });
+      // without Object.setPrototypeOf, subclassing is not possible
+      var mapFailsToSupportSubclassing = Object.setPrototypeOf && !mapSupportsSubclassing;
+      var mapRequiresNew = (function () {
+        try {
+          return !(globals.Map() instanceof globals.Map);
+        } catch (e) {
+          return e instanceof TypeError;
+        }
+      }());
+      if (globals.Map.length !== 0 || mapFailsToSupportSubclassing || !mapRequiresNew) {
+        globals.Map = function Map() {
+          if (!(this instanceof Map)) {
+            throw new TypeError('Constructor Map requires "new"');
+          }
+          var m = new OrigMap();
+          if (arguments.length > 0) {
+            addIterableToMap(Map, m, arguments[0]);
+          }
+          delete m.constructor;
+          Object.setPrototypeOf(m, Map.prototype);
+          return m;
+        };
+        globals.Map.prototype = OrigMap.prototype;
+        defineProperty(globals.Map.prototype, 'constructor', globals.Map, true);
+        Value.preserveToString(globals.Map, OrigMap);
+      }
+      var setSupportsSubclassing = supportsSubclassing(globals.Set, function (S) {
+        var s = new S([]);
+        s.add(42, 42);
+        return s instanceof S;
+      });
+      // without Object.setPrototypeOf, subclassing is not possible
+      var setFailsToSupportSubclassing = Object.setPrototypeOf && !setSupportsSubclassing;
+      var setRequiresNew = (function () {
+        try {
+          return !(globals.Set() instanceof globals.Set);
+        } catch (e) {
+          return e instanceof TypeError;
+        }
+      }());
+      if (globals.Set.length !== 0 || setFailsToSupportSubclassing || !setRequiresNew) {
+        var OrigSet = globals.Set;
+        globals.Set = function Set() {
+          if (!(this instanceof Set)) {
+            throw new TypeError('Constructor Set requires "new"');
+          }
+          var s = new OrigSet();
+          if (arguments.length > 0) {
+            addIterableToSet(Set, s, arguments[0]);
+          }
+          delete s.constructor;
+          Object.setPrototypeOf(s, Set.prototype);
+          return s;
+        };
+        globals.Set.prototype = OrigSet.prototype;
+        defineProperty(globals.Set.prototype, 'constructor', globals.Set, true);
+        Value.preserveToString(globals.Set, OrigSet);
+      }
+      var newMap = new globals.Map();
+      var mapIterationThrowsStopIterator = !valueOrFalseIfThrows(function () {
+        return newMap.keys().next().done;
+      });
+      /*
+        - In Firefox < 23, Map#size is a function.
+        - In all current Firefox, Set#entries/keys/values & Map#clear do not exist
+        - https://bugzilla.mozilla.org/show_bug.cgi?id=869996
+        - In Firefox 24, Map and Set do not implement forEach
+        - In Firefox 25 at least, Map and Set are callable without "new"
+      */
+      if (
+        typeof globals.Map.prototype.clear !== 'function' ||
+        new globals.Set().size !== 0 ||
+        newMap.size !== 0 ||
+        typeof globals.Map.prototype.keys !== 'function' ||
+        typeof globals.Set.prototype.keys !== 'function' ||
+        typeof globals.Map.prototype.forEach !== 'function' ||
+        typeof globals.Set.prototype.forEach !== 'function' ||
+        isCallableWithoutNew(globals.Map) ||
+        isCallableWithoutNew(globals.Set) ||
+        typeof newMap.keys().next !== 'function' || // Safari 8
+        mapIterationThrowsStopIterator || // Firefox 25
+        !mapSupportsSubclassing
+      ) {
+        defineProperties(globals, {
+          Map: collectionShims.Map,
+          Set: collectionShims.Set
+        }, true);
+      }
+
+      if (globals.Set.prototype.keys !== globals.Set.prototype.values) {
+        // Fixed in WebKit with https://bugs.webkit.org/show_bug.cgi?id=144190
+        defineProperty(globals.Set.prototype, 'keys', globals.Set.prototype.values, true);
+      }
+
+      // Shim incomplete iterator implementations.
+      addIterator(Object.getPrototypeOf((new globals.Map()).keys()));
+      addIterator(Object.getPrototypeOf((new globals.Set()).keys()));
+
+      if (functionsHaveNames && globals.Set.prototype.has.name !== 'has') {
+        // Microsoft Edge v0.11.10074.0 is missing a name on Set#has
+        var anonymousSetHas = globals.Set.prototype.has;
+        overrideNative(globals.Set.prototype, 'has', function has(key) {
+          return _call(anonymousSetHas, this, key);
+        });
+      }
+    }
+    defineProperties(globals, collectionShims);
+    addDefaultSpecies(globals.Map);
+    addDefaultSpecies(globals.Set);
+  }
+
+  var throwUnlessTargetIsObject = function throwUnlessTargetIsObject(target) {
+    if (!ES.TypeIsObject(target)) {
+      throw new TypeError('target must be an object');
+    }
+  };
+
+  // Some Reflect methods are basically the same as
+  // those on the Object global, except that a TypeError is thrown if
+  // target isn't an object. As well as returning a boolean indicating
+  // the success of the operation.
+  var ReflectShims = {
+    // Apply method in a functional form.
+    apply: function apply() {
+      return ES.Call(ES.Call, null, arguments);
+    },
+
+    // New operator in a functional form.
+    construct: function construct(constructor, args) {
+      if (!ES.IsConstructor(constructor)) {
+        throw new TypeError('First argument must be a constructor.');
+      }
+      var newTarget = arguments.length > 2 ? arguments[2] : constructor;
+      if (!ES.IsConstructor(newTarget)) {
+        throw new TypeError('new.target must be a constructor.');
+      }
+      return ES.Construct(constructor, args, newTarget, 'internal');
+    },
+
+    // When deleting a non-existent or configurable property,
+    // true is returned.
+    // When attempting to delete a non-configurable property,
+    // it will return false.
+    deleteProperty: function deleteProperty(target, key) {
+      throwUnlessTargetIsObject(target);
+      if (supportsDescriptors) {
+        var desc = Object.getOwnPropertyDescriptor(target, key);
+
+        if (desc && !desc.configurable) {
+          return false;
+        }
+      }
+
+      // Will return true.
+      return delete target[key];
+    },
+
+    has: function has(target, key) {
+      throwUnlessTargetIsObject(target);
+      return key in target;
+    }
+  };
+
+  if (Object.getOwnPropertyNames) {
+    Object.assign(ReflectShims, {
+      // Basically the result of calling the internal [[OwnPropertyKeys]].
+      // Concatenating propertyNames and propertySymbols should do the trick.
+      // This should continue to work together with a Symbol shim
+      // which overrides Object.getOwnPropertyNames and implements
+      // Object.getOwnPropertySymbols.
+      ownKeys: function ownKeys(target) {
+        throwUnlessTargetIsObject(target);
+        var keys = Object.getOwnPropertyNames(target);
+
+        if (ES.IsCallable(Object.getOwnPropertySymbols)) {
+          _pushApply(keys, Object.getOwnPropertySymbols(target));
+        }
+
+        return keys;
+      }
+    });
+  }
+
+  var callAndCatchException = function ConvertExceptionToBoolean(func) {
+    return !throwsError(func);
+  };
+
+  if (Object.preventExtensions) {
+    Object.assign(ReflectShims, {
+      isExtensible: function isExtensible(target) {
+        throwUnlessTargetIsObject(target);
+        return Object.isExtensible(target);
+      },
+      preventExtensions: function preventExtensions(target) {
+        throwUnlessTargetIsObject(target);
+        return callAndCatchException(function () {
+          Object.preventExtensions(target);
+        });
+      }
+    });
+  }
+
+  if (supportsDescriptors) {
+    var internalGet = function get(target, key, receiver) {
+      var desc = Object.getOwnPropertyDescriptor(target, key);
+
+      if (!desc) {
+        var parent = Object.getPrototypeOf(target);
+
+        if (parent === null) {
+          return void 0;
+        }
+
+        return internalGet(parent, key, receiver);
+      }
+
+      if ('value' in desc) {
+        return desc.value;
+      }
+
+      if (desc.get) {
+        return ES.Call(desc.get, receiver);
+      }
+
+      return void 0;
+    };
+
+    var internalSet = function set(target, key, value, receiver) {
+      var desc = Object.getOwnPropertyDescriptor(target, key);
+
+      if (!desc) {
+        var parent = Object.getPrototypeOf(target);
+
+        if (parent !== null) {
+          return internalSet(parent, key, value, receiver);
+        }
+
+        desc = {
+          value: void 0,
+          writable: true,
+          enumerable: true,
+          configurable: true
+        };
+      }
+
+      if ('value' in desc) {
+        if (!desc.writable) {
+          return false;
+        }
+
+        if (!ES.TypeIsObject(receiver)) {
+          return false;
+        }
+
+        var existingDesc = Object.getOwnPropertyDescriptor(receiver, key);
+
+        if (existingDesc) {
+          return Reflect.defineProperty(receiver, key, {
+            value: value
+          });
+        } else {
+          return Reflect.defineProperty(receiver, key, {
+            value: value,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        }
+      }
+
+      if (desc.set) {
+        _call(desc.set, receiver, value);
+        return true;
+      }
+
+      return false;
+    };
+
+    Object.assign(ReflectShims, {
+      defineProperty: function defineProperty(target, propertyKey, attributes) {
+        throwUnlessTargetIsObject(target);
+        return callAndCatchException(function () {
+          Object.defineProperty(target, propertyKey, attributes);
+        });
+      },
+
+      getOwnPropertyDescriptor: function getOwnPropertyDescriptor(target, propertyKey) {
+        throwUnlessTargetIsObject(target);
+        return Object.getOwnPropertyDescriptor(target, propertyKey);
+      },
+
+      // Syntax in a functional form.
+      get: function get(target, key) {
+        throwUnlessTargetIsObject(target);
+        var receiver = arguments.length > 2 ? arguments[2] : target;
+
+        return internalGet(target, key, receiver);
+      },
+
+      set: function set(target, key, value) {
+        throwUnlessTargetIsObject(target);
+        var receiver = arguments.length > 3 ? arguments[3] : target;
+
+        return internalSet(target, key, value, receiver);
+      }
+    });
+  }
+
+  if (Object.getPrototypeOf) {
+    var objectDotGetPrototypeOf = Object.getPrototypeOf;
+    ReflectShims.getPrototypeOf = function getPrototypeOf(target) {
+      throwUnlessTargetIsObject(target);
+      return objectDotGetPrototypeOf(target);
+    };
+  }
+
+  if (Object.setPrototypeOf && ReflectShims.getPrototypeOf) {
+    var willCreateCircularPrototype = function (object, lastProto) {
+      var proto = lastProto;
+      while (proto) {
+        if (object === proto) {
+          return true;
+        }
+        proto = ReflectShims.getPrototypeOf(proto);
+      }
+      return false;
+    };
+
+    Object.assign(ReflectShims, {
+      // Sets the prototype of the given object.
+      // Returns true on success, otherwise false.
+      setPrototypeOf: function setPrototypeOf(object, proto) {
+        throwUnlessTargetIsObject(object);
+        if (proto !== null && !ES.TypeIsObject(proto)) {
+          throw new TypeError('proto must be an object or null');
+        }
+
+        // If they already are the same, we're done.
+        if (proto === Reflect.getPrototypeOf(object)) {
+          return true;
+        }
+
+        // Cannot alter prototype if object not extensible.
+        if (Reflect.isExtensible && !Reflect.isExtensible(object)) {
+          return false;
+        }
+
+        // Ensure that we do not create a circular prototype chain.
+        if (willCreateCircularPrototype(object, proto)) {
+          return false;
+        }
+
+        Object.setPrototypeOf(object, proto);
+
+        return true;
+      }
+    });
+  }
+  var defineOrOverrideReflectProperty = function (key, shim) {
+    if (!ES.IsCallable(globals.Reflect[key])) {
+      defineProperty(globals.Reflect, key, shim);
+    } else {
+      var acceptsPrimitives = valueOrFalseIfThrows(function () {
+        globals.Reflect[key](1);
+        globals.Reflect[key](NaN);
+        globals.Reflect[key](true);
+        return true;
+      });
+      if (acceptsPrimitives) {
+        overrideNative(globals.Reflect, key, shim);
+      }
+    }
+  };
+  Object.keys(ReflectShims).forEach(function (key) {
+    defineOrOverrideReflectProperty(key, ReflectShims[key]);
+  });
+  var originalReflectGetProto = globals.Reflect.getPrototypeOf;
+  if (functionsHaveNames && originalReflectGetProto && originalReflectGetProto.name !== 'getPrototypeOf') {
+    overrideNative(globals.Reflect, 'getPrototypeOf', function getPrototypeOf(target) {
+      return _call(originalReflectGetProto, globals.Reflect, target);
+    });
+  }
+  if (globals.Reflect.setPrototypeOf) {
+    if (valueOrFalseIfThrows(function () {
+      globals.Reflect.setPrototypeOf(1, {});
+      return true;
+    })) {
+      overrideNative(globals.Reflect, 'setPrototypeOf', ReflectShims.setPrototypeOf);
+    }
+  }
+  if (globals.Reflect.defineProperty) {
+    if (!valueOrFalseIfThrows(function () {
+      var basic = !globals.Reflect.defineProperty(1, 'test', { value: 1 });
+      // "extensible" fails on Edge 0.12
+      var extensible = typeof Object.preventExtensions !== 'function' || !globals.Reflect.defineProperty(Object.preventExtensions({}), 'test', {});
+      return basic && extensible;
+    })) {
+      overrideNative(globals.Reflect, 'defineProperty', ReflectShims.defineProperty);
+    }
+  }
+  if (globals.Reflect.construct) {
+    if (!valueOrFalseIfThrows(function () {
+      var F = function F() {};
+      return globals.Reflect.construct(function () {}, [], F) instanceof F;
+    })) {
+      overrideNative(globals.Reflect, 'construct', ReflectShims.construct);
+    }
+  }
+
+  if (String(new Date(NaN)) !== 'Invalid Date') {
+    var dateToString = Date.prototype.toString;
+    var shimmedDateToString = function toString() {
+      var valueOf = +this;
+      if (valueOf !== valueOf) {
+        return 'Invalid Date';
+      }
+      return ES.Call(dateToString, this);
+    };
+    overrideNative(Date.prototype, 'toString', shimmedDateToString);
+  }
+
+  // Annex B HTML methods
+  // http://www.ecma-international.org/ecma-262/6.0/#sec-additional-properties-of-the-string.prototype-object
+  var stringHTMLshims = {
+    anchor: function anchor(name) { return ES.CreateHTML(this, 'a', 'name', name); },
+    big: function big() { return ES.CreateHTML(this, 'big', '', ''); },
+    blink: function blink() { return ES.CreateHTML(this, 'blink', '', ''); },
+    bold: function bold() { return ES.CreateHTML(this, 'b', '', ''); },
+    fixed: function fixed() { return ES.CreateHTML(this, 'tt', '', ''); },
+    fontcolor: function fontcolor(color) { return ES.CreateHTML(this, 'font', 'color', color); },
+    fontsize: function fontsize(size) { return ES.CreateHTML(this, 'font', 'size', size); },
+    italics: function italics() { return ES.CreateHTML(this, 'i', '', ''); },
+    link: function link(url) { return ES.CreateHTML(this, 'a', 'href', url); },
+    small: function small() { return ES.CreateHTML(this, 'small', '', ''); },
+    strike: function strike() { return ES.CreateHTML(this, 'strike', '', ''); },
+    sub: function sub() { return ES.CreateHTML(this, 'sub', '', ''); },
+    sup: function sub() { return ES.CreateHTML(this, 'sup', '', ''); }
+  };
+  _forEach(Object.keys(stringHTMLshims), function (key) {
+    var method = String.prototype[key];
+    var shouldOverwrite = false;
+    if (ES.IsCallable(method)) {
+      var output = _call(method, '', ' " ');
+      var quotesCount = _concat([], output.match(/"/g)).length;
+      shouldOverwrite = output !== output.toLowerCase() || quotesCount > 2;
+    } else {
+      shouldOverwrite = true;
+    }
+    if (shouldOverwrite) {
+      overrideNative(String.prototype, key, stringHTMLshims[key]);
+    }
+  });
+
+  var JSONstringifiesSymbols = (function () {
+    // Microsoft Edge v0.12 stringifies Symbols incorrectly
+    if (!hasSymbols) { return false; } // Symbols are not supported
+    var stringify = typeof JSON === 'object' && typeof JSON.stringify === 'function' ? JSON.stringify : null;
+    if (!stringify) { return false; } // JSON.stringify is not supported
+    if (typeof stringify(Symbol()) !== 'undefined') { return true; } // Symbols should become `undefined`
+    if (stringify([Symbol()]) !== '[null]') { return true; } // Symbols in arrays should become `null`
+    var obj = { a: Symbol() };
+    obj[Symbol()] = true;
+    if (stringify(obj) !== '{}') { return true; } // Symbol-valued keys *and* Symbol-valued properties should be omitted
+    return false;
+  }());
+  var JSONstringifyAcceptsObjectSymbol = valueOrFalseIfThrows(function () {
+    // Chrome 45 throws on stringifying object symbols
+    if (!hasSymbols) { return true; } // Symbols are not supported
+    return JSON.stringify(Object(Symbol())) === '{}' && JSON.stringify([Object(Symbol())]) === '[{}]';
+  });
+  if (JSONstringifiesSymbols || !JSONstringifyAcceptsObjectSymbol) {
+    var origStringify = JSON.stringify;
+    overrideNative(JSON, 'stringify', function stringify(value) {
+      if (typeof value === 'symbol') { return; }
+      var replacer;
+      if (arguments.length > 1) {
+        replacer = arguments[1];
+      }
+      var args = [value];
+      if (!isArray(replacer)) {
+        var replaceFn = ES.IsCallable(replacer) ? replacer : null;
+        var wrappedReplacer = function (key, val) {
+          var parsedValue = replaceFn ? _call(replaceFn, this, key, val) : val;
+          if (typeof parsedValue !== 'symbol') {
+            if (Type.symbol(parsedValue)) {
+              return assignTo({})(parsedValue);
+            } else {
+              return parsedValue;
+            }
+          }
+        };
+        args.push(wrappedReplacer);
+      } else {
+        // create wrapped replacer that handles an array replacer?
+        args.push(replacer);
+      }
+      if (arguments.length > 2) {
+        args.push(arguments[2]);
+      }
+      return origStringify.apply(this, args);
+    });
+  }
+
+  return globals;
+}));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(129), __webpack_require__(13)))
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var React = __webpack_require__(0);
+var ReactDOM = __webpack_require__(12);
+var core_1 = __webpack_require__(7);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var draggable_1 = __webpack_require__(19);
+var cell_1 = __webpack_require__(25);
+var EditableCell = (function (_super) {
+    tslib_1.__extends(EditableCell, _super);
+    function EditableCell(props, context) {
+        var _this = _super.call(this, props, context) || this;
+        _this.handleEdit = function () {
+            _this.setState({ isEditing: true, dirtyValue: _this.state.savedValue });
+        };
+        _this.handleCancel = function (value) {
+            // don't strictly need to clear the dirtyValue, but it's better hygiene
+            _this.setState({ isEditing: false, dirtyValue: undefined });
+            _this.invokeCallback(_this.props.onCancel, value);
+        };
+        _this.handleChange = function (value) {
+            _this.setState({ dirtyValue: value });
+            _this.invokeCallback(_this.props.onChange, value);
+        };
+        _this.handleConfirm = function (value) {
+            _this.setState({ isEditing: false, savedValue: value, dirtyValue: undefined });
+            _this.invokeCallback(_this.props.onConfirm, value);
+        };
+        _this.handleCellActivate = function (_event) {
+            // Cancel edit of active cell when clicking away
+            if (!_this.state.isEditing && document.activeElement instanceof HTMLElement && document.activeElement.blur) {
+                document.activeElement.blur();
+            }
+            return true;
+        };
+        _this.handleCellDoubleClick = function (_event) {
+            var cellElement = ReactDOM.findDOMNode(_this);
+            if (cellElement == null) {
+                return;
+            }
+            var focusable = cellElement.querySelector(".pt-editable-text");
+            if (focusable.focus != null) {
+                focusable.focus();
+            }
+        };
+        _this.state = {
+            isEditing: false,
+            savedValue: props.value,
+        };
+        return _this;
+    }
+    EditableCell.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { exclude: ["style"] })
+            || !utils_1.Utils.shallowCompareKeys(this.state, nextState)
+            || !utils_1.Utils.deepCompareKeys(this.props, nextProps, ["style"]);
+    };
+    EditableCell.prototype.componentWillReceiveProps = function (nextProps) {
+        var value = nextProps.value;
+        this.setState({ savedValue: value, dirtyValue: value });
+    };
+    EditableCell.prototype.render = function () {
+        var _a = this.props, onCancel = _a.onCancel, onChange = _a.onChange, onConfirm = _a.onConfirm, spreadableProps = tslib_1.__rest(_a, ["onCancel", "onChange", "onConfirm"]);
+        var _b = this.state, isEditing = _b.isEditing, dirtyValue = _b.dirtyValue, savedValue = _b.savedValue;
+        var interactive = spreadableProps.interactive || isEditing;
+        return (React.createElement(cell_1.Cell, tslib_1.__assign({}, spreadableProps, { truncated: false, interactive: interactive }),
+            React.createElement(draggable_1.Draggable, { onActivate: this.handleCellActivate, onDoubleClick: this.handleCellDoubleClick, preventDefault: !interactive, stopPropagation: interactive },
+                React.createElement(core_1.EditableText, { className: Classes.TABLE_EDITABLE_NAME, intent: spreadableProps.intent, minWidth: null, onCancel: this.handleCancel, onChange: this.handleChange, onConfirm: this.handleConfirm, onEdit: this.handleEdit, placeholder: "", selectAllOnFocus: true, value: isEditing ? dirtyValue : savedValue }))));
+    };
+    EditableCell.prototype.invokeCallback = function (callback, value) {
+        // pass through the row and column indices if they were provided as props by the consumer
+        var _a = this.props, rowIndex = _a.rowIndex, columnIndex = _a.columnIndex;
+        core_1.Utils.safeInvoke(callback, value, rowIndex, columnIndex);
+    };
+    return EditableCell;
+}(React.Component));
+exports.EditableCell = EditableCell;
+
+
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var truncatedFormat_1 = __webpack_require__(64);
+var JSONFormat = (function (_super) {
+    tslib_1.__extends(JSONFormat, _super);
+    function JSONFormat() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    JSONFormat.prototype.render = function () {
+        var _a = this.props, children = _a.children, omitQuotesOnStrings = _a.omitQuotesOnStrings, stringify = _a.stringify;
+        var showPopover = this.props.showPopover;
+        // always hide popover if value is nully
+        var isNully = children == null;
+        if (isNully) {
+            showPopover = truncatedFormat_1.TruncatedPopoverMode.NEVER;
+        }
+        var className = classNames(this.props.className, (_b = {},
+            _b[Classes.TABLE_NULL] = isNully,
+            _b));
+        var displayValue = "";
+        if (omitQuotesOnStrings && typeof children === "string") {
+            displayValue = children;
+        }
+        else {
+            displayValue = stringify(children);
+        }
+        return (React.createElement(truncatedFormat_1.TruncatedFormat, tslib_1.__assign({}, this.props, { className: className, showPopover: showPopover }), displayValue));
+        var _b;
+    };
+    return JSONFormat;
+}(React.Component));
+JSONFormat.defaultProps = {
+    detectTruncation: true,
+    omitQuotesOnStrings: true,
+    showPopover: truncatedFormat_1.TruncatedPopoverMode.WHEN_TRUNCATED,
+    stringify: function (obj) { return (JSON.stringify(obj, null, 2)); },
+};
+exports.JSONFormat = JSONFormat;
+
+
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+/**
+ * A React component that measures and rounds the size of its only child. This
+ * is necessary due to a Chrome bug that prevents scrolling when the size is
+ * changed to a fractional value. See this JSFiddle for a repro of the issue:
+ * https://jsfiddle.net/2rmz7p1d/5/
+ */
+var RoundSize = (function (_super) {
+    tslib_1.__extends(RoundSize, _super);
+    function RoundSize() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.setInternalRef = function (ref) { return _this.internalElement = ref; };
+        _this.setContainerRef = function (ref) { return _this.containerElement = ref; };
+        return _this;
+    }
+    RoundSize.prototype.render = function () {
+        return (React.createElement("div", { className: Classes.TABLE_ROUNDED_LAYOUT, ref: this.setContainerRef },
+            React.createElement("div", { className: Classes.TABLE_NO_LAYOUT, ref: this.setInternalRef }, React.Children.only(this.props.children))));
+    };
+    RoundSize.prototype.componentDidMount = function () {
+        this.copyRoundedSize();
+    };
+    RoundSize.prototype.componentDidUpdate = function () {
+        this.copyRoundedSize();
+    };
+    RoundSize.prototype.copyRoundedSize = function () {
+        if (this.internalElement == null || this.containerElement == null) {
+            return;
+        }
+        // measure the size of the internal children
+        var width = Math.round(this.internalElement.clientWidth) + "px";
+        var height = Math.round(this.internalElement.clientHeight) + "px";
+        // set the size of the container element with rounded values
+        this.containerElement.style.width = width;
+        this.containerElement.style.height = height;
+    };
+    return RoundSize;
+}(React.Component));
+exports.RoundSize = RoundSize;
+
+
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var clipboard_1 = __webpack_require__(37);
+var regions_1 = __webpack_require__(11);
+var CopyCellsMenuItem = (function (_super) {
+    tslib_1.__extends(CopyCellsMenuItem, _super);
+    function CopyCellsMenuItem() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.handleClick = function () {
+            var _a = _this.props, context = _a.context, getCellData = _a.getCellData, onCopy = _a.onCopy;
+            var cells = context.getUniqueCells();
+            var sparse = regions_1.Regions.sparseMapCells(cells, getCellData);
+            var success = clipboard_1.Clipboard.copyCells(sparse);
+            if (onCopy != null) {
+                onCopy(success);
+            }
+        };
+        return _this;
+    }
+    CopyCellsMenuItem.prototype.render = function () {
+        return React.createElement(core_1.MenuItem, tslib_1.__assign({}, this.props, { onClick: this.handleClick }));
+    };
+    return CopyCellsMenuItem;
+}(React.Component));
+CopyCellsMenuItem = tslib_1.__decorate([
+    PureRender
+], CopyCellsMenuItem);
+exports.CopyCellsMenuItem = CopyCellsMenuItem;
+
+
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var regions_1 = __webpack_require__(11);
+var MenuContext = (function () {
+    function MenuContext(target, selectedRegions, numRows, numCols) {
+        this.target = target;
+        this.selectedRegions = selectedRegions;
+        this.numRows = numRows;
+        this.numCols = numCols;
+        this.regions = regions_1.Regions.overlapsRegion(selectedRegions, target) ? selectedRegions : [target];
+    }
+    MenuContext.prototype.getTarget = function () {
+        return this.target;
+    };
+    MenuContext.prototype.getSelectedRegions = function () {
+        return this.selectedRegions;
+    };
+    MenuContext.prototype.getRegions = function () {
+        return this.regions;
+    };
+    MenuContext.prototype.getUniqueCells = function () {
+        return regions_1.Regions.enumerateUniqueCells(this.regions, this.numRows, this.numCols);
+    };
+    return MenuContext;
+}());
+exports.MenuContext = MenuContext;
+
+
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var classNames = __webpack_require__(2);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var EditableName = (function (_super) {
+    tslib_1.__extends(EditableName, _super);
+    function EditableName() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    EditableName.prototype.render = function () {
+        var _a = this.props, className = _a.className, intent = _a.intent, name = _a.name, onCancel = _a.onCancel, onChange = _a.onChange, onConfirm = _a.onConfirm;
+        return (React.createElement(core_1.EditableText, { className: classNames(className, Classes.TABLE_EDITABLE_NAME), defaultValue: name, intent: intent, minWidth: null, onCancel: onCancel, onChange: onChange, onConfirm: onConfirm, placeholder: "", selectAllOnFocus: true }));
+    };
+    return EditableName;
+}(React.Component));
+EditableName = tslib_1.__decorate([
+    PureRender
+], EditableName);
+exports.EditableName = EditableName;
+
+
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var core_2 = __webpack_require__(7);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var column_1 = __webpack_require__(65);
+var Classes = __webpack_require__(6);
+var clipboard_1 = __webpack_require__(37);
+var grid_1 = __webpack_require__(66);
+var rect_1 = __webpack_require__(20);
+var utils_1 = __webpack_require__(10);
+var columnHeader_1 = __webpack_require__(137);
+var columnHeaderCell_1 = __webpack_require__(39);
+var rowHeader_1 = __webpack_require__(141);
+var resizeSensor_1 = __webpack_require__(142);
+var guides_1 = __webpack_require__(143);
+var regions_1 = __webpack_require__(144);
+var locator_1 = __webpack_require__(145);
+var regions_2 = __webpack_require__(11);
+var tableBody_1 = __webpack_require__(146);
+var Table = Table_1 = (function (_super) {
+    tslib_1.__extends(Table, _super);
+    function Table(props, context) {
+        var _this = _super.call(this, props, context) || this;
+        _this.handleCopy = function (e) {
+            var grid = _this.grid;
+            var _a = _this.props, getCellClipboardData = _a.getCellClipboardData, onCopy = _a.onCopy;
+            var selectedRegions = _this.state.selectedRegions;
+            if (getCellClipboardData == null) {
+                return;
+            }
+            // prevent "real" copy from being called
+            e.preventDefault();
+            e.stopPropagation();
+            var cells = regions_2.Regions.enumerateUniqueCells(selectedRegions, grid.numRows, grid.numCols);
+            var sparse = regions_2.Regions.sparseMapCells(cells, getCellClipboardData);
+            if (sparse != null) {
+                var success = clipboard_1.Clipboard.copyCells(sparse);
+                core_1.Utils.safeInvoke(onCopy, success);
+            }
+        };
+        _this.selectAll = function () {
+            var selectionHandler = _this.getEnabledSelectionHandler(regions_2.RegionCardinality.FULL_TABLE);
+            // clicking on upper left hand corner sets selection to "all"
+            // regardless of current selection state (clicking twice does not deselect table)
+            selectionHandler([regions_2.Regions.table()]);
+            // move the focus cell to the top left
+            var newFocusedCellCoordinates = regions_2.Regions.getFocusCellCoordinatesFromRegion(regions_2.RegionCardinality.FULL_TABLE);
+            var fullFocusCellCoordinates = {
+                col: newFocusedCellCoordinates.col,
+                focusSelectionIndex: 0,
+                row: newFocusedCellCoordinates.row,
+            };
+            _this.handleFocus(fullFocusCellCoordinates);
+        };
+        _this.handleSelectAllHotkey = function (e) {
+            // prevent "real" select all from happening as well
+            e.preventDefault();
+            e.stopPropagation();
+            _this.selectAll();
+        };
+        _this.columnHeaderCellRenderer = function (columnIndex) {
+            var props = _this.getColumnProps(columnIndex);
+            var id = props.id, loadingOptions = props.loadingOptions, renderCell = props.renderCell, renderColumnHeader = props.renderColumnHeader, spreadableProps = tslib_1.__rest(props, ["id", "loadingOptions", "renderCell", "renderColumnHeader"]);
+            var columnLoading = _this.hasLoadingOption(loadingOptions, regions_2.ColumnLoadingOption.HEADER);
+            if (renderColumnHeader != null) {
+                var columnHeader = renderColumnHeader(columnIndex);
+                var columnHeaderLoading = columnHeader.props.loading;
+                return React.cloneElement(columnHeader, {
+                    loading: columnHeaderLoading != null ? columnHeaderLoading : columnLoading,
+                });
+            }
+            var baseProps = tslib_1.__assign({ index: columnIndex, loading: columnLoading }, spreadableProps);
+            if (props.name != null) {
+                return React.createElement(columnHeaderCell_1.ColumnHeaderCell, tslib_1.__assign({}, baseProps));
+            }
+            else {
+                return React.createElement(columnHeaderCell_1.ColumnHeaderCell, tslib_1.__assign({}, baseProps, { name: utils_1.Utils.toBase26Alpha(columnIndex) }));
+            }
+        };
+        _this.bodyCellRenderer = function (rowIndex, columnIndex) {
+            var columnProps = _this.getColumnProps(columnIndex);
+            var cell = columnProps.renderCell(rowIndex, columnIndex);
+            var cellLoading = cell.props.loading;
+            var loading = cellLoading != null
+                ? cellLoading
+                : _this.hasLoadingOption(columnProps.loadingOptions, regions_2.ColumnLoadingOption.CELLS);
+            return React.cloneElement(cell, tslib_1.__assign({}, columnProps, { loading: loading }));
+        };
+        _this.handleFocusMoveLeft = function (e) { return _this.handleFocusMove(e, "left"); };
+        _this.handleFocusMoveLeftInternal = function (e) { return _this.handleFocusMoveInternal(e, "left"); };
+        _this.handleFocusMoveRight = function (e) { return _this.handleFocusMove(e, "right"); };
+        _this.handleFocusMoveRightInternal = function (e) { return _this.handleFocusMoveInternal(e, "right"); };
+        _this.handleFocusMoveUp = function (e) { return _this.handleFocusMove(e, "up"); };
+        _this.handleFocusMoveUpInternal = function (e) { return _this.handleFocusMoveInternal(e, "up"); };
+        _this.handleFocusMoveDown = function (e) { return _this.handleFocusMove(e, "down"); };
+        _this.handleFocusMoveDownInternal = function (e) { return _this.handleFocusMoveInternal(e, "down"); };
+        _this.styleBodyRegion = function (region) {
+            var cardinality = regions_2.Regions.getRegionCardinality(region);
+            var style = _this.grid.getRegionStyle(region);
+            switch (cardinality) {
+                case regions_2.RegionCardinality.CELLS:
+                    return style;
+                case regions_2.RegionCardinality.FULL_COLUMNS:
+                    style.top = "-1px";
+                    return style;
+                case regions_2.RegionCardinality.FULL_ROWS:
+                    style.left = "-1px";
+                    return style;
+                case regions_2.RegionCardinality.FULL_TABLE:
+                    style.left = "-1px";
+                    style.top = "-1px";
+                    return style;
+                default:
+                    return { display: "none" };
+            }
+        };
+        _this.styleMenuRegion = function (region) {
+            var grid = _this.grid;
+            var viewportRect = _this.state.viewportRect;
+            if (viewportRect == null) {
+                return {};
+            }
+            var cardinality = regions_2.Regions.getRegionCardinality(region);
+            var style = grid.getRegionStyle(region);
+            switch (cardinality) {
+                case regions_2.RegionCardinality.FULL_TABLE:
+                    style.right = "0px";
+                    style.bottom = "0px";
+                    style.top = "0px";
+                    style.left = "0px";
+                    style.borderBottom = "none";
+                    style.borderRight = "none";
+                    return style;
+                default:
+                    return { display: "none" };
+            }
+        };
+        _this.styleColumnHeaderRegion = function (region) {
+            var grid = _this.grid;
+            var viewportRect = _this.state.viewportRect;
+            if (viewportRect == null) {
+                return {};
+            }
+            var cardinality = regions_2.Regions.getRegionCardinality(region);
+            var style = grid.getRegionStyle(region);
+            switch (cardinality) {
+                case regions_2.RegionCardinality.FULL_TABLE:
+                    style.left = "-1px";
+                    style.borderLeft = "none";
+                    style.bottom = "-1px";
+                    style.transform = "translate3d(" + -viewportRect.left + "px, 0, 0)";
+                    return style;
+                case regions_2.RegionCardinality.FULL_COLUMNS:
+                    style.bottom = "-1px";
+                    style.transform = "translate3d(" + -viewportRect.left + "px, 0, 0)";
+                    return style;
+                default:
+                    return { display: "none" };
+            }
+        };
+        _this.styleRowHeaderRegion = function (region) {
+            var grid = _this.grid;
+            var viewportRect = _this.state.viewportRect;
+            if (viewportRect == null) {
+                return {};
+            }
+            var cardinality = regions_2.Regions.getRegionCardinality(region);
+            var style = grid.getRegionStyle(region);
+            switch (cardinality) {
+                case regions_2.RegionCardinality.FULL_TABLE:
+                    style.top = "-1px";
+                    style.borderTop = "none";
+                    style.right = "-1px";
+                    style.transform = "translate3d(0, " + -viewportRect.top + "px, 0)";
+                    return style;
+                case regions_2.RegionCardinality.FULL_ROWS:
+                    style.right = "-1px";
+                    style.transform = "translate3d(0, " + -viewportRect.top + "px, 0)";
+                    return style;
+                default:
+                    return { display: "none" };
+            }
+        };
+        _this.handleColumnWidthChanged = function (columnIndex, width) {
+            var selectedRegions = _this.state.selectedRegions;
+            var columnWidths = _this.state.columnWidths.slice();
+            if (regions_2.Regions.hasFullTable(selectedRegions)) {
+                for (var col = 0; col < columnWidths.length; col++) {
+                    columnWidths[col] = width;
+                }
+            }
+            if (regions_2.Regions.hasFullColumn(selectedRegions, columnIndex)) {
+                regions_2.Regions.eachUniqueFullColumn(selectedRegions, function (col) {
+                    columnWidths[col] = width;
+                });
+            }
+            else {
+                columnWidths[columnIndex] = width;
+            }
+            _this.invalidateGrid();
+            _this.setState({ columnWidths: columnWidths });
+            var onColumnWidthChanged = _this.props.onColumnWidthChanged;
+            if (onColumnWidthChanged != null) {
+                onColumnWidthChanged(columnIndex, width);
+            }
+        };
+        _this.handleRowHeightChanged = function (rowIndex, height) {
+            var selectedRegions = _this.state.selectedRegions;
+            var rowHeights = _this.state.rowHeights.slice();
+            if (regions_2.Regions.hasFullTable(selectedRegions)) {
+                for (var row = 0; row < rowHeights.length; row++) {
+                    rowHeights[row] = height;
+                }
+            }
+            if (regions_2.Regions.hasFullRow(selectedRegions, rowIndex)) {
+                regions_2.Regions.eachUniqueFullRow(selectedRegions, function (row) {
+                    rowHeights[row] = height;
+                });
+            }
+            else {
+                rowHeights[rowIndex] = height;
+            }
+            _this.invalidateGrid();
+            _this.setState({ rowHeights: rowHeights });
+            var onRowHeightChanged = _this.props.onRowHeightChanged;
+            if (onRowHeightChanged != null) {
+                onRowHeightChanged(rowIndex, height);
+            }
+        };
+        _this.handleRootScroll = function (_event) {
+            // Bug #211 - Native browser text selection events can cause the root
+            // element to scroll even though it has a overflow:hidden style. The
+            // only viable solution to this is to unscroll the element after the
+            // browser scrolls it.
+            if (_this.rootTableElement != null) {
+                _this.rootTableElement.scrollLeft = 0;
+                _this.rootTableElement.scrollTop = 0;
+            }
+        };
+        _this.handleBodyScroll = function (event) {
+            // Prevent the event from propagating to avoid a resize event on the
+            // resize sensor.
+            event.stopPropagation();
+            if (_this.locator != null && !_this.state.isLayoutLocked) {
+                var viewportRect = _this.locator.getViewportRect();
+                _this.updateViewportRect(viewportRect);
+            }
+        };
+        _this.handleColumnResizeGuide = function (verticalGuides) {
+            _this.setState({ verticalGuides: verticalGuides });
+        };
+        _this.handleRowResizeGuide = function (horizontalGuides) {
+            _this.setState({ horizontalGuides: horizontalGuides });
+        };
+        _this.clearSelection = function (_selectedRegions) {
+            _this.handleSelection([]);
+        };
+        // no good way to call arrow-key keyboard events from tests
+        /* istanbul ignore next */
+        _this.handleFocusMove = function (e, direction) {
+            e.preventDefault();
+            e.stopPropagation();
+            var focusedCell = _this.state.focusedCell;
+            if (focusedCell == null) {
+                // halt early if we have a selectedRegionTransform or something else in play that nixes
+                // the focused cell.
+                return;
+            }
+            var newFocusedCell = { col: focusedCell.col, row: focusedCell.row, focusSelectionIndex: 0 };
+            var grid = _this.grid;
+            switch (direction) {
+                case "up":
+                    newFocusedCell.row -= 1;
+                    break;
+                case "down":
+                    newFocusedCell.row += 1;
+                    break;
+                case "left":
+                    newFocusedCell.col -= 1;
+                    break;
+                case "right":
+                    newFocusedCell.col += 1;
+                    break;
+                default:
+                    break;
+            }
+            if (newFocusedCell.row < 0 || newFocusedCell.row >= grid.numRows ||
+                newFocusedCell.col < 0 || newFocusedCell.col >= grid.numCols) {
+                return;
+            }
+            // change selection to match new focus cell location
+            var newSelectionRegions = [regions_2.Regions.cell(newFocusedCell.row, newFocusedCell.col)];
+            _this.handleSelection(newSelectionRegions);
+            _this.handleFocus(newFocusedCell);
+            // keep the focused cell in view
+            _this.scrollBodyToFocusedCell(newFocusedCell);
+        };
+        // no good way to call arrow-key keyboard events from tests
+        /* istanbul ignore next */
+        _this.handleFocusMoveInternal = function (e, direction) {
+            e.preventDefault();
+            e.stopPropagation();
+            var _a = _this.state, focusedCell = _a.focusedCell, selectedRegions = _a.selectedRegions;
+            var grid = _this.grid;
+            if (focusedCell == null) {
+                // halt early if we have a selectedRegionTransform or something else in play that nixes
+                // the focused cell.
+                return;
+            }
+            var newFocusedCell = {
+                col: focusedCell.col,
+                focusSelectionIndex: focusedCell.focusSelectionIndex,
+                row: focusedCell.row,
+            };
+            // if we're not in any particular focus cell region, and one exists, go to the first cell of the first one
+            if (focusedCell.focusSelectionIndex == null && selectedRegions.length > 0) {
+                var focusCellRegion = regions_2.Regions.getCellRegionFromRegion(selectedRegions[0], grid.numRows, grid.numCols);
+                newFocusedCell = {
+                    col: focusCellRegion.cols[0],
+                    focusSelectionIndex: 0,
+                    row: focusCellRegion.rows[0],
+                };
+            }
+            else {
+                if (selectedRegions.length === 0) {
+                    _this.handleFocusMove(e, direction);
+                    return;
+                }
+                var focusCellRegion = regions_2.Regions.getCellRegionFromRegion(selectedRegions[focusedCell.focusSelectionIndex], grid.numRows, grid.numCols);
+                if (focusCellRegion.cols[0] === focusCellRegion.cols[1]
+                    && focusCellRegion.rows[0] === focusCellRegion.rows[1]
+                    && selectedRegions.length === 1) {
+                    _this.handleFocusMove(e, direction);
+                    return;
+                }
+                switch (direction) {
+                    case "up":
+                        newFocusedCell = _this.moveFocusCell("row", "col", true, newFocusedCell, focusCellRegion);
+                        break;
+                    case "left":
+                        newFocusedCell = _this.moveFocusCell("col", "row", true, newFocusedCell, focusCellRegion);
+                        break;
+                    case "down":
+                        newFocusedCell = _this.moveFocusCell("row", "col", false, newFocusedCell, focusCellRegion);
+                        break;
+                    case "right":
+                        newFocusedCell = _this.moveFocusCell("col", "row", false, newFocusedCell, focusCellRegion);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (newFocusedCell.row < 0 || newFocusedCell.row >= grid.numRows ||
+                newFocusedCell.col < 0 || newFocusedCell.col >= grid.numCols) {
+                return;
+            }
+            _this.handleFocus(newFocusedCell);
+            // keep the focused cell in view
+            _this.scrollBodyToFocusedCell(newFocusedCell);
+        };
+        _this.scrollBodyToFocusedCell = function (focusedCell) {
+            var row = focusedCell.row, col = focusedCell.col;
+            var viewportRect = _this.state.viewportRect;
+            // sort keys in normal CSS position order (per the trusty TRBL/"trouble" acronym)
+            // tslint:disable:object-literal-sort-keys
+            var viewportBounds = {
+                top: viewportRect.top,
+                right: viewportRect.left + viewportRect.width,
+                bottom: viewportRect.top + viewportRect.height,
+                left: viewportRect.left,
+            };
+            var focusedCellBounds = {
+                top: _this.grid.getCumulativeHeightBefore(row),
+                right: _this.grid.getCumulativeWidthAt(col),
+                bottom: _this.grid.getCumulativeHeightAt(row),
+                left: _this.grid.getCumulativeWidthBefore(col),
+            };
+            // tslint:enable:object-literal-sort-keys
+            var focusedCellWidth = focusedCellBounds.right - focusedCellBounds.left;
+            var focusedCellHeight = focusedCellBounds.bottom - focusedCellBounds.top;
+            var isFocusedCellWiderThanViewport = focusedCellWidth > viewportRect.width;
+            var isFocusedCellTallerThanViewport = focusedCellHeight > viewportRect.height;
+            var nextScrollTop = viewportRect.top;
+            var nextScrollLeft = viewportRect.left;
+            // keep the top end of an overly tall focused cell in view when moving left and right
+            // (without this OR check, the body seesaws to fit the top end, then the bottom end, etc.)
+            if (focusedCellBounds.top < viewportBounds.top || isFocusedCellTallerThanViewport) {
+                // scroll up (minus one pixel to avoid clipping the focused-cell border)
+                nextScrollTop = Math.max(0, focusedCellBounds.top - 1);
+            }
+            else if (focusedCellBounds.bottom > viewportBounds.bottom) {
+                // scroll down
+                var scrollDelta = focusedCellBounds.bottom - viewportBounds.bottom;
+                nextScrollTop = viewportBounds.top + scrollDelta;
+            }
+            // keep the left end of an overly wide focused cell in view when moving up and down
+            if (focusedCellBounds.left < viewportBounds.left || isFocusedCellWiderThanViewport) {
+                // scroll left (again minus one additional pixel)
+                nextScrollLeft = Math.max(0, focusedCellBounds.left - 1);
+            }
+            else if (focusedCellBounds.right > viewportBounds.right) {
+                // scroll right
+                var scrollDelta = focusedCellBounds.right - viewportBounds.right;
+                nextScrollLeft = viewportBounds.left + scrollDelta;
+            }
+            _this.syncViewportPosition(nextScrollLeft, nextScrollTop);
+        };
+        _this.handleFocus = function (focusedCell) {
+            if (!_this.props.enableFocus) {
+                // don't set focus state if focus is not allowed
+                return;
+            }
+            // only set focused cell state if not specified in props
+            if (_this.props.focusedCell == null) {
+                _this.setState({ focusedCell: focusedCell });
+            }
+            core_1.Utils.safeInvoke(_this.props.onFocus, focusedCell);
+        };
+        _this.handleSelection = function (selectedRegions) {
+            // only set selectedRegions state if not specified in props
+            if (_this.props.selectedRegions == null) {
+                _this.setState({ selectedRegions: selectedRegions });
+            }
+            var onSelection = _this.props.onSelection;
+            if (onSelection != null) {
+                onSelection(selectedRegions);
+            }
+        };
+        _this.handleColumnsReordering = function (oldIndex, newIndex, length) {
+            var guideIndex = utils_1.Utils.reorderedIndexToGuideIndex(oldIndex, newIndex, length);
+            var leftOffset = _this.grid.getCumulativeWidthBefore(guideIndex);
+            _this.setState({ isReordering: true, verticalGuides: [leftOffset] });
+        };
+        _this.handleColumnsReordered = function (oldIndex, newIndex, length) {
+            _this.setState({ isReordering: false, verticalGuides: undefined });
+            core_1.Utils.safeInvoke(_this.props.onColumnsReordered, oldIndex, newIndex, length);
+        };
+        _this.handleRowsReordering = function (oldIndex, newIndex, length) {
+            var guideIndex = utils_1.Utils.reorderedIndexToGuideIndex(oldIndex, newIndex, length);
+            var topOffset = _this.grid.getCumulativeHeightBefore(guideIndex);
+            _this.setState({ isReordering: true, horizontalGuides: [topOffset] });
+        };
+        _this.handleRowsReordered = function (oldIndex, newIndex, length) {
+            _this.setState({ isReordering: false, horizontalGuides: undefined });
+            core_1.Utils.safeInvoke(_this.props.onRowsReordered, oldIndex, newIndex, length);
+        };
+        _this.handleLayoutLock = function (isLayoutLocked) {
+            if (isLayoutLocked === void 0) { isLayoutLocked = false; }
+            _this.setState({ isLayoutLocked: isLayoutLocked });
+        };
+        _this.hasLoadingOption = function (loadingOptions, loadingOption) {
+            if (loadingOptions == null) {
+                return undefined;
+            }
+            return loadingOptions.indexOf(loadingOption) >= 0;
+        };
+        _this.updateViewportRect = function (nextViewportRect) {
+            _this.setState({ viewportRect: nextViewportRect });
+            _this.invokeOnVisibleCellsChangeCallback(nextViewportRect);
+        };
+        _this.setBodyRef = function (ref) { return _this.bodyElement = ref; };
+        _this.setMenuRef = function (ref) { return _this.menuElement = ref; };
+        _this.setRootTableRef = function (ref) { return _this.rootTableElement = ref; };
+        _this.setRowHeaderRef = function (ref) { return _this.rowHeaderElement = ref; };
+        var _a = _this.props, defaultRowHeight = _a.defaultRowHeight, defaultColumnWidth = _a.defaultColumnWidth, numRows = _a.numRows, columnWidths = _a.columnWidths, rowHeights = _a.rowHeights, children = _a.children;
+        _this.childrenArray = React.Children.toArray(children);
+        _this.columnIdToIndex = Table_1.createColumnIdIndex(_this.childrenArray);
+        // Create height/width arrays using the lengths from props and
+        // children, the default values from props, and finally any sparse
+        // arrays passed into props.
+        var newColumnWidths = _this.childrenArray.map(function () { return defaultColumnWidth; });
+        newColumnWidths = utils_1.Utils.assignSparseValues(newColumnWidths, columnWidths);
+        var newRowHeights = utils_1.Utils.times(numRows, function () { return defaultRowHeight; });
+        newRowHeights = utils_1.Utils.assignSparseValues(newRowHeights, rowHeights);
+        var selectedRegions = (props.selectedRegions == null) ? [] : props.selectedRegions;
+        var focusedCell;
+        if (props.enableFocus) {
+            if (props.focusedCell != null) {
+                focusedCell = props.focusedCell;
+            }
+            else {
+                focusedCell = { col: 0, row: 0, focusSelectionIndex: 0 };
+            }
+        }
+        _this.state = {
+            columnWidths: newColumnWidths,
+            focusedCell: focusedCell,
+            isLayoutLocked: false,
+            isReordering: false,
+            rowHeights: newRowHeights,
+            selectedRegions: selectedRegions,
+        };
+        return _this;
+    }
+    Table.createColumnIdIndex = function (children) {
+        var columnIdToIndex = {};
+        for (var i = 0; i < children.length; i++) {
+            var key = children[i].props.id;
+            if (key != null) {
+                columnIdToIndex[String(key)] = i;
+            }
+        }
+        return columnIdToIndex;
+    };
+    Table.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        var propKeysBlacklist = { exclude: Table_1.SHALLOW_COMPARE_PROP_KEYS_BLACKLIST };
+        var stateKeysBlacklist = { exclude: Table_1.SHALLOW_COMPARE_STATE_KEYS_BLACKLIST };
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, propKeysBlacklist)
+            || !utils_1.Utils.shallowCompareKeys(this.state, nextState, stateKeysBlacklist)
+            || !utils_1.Utils.deepCompareKeys(this.props, nextProps, ["selectedRegions"])
+            || !utils_1.Utils.deepCompareKeys(this.state, nextState, ["selectedRegions"]);
+    };
+    Table.prototype.componentWillReceiveProps = function (nextProps) {
+        var _this = this;
+        var defaultRowHeight = nextProps.defaultRowHeight, defaultColumnWidth = nextProps.defaultColumnWidth, columnWidths = nextProps.columnWidths, enableFocus = nextProps.enableFocus, focusedCell = nextProps.focusedCell, rowHeights = nextProps.rowHeights, children = nextProps.children, numRows = nextProps.numRows, selectedRegions = nextProps.selectedRegions, selectionModes = nextProps.selectionModes;
+        var newChildArray = React.Children.toArray(children);
+        // Try to maintain widths of columns by looking up the width of the
+        // column that had the same `ID` prop. If none is found, use the
+        // previous width at the same index.
+        var previousColumnWidths = newChildArray.map(function (child, index) {
+            var mappedIndex = _this.columnIdToIndex[child.props.id];
+            return _this.state.columnWidths[mappedIndex != null ? mappedIndex : index];
+        });
+        // Make sure the width/height arrays have the correct length, but keep
+        // as many existing widths/heights when possible. Also, apply the
+        // sparse width/heights from props.
+        var newColumnWidths = this.state.columnWidths;
+        newColumnWidths = utils_1.Utils.arrayOfLength(newColumnWidths, newChildArray.length, defaultColumnWidth);
+        newColumnWidths = utils_1.Utils.assignSparseValues(newColumnWidths, previousColumnWidths);
+        newColumnWidths = utils_1.Utils.assignSparseValues(newColumnWidths, columnWidths);
+        var newRowHeights = this.state.rowHeights;
+        newRowHeights = utils_1.Utils.arrayOfLength(newRowHeights, numRows, defaultRowHeight);
+        newRowHeights = utils_1.Utils.assignSparseValues(newRowHeights, rowHeights);
+        var numCols = newColumnWidths.length;
+        var newSelectedRegions = selectedRegions;
+        if (selectedRegions == null) {
+            // if we're in uncontrolled mode, filter out all selected regions that don't
+            // fit in the current new table dimensions
+            newSelectedRegions = this.state.selectedRegions.filter(function (region) {
+                var regionCardinality = regions_2.Regions.getRegionCardinality(region);
+                var isSelectionModeEnabled = selectionModes.indexOf(regionCardinality) >= 0;
+                return isSelectionModeEnabled && regions_2.Regions.isRegionValidForTable(region, numRows, numCols);
+            });
+        }
+        var newFocusedCellCoordinates = (focusedCell == null)
+            ? this.state.focusedCell
+            : focusedCell;
+        this.childrenArray = newChildArray;
+        this.columnIdToIndex = Table_1.createColumnIdIndex(this.childrenArray);
+        this.invalidateGrid();
+        this.setState({
+            columnWidths: newColumnWidths,
+            focusedCell: enableFocus ? newFocusedCellCoordinates : undefined,
+            rowHeights: newRowHeights,
+            selectedRegions: newSelectedRegions,
+        });
+    };
+    Table.prototype.render = function () {
+        var _a = this.props, className = _a.className, isRowHeaderShown = _a.isRowHeaderShown;
+        this.validateGrid();
+        var classes = classNames(Classes.TABLE_CONTAINER, (_b = {},
+            _b[Classes.TABLE_REORDERING] = this.state.isReordering,
+            _b), className);
+        return (React.createElement("div", { className: classes, ref: this.setRootTableRef, onScroll: this.handleRootScroll },
+            React.createElement("div", { className: Classes.TABLE_TOP_CONTAINER },
+                isRowHeaderShown ? this.renderMenu() : undefined,
+                this.renderColumnHeader()),
+            React.createElement("div", { className: Classes.TABLE_BOTTOM_CONTAINER },
+                isRowHeaderShown ? this.renderRowHeader() : undefined,
+                this.renderBody()),
+            React.createElement("div", { className: classNames(Classes.TABLE_OVERLAY_LAYER, "bp-table-reordering-cursor-overlay") })));
+        var _b;
+    };
+    Table.prototype.renderHotkeys = function () {
+        var hotkeys = [this.maybeRenderCopyHotkey(), this.maybeRenderSelectAllHotkey(), this.maybeRenderFocusHotkeys()];
+        return (React.createElement(core_2.Hotkeys, null, hotkeys.filter(function (element) { return element !== undefined; })));
+    };
+    /**
+     * Resize all rows in the table to the height of the tallest visible cell in the specified columns.
+     * If no indices are provided, default to using the tallest visible cell from all columns in view.
+     */
+    Table.prototype.resizeRowsByTallestCell = function (columnIndices) {
+        var _this = this;
+        var tallest = 0;
+        if (columnIndices == null) {
+            // Consider all columns currently in viewport
+            var viewportColumnIndices = this.grid.getColumnIndicesInRect(this.state.viewportRect);
+            for (var col = viewportColumnIndices.columnIndexStart; col <= viewportColumnIndices.columnIndexEnd; col++) {
+                tallest = Math.max(tallest, this.locator.getTallestVisibleCellInColumn(col));
+            }
+        }
+        else {
+            var columnIndicesArray = Array.isArray(columnIndices) ? columnIndices : [columnIndices];
+            var tallestByColumns = columnIndicesArray.map(function (col) { return _this.locator.getTallestVisibleCellInColumn(col); });
+            tallest = Math.max.apply(Math, tallestByColumns);
+        }
+        var rowHeights = Array(this.state.rowHeights.length).fill(tallest);
+        this.invalidateGrid();
+        this.setState({ rowHeights: rowHeights });
+    };
+    /**
+     * When the component mounts, the HTML Element refs will be available, so
+     * we constructor the Locator, which queries the elements' bounding
+     * ClientRects.
+     */
+    Table.prototype.componentDidMount = function () {
+        var _this = this;
+        this.validateGrid();
+        this.locator = new locator_1.Locator(this.rootTableElement, this.bodyElement, this.grid);
+        this.updateViewportRect(this.locator.getViewportRect());
+        this.resizeSensorDetach = resizeSensor_1.ResizeSensor.attach(this.rootTableElement, function () {
+            if (!_this.state.isLayoutLocked) {
+                _this.updateViewportRect(_this.locator.getViewportRect());
+            }
+        });
+        this.syncMenuWidth();
+    };
+    Table.prototype.componentWillUnmount = function () {
+        if (this.resizeSensorDetach != null) {
+            this.resizeSensorDetach();
+            delete this.resizeSensorDetach;
+        }
+    };
+    Table.prototype.componentDidUpdate = function () {
+        if (this.locator != null) {
+            this.validateGrid();
+            this.locator.setGrid(this.grid);
+        }
+        this.syncMenuWidth();
+        this.maybeScrollTableIntoView();
+    };
+    Table.prototype.validateProps = function (props) {
+        var WARNING_MESSAGE = "Children of Table must be Columns";
+        React.Children.forEach(props.children, function (child) {
+            // save as a variable so that union type narrowing works
+            var cType = child.type;
+            if (typeof cType === "string") {
+                console.warn(WARNING_MESSAGE);
+            }
+            else {
+                var isColumn = cType.prototype === column_1.Column.prototype || column_1.Column.prototype.isPrototypeOf(cType);
+                if (!isColumn) {
+                    console.warn(WARNING_MESSAGE);
+                }
+            }
+        });
+    };
+    Table.prototype.moveFocusCell = function (primaryAxis, secondaryAxis, isUpOrLeft, newFocusedCell, focusCellRegion) {
+        var grid = this.grid;
+        var selectedRegions = this.state.selectedRegions;
+        var primaryAxisPlural = primaryAxis === "row" ? "rows" : "cols";
+        var secondaryAxisPlural = secondaryAxis === "row" ? "rows" : "cols";
+        var movementDirection = isUpOrLeft ? -1 : +1;
+        var regionIntervalIndex = isUpOrLeft ? 1 : 0;
+        // try moving the cell in the direction along the primary axis
+        newFocusedCell[primaryAxis] += movementDirection;
+        var isPrimaryIndexOutOfBounds = isUpOrLeft
+            ? newFocusedCell[primaryAxis] < focusCellRegion[primaryAxisPlural][0]
+            : newFocusedCell[primaryAxis] > focusCellRegion[primaryAxisPlural][1];
+        if (isPrimaryIndexOutOfBounds) {
+            // if we moved outside the bounds of selection region,
+            // move to the start (or end) of the primary axis, and move one along the secondary
+            newFocusedCell[primaryAxis] = focusCellRegion[primaryAxisPlural][regionIntervalIndex];
+            newFocusedCell[secondaryAxis] += movementDirection;
+            var isSecondaryIndexOutOfBounds = isUpOrLeft
+                ? newFocusedCell[secondaryAxis] < focusCellRegion[secondaryAxisPlural][0]
+                : newFocusedCell[secondaryAxis] > focusCellRegion[secondaryAxisPlural][1];
+            if (isSecondaryIndexOutOfBounds) {
+                // if moving along the secondary also moves us outside
+                // go to the start (or end) of the next (or previous region)
+                // (note that if there's only one region you'll be moving to the opposite corner, which is fine)
+                var newFocusCellSelectionIndex = newFocusedCell.focusSelectionIndex + movementDirection;
+                // newFocusCellSelectionIndex should be one more (or less), unless we need to wrap around
+                if (isUpOrLeft
+                    ? newFocusCellSelectionIndex < 0
+                    : newFocusCellSelectionIndex >= selectedRegions.length) {
+                    newFocusCellSelectionIndex = isUpOrLeft
+                        ? selectedRegions.length - 1
+                        : 0;
+                }
+                var newFocusCellRegion = regions_2.Regions.getCellRegionFromRegion(selectedRegions[newFocusCellSelectionIndex], grid.numRows, grid.numCols);
+                newFocusedCell = {
+                    col: newFocusCellRegion.cols[regionIntervalIndex],
+                    focusSelectionIndex: newFocusCellSelectionIndex,
+                    row: newFocusCellRegion.rows[regionIntervalIndex],
+                };
+            }
+        }
+        return newFocusedCell;
+    };
+    Table.prototype.renderMenu = function () {
+        var classes = classNames(Classes.TABLE_MENU, (_a = {},
+            _a[Classes.TABLE_SELECTION_ENABLED] = this.isSelectionModeEnabled(regions_2.RegionCardinality.FULL_TABLE),
+            _a));
+        return (React.createElement("div", { className: classes, ref: this.setMenuRef, onClick: this.selectAll }, this.maybeRenderRegions(this.styleMenuRegion)));
+        var _a;
+    };
+    Table.prototype.syncMenuWidth = function () {
+        var _a = this, menuElement = _a.menuElement, rowHeaderElement = _a.rowHeaderElement;
+        if (menuElement != null && rowHeaderElement != null) {
+            var width = rowHeaderElement.getBoundingClientRect().width;
+            menuElement.style.width = width + "px";
+        }
+    };
+    Table.prototype.maybeScrollTableIntoView = function () {
+        var viewportRect = this.state.viewportRect;
+        var tableBottom = this.grid.getCumulativeHeightAt(this.grid.numRows - 1);
+        var tableRight = this.grid.getCumulativeWidthAt(this.grid.numCols - 1);
+        var nextScrollTop = (tableBottom < viewportRect.top + viewportRect.height)
+            ? Math.max(0, tableBottom - viewportRect.height)
+            : viewportRect.top;
+        var nextScrollLeft = (tableRight < viewportRect.left + viewportRect.width)
+            ? Math.max(0, tableRight - viewportRect.width)
+            : viewportRect.left;
+        this.syncViewportPosition(nextScrollLeft, nextScrollTop);
+    };
+    Table.prototype.getColumnProps = function (columnIndex) {
+        var column = this.childrenArray[columnIndex];
+        return column.props;
+    };
+    Table.prototype.renderColumnHeader = function () {
+        var _a = this, grid = _a.grid, locator = _a.locator;
+        var _b = this.state, selectedRegions = _b.selectedRegions, viewportRect = _b.viewportRect;
+        var _c = this.props, allowMultipleSelection = _c.allowMultipleSelection, fillBodyWithGhostCells = _c.fillBodyWithGhostCells, isColumnReorderable = _c.isColumnReorderable, isColumnResizable = _c.isColumnResizable, loadingOptions = _c.loadingOptions, maxColumnWidth = _c.maxColumnWidth, minColumnWidth = _c.minColumnWidth, selectedRegionTransform = _c.selectedRegionTransform;
+        var classes = classNames(Classes.TABLE_COLUMN_HEADERS, (_d = {},
+            _d[Classes.TABLE_SELECTION_ENABLED] = this.isSelectionModeEnabled(regions_2.RegionCardinality.FULL_COLUMNS),
+            _d));
+        var columnIndices = grid.getColumnIndicesInRect(viewportRect, fillBodyWithGhostCells);
+        return (React.createElement("div", { className: classes },
+            React.createElement(columnHeader_1.ColumnHeader, tslib_1.__assign({ allowMultipleSelection: allowMultipleSelection, cellRenderer: this.columnHeaderCellRenderer, grid: grid, isReorderable: isColumnReorderable, isResizable: isColumnResizable, loading: this.hasLoadingOption(loadingOptions, regions_2.TableLoadingOption.COLUMN_HEADERS), locator: locator, maxColumnWidth: maxColumnWidth, minColumnWidth: minColumnWidth, onColumnWidthChanged: this.handleColumnWidthChanged, onFocus: this.handleFocus, onLayoutLock: this.handleLayoutLock, onReordered: this.handleColumnsReordered, onReordering: this.handleColumnsReordering, onResizeGuide: this.handleColumnResizeGuide, onSelection: this.getEnabledSelectionHandler(regions_2.RegionCardinality.FULL_COLUMNS), selectedRegions: selectedRegions, selectedRegionTransform: selectedRegionTransform, viewportRect: viewportRect }, columnIndices), this.props.children),
+            this.maybeRenderRegions(this.styleColumnHeaderRegion)));
+        var _d;
+    };
+    Table.prototype.renderRowHeader = function () {
+        var _a = this, grid = _a.grid, locator = _a.locator;
+        var _b = this.state, selectedRegions = _b.selectedRegions, viewportRect = _b.viewportRect;
+        var _c = this.props, allowMultipleSelection = _c.allowMultipleSelection, fillBodyWithGhostCells = _c.fillBodyWithGhostCells, isRowReorderable = _c.isRowReorderable, isRowResizable = _c.isRowResizable, loadingOptions = _c.loadingOptions, maxRowHeight = _c.maxRowHeight, minRowHeight = _c.minRowHeight, renderRowHeader = _c.renderRowHeader, selectedRegionTransform = _c.selectedRegionTransform;
+        var classes = classNames(Classes.TABLE_ROW_HEADERS, (_d = {},
+            _d[Classes.TABLE_SELECTION_ENABLED] = this.isSelectionModeEnabled(regions_2.RegionCardinality.FULL_ROWS),
+            _d));
+        var rowIndices = grid.getRowIndicesInRect(viewportRect, fillBodyWithGhostCells);
+        return (React.createElement("div", { className: classes, ref: this.setRowHeaderRef },
+            React.createElement(rowHeader_1.RowHeader, tslib_1.__assign({ allowMultipleSelection: allowMultipleSelection, grid: grid, locator: locator, isReorderable: isRowReorderable, isResizable: isRowResizable, loading: this.hasLoadingOption(loadingOptions, regions_2.TableLoadingOption.ROW_HEADERS), maxRowHeight: maxRowHeight, minRowHeight: minRowHeight, onFocus: this.handleFocus, onLayoutLock: this.handleLayoutLock, onResizeGuide: this.handleRowResizeGuide, onReordered: this.handleRowsReordered, onReordering: this.handleRowsReordering, onRowHeightChanged: this.handleRowHeightChanged, onSelection: this.getEnabledSelectionHandler(regions_2.RegionCardinality.FULL_ROWS), renderRowHeader: renderRowHeader, selectedRegions: selectedRegions, selectedRegionTransform: selectedRegionTransform, viewportRect: viewportRect }, rowIndices)),
+            this.maybeRenderRegions(this.styleRowHeaderRegion)));
+        var _d;
+    };
+    Table.prototype.renderBody = function () {
+        var _a = this, grid = _a.grid, locator = _a.locator;
+        var _b = this.props, allowMultipleSelection = _b.allowMultipleSelection, fillBodyWithGhostCells = _b.fillBodyWithGhostCells, loadingOptions = _b.loadingOptions, renderBodyContextMenu = _b.renderBodyContextMenu, selectedRegionTransform = _b.selectedRegionTransform;
+        var _c = this.state, selectedRegions = _c.selectedRegions, viewportRect = _c.viewportRect, verticalGuides = _c.verticalGuides, horizontalGuides = _c.horizontalGuides;
+        var style = grid.getRect().sizeStyle();
+        var rowIndices = grid.getRowIndicesInRect(viewportRect, fillBodyWithGhostCells);
+        var columnIndices = grid.getColumnIndicesInRect(viewportRect, fillBodyWithGhostCells);
+        var noVerticalScroll = fillBodyWithGhostCells &&
+            grid.isGhostIndex(rowIndices.rowIndexEnd, 0) &&
+            viewportRect != null && viewportRect.top === 0 ||
+            this.hasLoadingOption(loadingOptions, regions_2.TableLoadingOption.ROW_HEADERS);
+        var noHorizontalScroll = fillBodyWithGhostCells &&
+            grid.isGhostIndex(0, columnIndices.columnIndexEnd) &&
+            viewportRect != null && viewportRect.left === 0 ||
+            this.hasLoadingOption(loadingOptions, regions_2.TableLoadingOption.COLUMN_HEADERS);
+        // disable scroll for ghost cells
+        var classes = classNames(Classes.TABLE_BODY, (_d = {},
+            _d[Classes.TABLE_NO_HORIZONTAL_SCROLL] = noHorizontalScroll,
+            _d[Classes.TABLE_NO_VERTICAL_SCROLL] = noVerticalScroll,
+            _d[Classes.TABLE_SELECTION_ENABLED] = this.isSelectionModeEnabled(regions_2.RegionCardinality.CELLS),
+            _d));
+        return (React.createElement("div", { className: classes, onScroll: this.handleBodyScroll, ref: this.setBodyRef },
+            React.createElement("div", { className: Classes.TABLE_BODY_SCROLL_CLIENT, style: style },
+                React.createElement(tableBody_1.TableBody, tslib_1.__assign({ allowMultipleSelection: allowMultipleSelection, cellRenderer: this.bodyCellRenderer, grid: grid, loading: this.hasLoadingOption(loadingOptions, regions_2.TableLoadingOption.CELLS), locator: locator, onFocus: this.handleFocus, onSelection: this.getEnabledSelectionHandler(regions_2.RegionCardinality.CELLS), renderBodyContextMenu: renderBodyContextMenu, selectedRegions: selectedRegions, selectedRegionTransform: selectedRegionTransform, viewportRect: viewportRect }, rowIndices, columnIndices)),
+                this.maybeRenderRegions(this.styleBodyRegion),
+                React.createElement(guides_1.GuideLayer, { className: Classes.TABLE_RESIZE_GUIDES, verticalGuides: verticalGuides, horizontalGuides: horizontalGuides }))));
+        var _d;
+    };
+    Table.prototype.isGuidesShowing = function () {
+        return this.state.verticalGuides != null || this.state.horizontalGuides != null;
+    };
+    Table.prototype.isSelectionModeEnabled = function (selectionMode) {
+        return this.props.selectionModes.indexOf(selectionMode) >= 0;
+    };
+    Table.prototype.getEnabledSelectionHandler = function (selectionMode) {
+        if (!this.isSelectionModeEnabled(selectionMode)) {
+            // If the selection mode isn't enabled, return a callback that
+            // will clear the selection. For example, if row selection is
+            // disabled, clicking on the row header will clear the table's
+            // selection. If all selection modes are enabled, clicking on the
+            // same region twice will clear the selection.
+            return this.clearSelection;
+        }
+        else {
+            return this.handleSelection;
+        }
+    };
+    Table.prototype.invalidateGrid = function () {
+        this.grid = null;
+    };
+    Table.prototype.validateGrid = function () {
+        if (this.grid == null) {
+            var _a = this.props, defaultRowHeight = _a.defaultRowHeight, defaultColumnWidth = _a.defaultColumnWidth;
+            var _b = this.state, rowHeights = _b.rowHeights, columnWidths = _b.columnWidths;
+            this.grid = new grid_1.Grid(rowHeights, columnWidths, grid_1.Grid.DEFAULT_BLEED, defaultRowHeight, defaultColumnWidth);
+            this.invokeOnVisibleCellsChangeCallback(this.state.viewportRect);
+        }
+    };
+    /**
+     * Renders a `RegionLayer`, applying styles to the regions using the
+     * supplied `IRegionStyler`. `RegionLayer` is a `PureRender` component, so
+     * the `IRegionStyler` should be a new instance on every render if we
+     * intend to redraw the region layer.
+     */
+    Table.prototype.maybeRenderRegions = function (getRegionStyle) {
+        if (this.isGuidesShowing() && !this.state.isReordering) {
+            // we want to show guides *and* the selection styles when reordering rows or columns
+            return undefined;
+        }
+        var regionGroups = regions_2.Regions.joinStyledRegionGroups(this.state.selectedRegions, this.props.styledRegionGroups, this.state.focusedCell);
+        return regionGroups.map(function (regionGroup, index) {
+            var regionStyles = regionGroup.regions.map(getRegionStyle);
+            return (React.createElement(regions_1.RegionLayer, { className: classNames(regionGroup.className), key: index, regions: regionGroup.regions, regionStyles: regionStyles }));
+        });
+    };
+    Table.prototype.maybeRenderCopyHotkey = function () {
+        var getCellClipboardData = this.props.getCellClipboardData;
+        if (getCellClipboardData != null) {
+            return (React.createElement(core_2.Hotkey, { key: "copy-hotkey", label: "Copy selected table cells", group: "Table", combo: "mod+c", onKeyDown: this.handleCopy }));
+        }
+        else {
+            return undefined;
+        }
+    };
+    Table.prototype.maybeRenderFocusHotkeys = function () {
+        var enableFocus = this.props.enableFocus;
+        if (enableFocus != null) {
+            return [
+                React.createElement(core_2.Hotkey, { key: "move left", label: "Move focus cell left", group: "Table", combo: "left", onKeyDown: this.handleFocusMoveLeft }),
+                React.createElement(core_2.Hotkey, { key: "move right", label: "Move focus cell right", group: "Table", combo: "right", onKeyDown: this.handleFocusMoveRight }),
+                React.createElement(core_2.Hotkey, { key: "move up", label: "Move focus cell up", group: "Table", combo: "up", onKeyDown: this.handleFocusMoveUp }),
+                React.createElement(core_2.Hotkey, { key: "move down", label: "Move focus cell down", group: "Table", combo: "down", onKeyDown: this.handleFocusMoveDown }),
+                React.createElement(core_2.Hotkey, { key: "move tab", label: "Move focus cell tab", group: "Table", combo: "tab", onKeyDown: this.handleFocusMoveRightInternal }),
+                React.createElement(core_2.Hotkey, { key: "move shift-tab", label: "Move focus cell shift tab", group: "Table", combo: "shift+tab", onKeyDown: this.handleFocusMoveLeftInternal }),
+                React.createElement(core_2.Hotkey, { key: "move enter", label: "Move focus cell enter", group: "Table", combo: "enter", onKeyDown: this.handleFocusMoveDownInternal }),
+                React.createElement(core_2.Hotkey, { key: "move shift-enter", label: "Move focus cell shift enter", group: "Table", combo: "shift+enter", onKeyDown: this.handleFocusMoveUpInternal }),
+            ];
+        }
+        else {
+            return [];
+        }
+    };
+    Table.prototype.maybeRenderSelectAllHotkey = function () {
+        if (this.isSelectionModeEnabled(regions_2.RegionCardinality.FULL_TABLE)) {
+            return (React.createElement(core_2.Hotkey, { key: "select-all-hotkey", label: "Select all", group: "Table", combo: "mod+a", onKeyDown: this.handleSelectAllHotkey }));
+        }
+        else {
+            return undefined;
+        }
+    };
+    Table.prototype.syncViewportPosition = function (nextScrollLeft, nextScrollTop) {
+        var viewportRect = this.state.viewportRect;
+        var didScrollTopChange = nextScrollTop !== viewportRect.top;
+        var didScrollLeftChange = nextScrollLeft !== viewportRect.left;
+        if (didScrollTopChange || didScrollLeftChange) {
+            // we need to modify the body element explicitly for the viewport to shift
+            if (didScrollTopChange) {
+                this.bodyElement.scrollTop = nextScrollTop;
+            }
+            if (didScrollLeftChange) {
+                this.bodyElement.scrollLeft = nextScrollLeft;
+            }
+            var nextViewportRect = new rect_1.Rect(nextScrollLeft, nextScrollTop, viewportRect.width, viewportRect.height);
+            this.updateViewportRect(nextViewportRect);
+        }
+    };
+    Table.prototype.invokeOnVisibleCellsChangeCallback = function (viewportRect) {
+        var columnIndices = this.grid.getColumnIndicesInRect(viewportRect);
+        var rowIndices = this.grid.getRowIndicesInRect(viewportRect);
+        core_1.Utils.safeInvoke(this.props.onVisibleCellsChange, rowIndices, columnIndices);
+    };
+    return Table;
+}(core_1.AbstractComponent));
+Table.defaultProps = {
+    allowMultipleSelection: true,
+    defaultColumnWidth: 150,
+    defaultRowHeight: 20,
+    enableFocus: false,
+    fillBodyWithGhostCells: false,
+    isRowHeaderShown: true,
+    loadingOptions: [],
+    minColumnWidth: 50,
+    minRowHeight: 20,
+    numRows: 0,
+    renderRowHeader: rowHeader_1.renderDefaultRowHeader,
+    selectionModes: regions_2.SelectionModes.ALL,
+};
+// these blacklists are identical, but we still need two definitions due to the different typings
+Table.SHALLOW_COMPARE_PROP_KEYS_BLACKLIST = [
+    "selectedRegions",
+];
+Table.SHALLOW_COMPARE_STATE_KEYS_BLACKLIST = [
+    "selectedRegions",
+];
+Table = Table_1 = tslib_1.__decorate([
+    core_2.HotkeysTarget
+], Table);
+exports.Table = Table;
+var Table_1;
+
+
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var index_1 = __webpack_require__(36);
+var resizeHandle_1 = __webpack_require__(26);
+var regions_1 = __webpack_require__(11);
+var columnHeaderCell_1 = __webpack_require__(39);
+var header_1 = __webpack_require__(71);
+var ColumnHeader = (function (_super) {
+    tslib_1.__extends(ColumnHeader, _super);
+    function ColumnHeader() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.wrapCells = function (cells) {
+            var _a = _this.props, grid = _a.grid, viewportRect = _a.viewportRect, columnIndexStart = _a.columnIndexStart;
+            // always set width so that the layout can push out the element unless it overflows.
+            var style = {
+                width: grid.getRect().width + "px",
+            };
+            // use CSS translation to offset the cells
+            if (viewportRect != null) {
+                style.transform = "translate3d(" + (grid.getColumnRect(columnIndexStart).left - viewportRect.left) + "px, 0, 0)";
+            }
+            var classes = classNames(Classes.TABLE_THEAD, Classes.TABLE_COLUMN_HEADER_TR, (_b = {},
+                _b[Classes.TABLE_DRAGGABLE] = (_this.props.onSelection != null),
+                _b));
+            return (React.createElement("div", { style: style, className: classes }, cells));
+            var _b;
+        };
+        _this.convertPointToColumn = function (clientXOrY, useMidpoint) {
+            var locator = _this.props.locator;
+            return locator != null ? locator.convertPointToColumn(clientXOrY, useMidpoint) : null;
+        };
+        _this.getCellExtremaClasses = function (index, endIndex) {
+            return _this.props.grid.getExtremaClasses(0, index, 1, endIndex);
+        };
+        _this.getColumnWidth = function (index) {
+            return _this.props.grid.getColumnRect(index).width;
+        };
+        _this.getDragCoordinate = function (clientCoords) {
+            return clientCoords[0]; // x-coordinate
+        };
+        _this.getMouseCoordinate = function (event) {
+            return event.clientX;
+        };
+        _this.handleResizeEnd = function (index, size) {
+            _this.props.onResizeGuide(null);
+            _this.props.onColumnWidthChanged(index, size);
+        };
+        _this.handleResizeDoubleClick = function (index) {
+            var _a = _this.props, minColumnWidth = _a.minColumnWidth, maxColumnWidth = _a.maxColumnWidth;
+            var width = _this.props.locator.getWidestVisibleCellInColumn(index);
+            var clampedWidth = index_1.Utils.clamp(width, minColumnWidth, maxColumnWidth);
+            _this.props.onResizeGuide(null);
+            _this.props.onColumnWidthChanged(index, clampedWidth);
+        };
+        _this.handleSizeChanged = function (index, size) {
+            var rect = _this.props.grid.getColumnRect(index);
+            _this.props.onResizeGuide([rect.left + size]);
+        };
+        _this.isCellSelected = function (index) {
+            return regions_1.Regions.hasFullColumn(_this.props.selectedRegions, index);
+        };
+        _this.isGhostIndex = function (index) {
+            return _this.props.grid.isGhostIndex(-1, index);
+        };
+        _this.renderGhostCell = function (index, extremaClasses) {
+            var _a = _this.props, grid = _a.grid, loading = _a.loading;
+            var rect = grid.getGhostCellRect(0, index);
+            var style = {
+                flexBasis: rect.width + "px",
+                width: rect.width + "px",
+            };
+            return (React.createElement(columnHeaderCell_1.ColumnHeaderCell, { className: classNames(extremaClasses), index: index, key: Classes.columnIndexClass(index), loading: loading, style: style }));
+        };
+        _this.toRegion = function (index1, index2) {
+            return regions_1.Regions.column(index1, index2);
+        };
+        _this.isSelectedRegionRelevant = function (selectedRegion) {
+            var regionCardinality = regions_1.Regions.getRegionCardinality(selectedRegion);
+            return regionCardinality === regions_1.RegionCardinality.FULL_COLUMNS
+                || regionCardinality === regions_1.RegionCardinality.FULL_TABLE;
+        };
+        return _this;
+    }
+    ColumnHeader.prototype.shouldComponentUpdate = function (nextProps) {
+        return header_1.shouldHeaderComponentUpdate(this.props, nextProps, this.isSelectedRegionRelevant);
+    };
+    ColumnHeader.prototype.render = function () {
+        var _a = this.props, 
+        // from IColumnHeaderProps
+        cellRenderer = _a.cellRenderer, onColumnWidthChanged = _a.onColumnWidthChanged, 
+        // from IColumnWidths
+        minColumnWidth = _a.minColumnWidth, maxColumnWidth = _a.maxColumnWidth, defaultColumnWidth = _a.defaultColumnWidth, 
+        // from IColumnIndices
+        columnIndexStart = _a.columnIndexStart, columnIndexEnd = _a.columnIndexEnd, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["cellRenderer", "onColumnWidthChanged", "minColumnWidth", "maxColumnWidth", "defaultColumnWidth", "columnIndexStart", "columnIndexEnd"]);
+        return (React.createElement(header_1.Header, tslib_1.__assign({ convertPointToIndex: this.convertPointToColumn, endIndex: this.props.columnIndexEnd, fullRegionCardinality: regions_1.RegionCardinality.FULL_COLUMNS, getCellExtremaClasses: this.getCellExtremaClasses, getCellIndexClass: Classes.columnCellIndexClass, getCellSize: this.getColumnWidth, getDragCoordinate: this.getDragCoordinate, getIndexClass: Classes.columnIndexClass, getMouseCoordinate: this.getMouseCoordinate, handleResizeDoubleClick: this.handleResizeDoubleClick, handleResizeEnd: this.handleResizeEnd, handleSizeChanged: this.handleSizeChanged, headerCellIsReorderablePropName: "isColumnReorderable", headerCellIsSelectedPropName: "isColumnSelected", isCellSelected: this.isCellSelected, isGhostIndex: this.isGhostIndex, maxSize: this.props.maxColumnWidth, minSize: this.props.minColumnWidth, renderGhostCell: this.renderGhostCell, renderHeaderCell: this.props.cellRenderer, resizeOrientation: resizeHandle_1.Orientation.VERTICAL, startIndex: this.props.columnIndexStart, toRegion: this.toRegion, wrapCells: this.wrapCells }, spreadableProps)));
+    };
+    return ColumnHeader;
+}(React.Component));
+ColumnHeader.defaultProps = {
+    isReorderable: false,
+    isResizable: true,
+    loading: false,
+};
+exports.ColumnHeader = ColumnHeader;
+
+
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Event name for `postMessage`
+ */
+var MESSAGE_EVENT_DATA = "blueprint-table-post-message";
+/**
+ * Object that holds state for managing idle callbacks
+ */
+var IDLE_STATE = {
+    callbacks: [],
+    triggered: false,
+};
+var handleIdle = function (event) {
+    if (event.source !== window || event.data !== MESSAGE_EVENT_DATA) {
+        return;
+    }
+    IDLE_STATE.triggered = false;
+    var callback = null;
+    if (IDLE_STATE.callbacks.length > 0) {
+        callback = IDLE_STATE.callbacks.shift();
+    }
+    if (IDLE_STATE.callbacks.length > 0) {
+        triggerIdleFrame();
+    }
+    // finally, invoke the callback. exceptions will be propagated
+    if (callback) {
+        callback();
+    }
+};
+// check for window since we might be in a headless server environment
+if (typeof window !== "undefined") {
+    if (window.addEventListener != null) {
+        window.addEventListener("message", handleIdle, false);
+    }
+}
+var triggerIdleFrame = function () {
+    if (IDLE_STATE.triggered) {
+        return;
+    }
+    IDLE_STATE.triggered = true;
+    /**
+     * This is the magic that will wait for the browser to be "idle" before
+     * invoking the callback.
+     *
+     * First, we use nested calls to `requestAnimationFrame` which will cause
+     * the inner callback to be invoked on the NEXT FRAME.
+     *
+     * Then, we call to `postMessage` to invoke the `handleIdle` method only
+     * once the current stack frame is empty.
+     *
+     * With this approach, the idle callback will be invoked at most once per
+     * frame and only after the stack frame is empty.
+     */
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            postMessage(MESSAGE_EVENT_DATA, "*");
+        });
+    });
+};
+/**
+ * Invokes the provided callback on the next available frame after the stack
+ * frame is empty.
+ *
+ * At most one callback per frame is invoked, and the callback may be delayed
+ * multiple frames until the page is idle.
+ *
+ * TODO: return a token from this method that allows you to cancel the callback
+ * (otherwise the callback list may increase without bound).
+ */
+exports.requestIdleCallback = function (callback) {
+    IDLE_STATE.callbacks.push(callback);
+    triggerIdleFrame();
+};
+
+
+
+/***/ }),
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var utils_1 = __webpack_require__(10);
+var draggable_1 = __webpack_require__(19);
+var regions_1 = __webpack_require__(11);
+var DragReorderable = (function (_super) {
+    tslib_1.__extends(DragReorderable, _super);
+    function DragReorderable() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.handleActivate = function (event) {
+            if (!utils_1.Utils.isLeftClick(event) || _this.props.disabled) {
+                return false;
+            }
+            var region = _this.props.locateClick(event);
+            if (!regions_1.Regions.isValid(region)) {
+                return false;
+            }
+            var cardinality = regions_1.Regions.getRegionCardinality(region);
+            var isColumnHeader = cardinality === regions_1.RegionCardinality.FULL_COLUMNS;
+            var isRowHeader = cardinality === regions_1.RegionCardinality.FULL_ROWS;
+            if (!isColumnHeader && !isRowHeader) {
+                return false;
+            }
+            var selectedRegions = _this.props.selectedRegions;
+            var selectedRegionIndex = regions_1.Regions.findContainingRegion(selectedRegions, region);
+            if (selectedRegionIndex >= 0) {
+                var selectedRegion = selectedRegions[selectedRegionIndex];
+                if (regions_1.Regions.getRegionCardinality(selectedRegion) !== cardinality) {
+                    // ignore FULL_TABLE selections
+                    return false;
+                }
+                // cache for easy access later in the lifecycle
+                var selectedInterval = isRowHeader ? selectedRegion.rows : selectedRegion.cols;
+                _this.selectedRegionStartIndex = selectedInterval[0];
+                // add 1 because the selected interval is inclusive, which simple subtraction doesn't
+                // account for (e.g. in a FULL_COLUMNS range from 3 to 6, 6 - 3 = 3, but the selection
+                // actually includes four columns: 3, 4, 5, and 6)
+                _this.selectedRegionLength = selectedInterval[1] - selectedInterval[0] + 1;
+            }
+            else {
+                // select the new region to avoid complex and unintuitive UX w/r/t the existing selection
+                _this.props.onSelection([region]);
+                var regionRange = isRowHeader ? region.rows : region.cols;
+                _this.selectedRegionStartIndex = regionRange[0];
+                _this.selectedRegionLength = regionRange[1] - regionRange[0] + 1;
+            }
+            return true;
+        };
+        _this.handleDragMove = function (event, coords) {
+            var oldIndex = _this.selectedRegionStartIndex;
+            var guideIndex = _this.props.locateDrag(event, coords);
+            var length = _this.selectedRegionLength;
+            var reorderedIndex = utils_1.Utils.guideIndexToReorderedIndex(oldIndex, guideIndex, length);
+            _this.props.onReordering(oldIndex, reorderedIndex, length);
+        };
+        _this.handleDragEnd = function (event, coords) {
+            var oldIndex = _this.selectedRegionStartIndex;
+            var guideIndex = _this.props.locateDrag(event, coords);
+            var length = _this.selectedRegionLength;
+            var reorderedIndex = utils_1.Utils.guideIndexToReorderedIndex(oldIndex, guideIndex, length);
+            _this.props.onReordered(oldIndex, reorderedIndex, length);
+            var newRegion = _this.props.toRegion(reorderedIndex, reorderedIndex + length - 1);
+            _this.props.onSelection(regions_1.Regions.update(_this.props.selectedRegions, newRegion));
+            // resetting is not strictly required, but it's cleaner
+            _this.selectedRegionStartIndex = undefined;
+            _this.selectedRegionLength = undefined;
+        };
+        return _this;
+    }
+    DragReorderable.prototype.render = function () {
+        var draggableProps = this.getDraggableProps();
+        return (React.createElement(draggable_1.Draggable, tslib_1.__assign({}, draggableProps, { preventDefault: false }), this.props.children));
+    };
+    DragReorderable.prototype.getDraggableProps = function () {
+        return this.props.onReordered == null ? {} : {
+            onActivate: this.handleActivate,
+            onDragEnd: this.handleDragEnd,
+            onDragMove: this.handleDragMove,
+        };
+    };
+    return DragReorderable;
+}(React.Component));
+DragReorderable = tslib_1.__decorate([
+    PureRender
+], DragReorderable);
+exports.DragReorderable = DragReorderable;
+
+
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+var index_1 = __webpack_require__(36);
+var resizeHandle_1 = __webpack_require__(26);
+var Resizable = (function (_super) {
+    tslib_1.__extends(Resizable, _super);
+    function Resizable(props, context) {
+        var _this = _super.call(this, props, context) || this;
+        _this.onResizeMove = function (_offset, delta) {
+            _this.offsetSize(delta);
+            if (_this.props.onSizeChanged != null) {
+                _this.props.onSizeChanged(_this.state.size);
+            }
+        };
+        _this.onResizeEnd = function (_offset) {
+            // reset "unclamped" size on end
+            _this.setState({ unclampedSize: _this.state.size });
+            if (_this.props.onResizeEnd != null) {
+                _this.props.onResizeEnd(_this.state.size);
+            }
+        };
+        var size = props.size;
+        _this.state = {
+            size: size,
+            unclampedSize: size,
+        };
+        return _this;
+    }
+    Resizable.prototype.componentWillReceiveProps = function (nextProps) {
+        var size = nextProps.size;
+        this.setState({
+            size: size,
+            unclampedSize: size,
+        });
+    };
+    Resizable.prototype.render = function () {
+        var child = React.Children.only(this.props.children);
+        var style = tslib_1.__assign({}, child.props.style, this.getStyle());
+        if (this.props.isResizable === false) {
+            return React.cloneElement(child, { style: style });
+        }
+        var resizeHandle = this.renderResizeHandle();
+        return React.cloneElement(child, { style: style, resizeHandle: resizeHandle });
+    };
+    Resizable.prototype.renderResizeHandle = function () {
+        var _a = this.props, onLayoutLock = _a.onLayoutLock, onDoubleClick = _a.onDoubleClick, orientation = _a.orientation;
+        return (React.createElement(resizeHandle_1.ResizeHandle, { key: "resize-handle", onDoubleClick: onDoubleClick, onLayoutLock: onLayoutLock, onResizeEnd: this.onResizeEnd, onResizeMove: this.onResizeMove, orientation: orientation }));
+    };
+    /**
+     * Returns the CSS style to apply to the child element given the state's
+     * size value.
+     */
+    Resizable.prototype.getStyle = function () {
+        if (this.props.orientation === resizeHandle_1.Orientation.VERTICAL) {
+            return {
+                flexBasis: this.state.size + "px",
+                minWidth: "0px",
+                width: this.state.size + "px",
+            };
+        }
+        else {
+            return {
+                flexBasis: this.state.size + "px",
+                height: this.state.size + "px",
+                minHeight: "0px",
+            };
+        }
+    };
+    Resizable.prototype.offsetSize = function (offset) {
+        var unclampedSize = this.state.unclampedSize + offset;
+        this.setState({
+            size: index_1.Utils.clamp(unclampedSize, this.props.minSize, this.props.maxSize),
+            unclampedSize: unclampedSize,
+        });
+    };
+    return Resizable;
+}(React.Component));
+Resizable.defaultProps = {
+    isResizable: true,
+    minSize: 0,
+};
+Resizable = tslib_1.__decorate([
+    PureRender
+], Resizable);
+exports.Resizable = Resizable;
+
+
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var resizeHandle_1 = __webpack_require__(26);
+var regions_1 = __webpack_require__(11);
+var header_1 = __webpack_require__(71);
+var rowHeaderCell_1 = __webpack_require__(70);
+var RowHeader = (function (_super) {
+    tslib_1.__extends(RowHeader, _super);
+    function RowHeader() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.defaultProps = {
+            renderRowHeader: renderDefaultRowHeader,
+        };
+        _this.wrapCells = function (cells) {
+            var _a = _this.props, grid = _a.grid, viewportRect = _a.viewportRect;
+            // always set height so that the layout can push out the element unless it overflows.
+            var style = {
+                height: grid.getRect().height + "px",
+            };
+            // use CSS translation to offset the cells
+            if (viewportRect != null) {
+                var startIndex = _this.getStartIndex();
+                var topOffset = grid.getRowRect(startIndex).top - viewportRect.top;
+                style.transform = "translate3d(0, " + topOffset + "px, 0)";
+            }
+            return (React.createElement("div", { style: style }, cells));
+        };
+        _this.convertPointToRow = function (clientXOrY, useMidpoint) {
+            var locator = _this.props.locator;
+            return locator != null ? locator.convertPointToRow(clientXOrY, useMidpoint) : null;
+        };
+        _this.getCellExtremaClasses = function (index, endIndex) {
+            return _this.props.grid.getExtremaClasses(index, 0, endIndex, 1);
+        };
+        _this.getRowHeight = function (index) {
+            return _this.props.grid.getRowRect(index).height;
+        };
+        _this.getDragCoordinate = function (clientCoords) {
+            return clientCoords[1]; // y-coordinate
+        };
+        _this.getMouseCoordinate = function (event) {
+            return event.clientY;
+        };
+        _this.getStartIndex = function () {
+            return _this.props.rowIndexStart;
+        };
+        _this.handleResizeEnd = function (index, size) {
+            _this.props.onResizeGuide(null);
+            _this.props.onRowHeightChanged(index, size);
+        };
+        _this.handleSizeChanged = function (index, size) {
+            var rect = _this.props.grid.getRowRect(index);
+            _this.props.onResizeGuide([rect.top + size]);
+        };
+        _this.isCellSelected = function (index) {
+            return regions_1.Regions.hasFullRow(_this.props.selectedRegions, index);
+        };
+        _this.isGhostIndex = function (index) {
+            return _this.props.grid.isGhostIndex(index, -1);
+        };
+        _this.renderGhostCell = function (index, extremaClasses) {
+            var rect = _this.props.grid.getGhostCellRect(index, 0);
+            return (React.createElement(rowHeaderCell_1.RowHeaderCell, { className: classNames(extremaClasses), index: index, key: Classes.rowIndexClass(index), loading: _this.props.loading, style: { height: rect.height + "px" } }));
+        };
+        _this.toRegion = function (index1, index2) {
+            // the `this` value is messed up for Regions.row, so we have to have a wrapper function here
+            return regions_1.Regions.row(index1, index2);
+        };
+        _this.isSelectedRegionRelevant = function (selectedRegion) {
+            var regionCardinality = regions_1.Regions.getRegionCardinality(selectedRegion);
+            return regionCardinality === regions_1.RegionCardinality.FULL_ROWS
+                || regionCardinality === regions_1.RegionCardinality.FULL_TABLE;
+        };
+        return _this;
+    }
+    RowHeader.prototype.shouldComponentUpdate = function (nextProps) {
+        return header_1.shouldHeaderComponentUpdate(this.props, nextProps, this.isSelectedRegionRelevant);
+    };
+    RowHeader.prototype.render = function () {
+        var _a = this.props, 
+        // from IRowHeaderProps
+        onRowHeightChanged = _a.onRowHeightChanged, renderRowHeader = _a.renderRowHeader, 
+        // from IRowHeights
+        minRowHeight = _a.minRowHeight, maxRowHeight = _a.maxRowHeight, defaultRowHeight = _a.defaultRowHeight, 
+        // from IRowIndices
+        rowIndexStart = _a.rowIndexStart, rowIndexEnd = _a.rowIndexEnd, 
+        // from IHeaderProps
+        spreadableProps = tslib_1.__rest(_a, ["onRowHeightChanged", "renderRowHeader", "minRowHeight", "maxRowHeight", "defaultRowHeight", "rowIndexStart", "rowIndexEnd"]);
+        return (React.createElement(header_1.Header, tslib_1.__assign({ convertPointToIndex: this.convertPointToRow, endIndex: this.props.rowIndexEnd, fullRegionCardinality: regions_1.RegionCardinality.FULL_ROWS, getCellExtremaClasses: this.getCellExtremaClasses, getCellIndexClass: Classes.rowCellIndexClass, getCellSize: this.getRowHeight, getDragCoordinate: this.getDragCoordinate, getIndexClass: Classes.rowIndexClass, getMouseCoordinate: this.getMouseCoordinate, handleResizeEnd: this.handleResizeEnd, handleSizeChanged: this.handleSizeChanged, headerCellIsReorderablePropName: "isRowReorderable", headerCellIsSelectedPropName: "isRowSelected", isCellSelected: this.isCellSelected, isGhostIndex: this.isGhostIndex, maxSize: this.props.maxRowHeight, minSize: this.props.minRowHeight, renderGhostCell: this.renderGhostCell, renderHeaderCell: this.props.renderRowHeader, resizeOrientation: resizeHandle_1.Orientation.HORIZONTAL, startIndex: this.props.rowIndexStart, toRegion: this.toRegion, wrapCells: this.wrapCells }, spreadableProps)));
+    };
+    return RowHeader;
+}(React.Component));
+exports.RowHeader = RowHeader;
+/**
+ * A default implementation of `IRowHeaderRenderer` that displays 1-indexed
+ * numbers for each row.
+ */
+function renderDefaultRowHeader(rowIndex) {
+    return React.createElement(rowHeaderCell_1.RowHeaderCell, { index: rowIndex, name: "" + (rowIndex + 1) });
+}
+exports.renderDefaultRowHeader = renderDefaultRowHeader;
+
+
+
+/***/ }),
+/* 142 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Classes = __webpack_require__(6);
+/**
+ * Efficiently detect when an HTMLElement is resized.
+ *
+ * Attaches an invisible "resize-sensor" div to the element. Then it checks
+ * the element's offsetWidth and offsetHeight whenever a scroll event is
+ * triggered on the "resize-sensor" children. These events are further
+ * debounced using requestAnimationFrame.
+ *
+ * Inspired by: https://github.com/marcj/css-element-queries/blob/master/src/ResizeSensor.js
+ */
+var ResizeSensor = (function () {
+    function ResizeSensor() {
+    }
+    ResizeSensor.attach = function (element, callback) {
+        var lifecycle = ResizeSensor.debounce(callback);
+        var resizeSensor = document.createElement("div");
+        resizeSensor.className = Classes.TABLE_RESIZE_SENSOR;
+        resizeSensor.style.cssText = ResizeSensor.RESIZE_SENSOR_STYLE;
+        resizeSensor.innerHTML = ResizeSensor.RESIZE_SENSOR_HTML;
+        element.appendChild(resizeSensor);
+        if (getComputedStyle(element, null).getPropertyValue("position") === "static") {
+            element.style.position = "relative";
+        }
+        var expand = resizeSensor.childNodes[0];
+        var expandChild = expand.childNodes[0];
+        var shrink = resizeSensor.childNodes[1];
+        var reset = function () {
+            expandChild.style.width = "100000px";
+            expandChild.style.height = "100000px";
+            expand.scrollLeft = 100000;
+            expand.scrollTop = 100000;
+            shrink.scrollLeft = 100000;
+            shrink.scrollTop = 100000;
+        };
+        reset();
+        var lastWidth;
+        var lastHeight;
+        var onScroll = function () {
+            var currentWidth = element.offsetWidth;
+            var currentHeight = element.offsetHeight;
+            if (currentWidth !== lastWidth || currentHeight !== lastHeight) {
+                lastWidth = currentWidth;
+                lastHeight = currentHeight;
+                lifecycle.trigger();
+            }
+            reset();
+        };
+        expand.addEventListener("scroll", onScroll);
+        shrink.addEventListener("scroll", onScroll);
+        return function () {
+            element.removeChild(resizeSensor);
+            lifecycle.cancelled = true;
+        };
+    };
+    ResizeSensor.debounce = function (callback) {
+        var scope = {
+            cancelled: false,
+            trigger: function () {
+                if (scope.triggered || scope.cancelled) {
+                    return;
+                }
+                scope.triggered = true;
+                requestAnimationFrame(function () {
+                    scope.triggered = false;
+                    if (!scope.cancelled) {
+                        callback();
+                    }
+                });
+            },
+            triggered: false,
+        };
+        return scope;
+    };
+    return ResizeSensor;
+}());
+ResizeSensor.RESIZE_SENSOR_STYLE = "position: absolute; left: 0; top: 0; right: 0; " +
+    "bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;";
+ResizeSensor.RESIZE_SENSOR_HTML = "<div class=\"" + Classes.TABLE_RESIZE_SENSOR_EXPAND + "\"\n        style=\"" + ResizeSensor.RESIZE_SENSOR_STYLE + "\"><div style=\"position: absolute; left: 0; top: 0; transition: 0s;\"\n        ></div></div><div class=\"" + Classes.TABLE_RESIZE_SENSOR_SHRINK + "\" style=\"" + ResizeSensor.RESIZE_SENSOR_STYLE + "\"\n        ><div style=\"position: absolute; left: 0; top: 0; transition: 0s; width: 200%; height: 200%;\"></div></div>";
+exports.ResizeSensor = ResizeSensor;
+
+
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var GuideLayer = (function (_super) {
+    tslib_1.__extends(GuideLayer, _super);
+    function GuideLayer() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.renderVerticalGuide = function (offset, index) {
+            var style = {
+                left: offset + "px",
+            };
+            var className = classNames(Classes.TABLE_OVERLAY, Classes.TABLE_VERTICAL_GUIDE, {
+                "bp-table-vertical-guide-flush-left": offset === 0,
+            });
+            return (React.createElement("div", { className: className, key: index, style: style }));
+        };
+        _this.renderHorizontalGuide = function (offset, index) {
+            var style = {
+                top: offset + "px",
+            };
+            var className = classNames(Classes.TABLE_OVERLAY, Classes.TABLE_HORIZONTAL_GUIDE, {
+                "bp-table-horizontal-guide-flush-top": offset === 0,
+            });
+            return (React.createElement("div", { className: className, key: index, style: style }));
+        };
+        return _this;
+    }
+    GuideLayer.prototype.shouldComponentUpdate = function (nextProps) {
+        if (this.props.className !== nextProps.className) {
+            return true;
+        }
+        // shallow-comparing guide arrays leads to tons of unnecessary re-renders, so we check the
+        // array contents explicitly.
+        return !utils_1.Utils.arraysEqual(this.props.verticalGuides, nextProps.verticalGuides)
+            || !utils_1.Utils.arraysEqual(this.props.horizontalGuides, nextProps.horizontalGuides);
+    };
+    GuideLayer.prototype.render = function () {
+        var _a = this.props, verticalGuides = _a.verticalGuides, horizontalGuides = _a.horizontalGuides, className = _a.className;
+        var verticals = (verticalGuides == null) ? undefined : verticalGuides.map(this.renderVerticalGuide);
+        var horizontals = (horizontalGuides == null) ? undefined : horizontalGuides.map(this.renderHorizontalGuide);
+        return (React.createElement("div", { className: classNames(className, Classes.TABLE_OVERLAY_LAYER) },
+            verticals,
+            horizontals));
+    };
+    return GuideLayer;
+}(React.Component));
+exports.GuideLayer = GuideLayer;
+
+
+
+/***/ }),
+/* 144 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var Classes = __webpack_require__(6);
+var utils_1 = __webpack_require__(10);
+var regions_1 = __webpack_require__(11);
+// don't include "regions" or "regionStyles" in here, because they can't be shallowly compared
+var UPDATE_PROPS_KEYS = [
+    "className",
+];
+var RegionLayer = (function (_super) {
+    tslib_1.__extends(RegionLayer, _super);
+    function RegionLayer() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.renderRegion = function (_region, index) {
+            var _a = _this.props, className = _a.className, regionStyles = _a.regionStyles;
+            return (React.createElement("div", { className: classNames(Classes.TABLE_OVERLAY, Classes.TABLE_REGION, className), key: index, style: regionStyles[index] }));
+        };
+        return _this;
+    }
+    RegionLayer.prototype.shouldComponentUpdate = function (nextProps) {
+        // shallowly comparable props like "className" tend not to change in the default table
+        // implementation, so do that check last with hope that we return earlier and avoid it
+        // altogether.
+        return !utils_1.Utils.arraysEqual(this.props.regions, nextProps.regions, regions_1.Regions.regionsEqual)
+            || !utils_1.Utils.arraysEqual(this.props.regionStyles, nextProps.regionStyles, utils_1.Utils.shallowCompareKeys)
+            || !utils_1.Utils.shallowCompareKeys(this.props, nextProps, { include: UPDATE_PROPS_KEYS });
+    };
+    RegionLayer.prototype.render = function () {
+        return React.createElement("div", { className: Classes.TABLE_OVERLAY_LAYER }, this.renderRegionChildren());
+    };
+    RegionLayer.prototype.renderRegionChildren = function () {
+        var regions = this.props.regions;
+        if (regions == null) {
+            return undefined;
+        }
+        return regions.map(this.renderRegion);
+    };
+    return RegionLayer;
+}(React.Component));
+exports.RegionLayer = RegionLayer;
+
+
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Classes = __webpack_require__(6);
+var rect_1 = __webpack_require__(20);
+var utils_1 = __webpack_require__(10);
+var Locator = (function () {
+    function Locator(tableElement, bodyElement, grid) {
+        var _this = this;
+        this.tableElement = tableElement;
+        this.bodyElement = bodyElement;
+        this.grid = grid;
+        this.convertCellIndexToClientX = function (index) {
+            return _this.grid.getCumulativeWidthAt(index);
+        };
+        this.convertCellMidpointToClientX = function (index) {
+            var cellLeft = _this.grid.getCumulativeWidthBefore(index);
+            var cellRight = _this.grid.getCumulativeWidthAt(index);
+            return (cellLeft + cellRight) / 2;
+        };
+        this.convertCellIndexToClientY = function (index) {
+            return _this.grid.getCumulativeHeightAt(index);
+        };
+        this.convertCellMidpointToClientY = function (index) {
+            var cellTop = _this.grid.getCumulativeHeightBefore(index);
+            var cellBottom = _this.grid.getCumulativeHeightAt(index);
+            return (cellTop + cellBottom) / 2;
+        };
+        this.toTableRelativeX = function (clientX) {
+            return _this.bodyElement.scrollLeft + clientX - _this.bodyElement.getBoundingClientRect().left;
+        };
+        this.toTableRelativeY = function (clientY) {
+            return _this.bodyElement.scrollTop + clientY - _this.bodyElement.getBoundingClientRect().top;
+        };
+    }
+    Locator.prototype.setGrid = function (grid) {
+        this.grid = grid;
+    };
+    Locator.prototype.getViewportRect = function () {
+        return new rect_1.Rect(this.bodyElement.scrollLeft, this.bodyElement.scrollTop, this.bodyElement.clientWidth, this.bodyElement.clientHeight);
+    };
+    Locator.prototype.getWidestVisibleCellInColumn = function (columnIndex) {
+        var cells = this.tableElement.getElementsByClassName(Classes.columnCellIndexClass(columnIndex));
+        var max = 0;
+        for (var i = 0; i < cells.length; i++) {
+            var contentWidth = utils_1.Utils.measureElementTextContent(cells.item(i)).width;
+            var cellWidth = Math.ceil(contentWidth) + Locator.CELL_HORIZONTAL_PADDING * 2;
+            if (cellWidth > max) {
+                max = cellWidth;
+            }
+        }
+        return max;
+    };
+    Locator.prototype.getTallestVisibleCellInColumn = function (columnIndex) {
+        var cells = this.tableElement
+            .getElementsByClassName(Classes.columnCellIndexClass(columnIndex) + " " + Classes.TABLE_CELL);
+        var max = 0;
+        for (var i = 0; i < cells.length; i++) {
+            var cellValue = cells.item(i).querySelector("." + Classes.TABLE_TRUNCATED_VALUE);
+            var cellTruncatedFormatText = cells.item(i).querySelector("." + Classes.TABLE_TRUNCATED_FORMAT_TEXT);
+            var cellTruncatedText = cells.item(i).querySelector("." + Classes.TABLE_TRUNCATED_TEXT);
+            var height = 0;
+            if (cellValue != null) {
+                height = cellValue.scrollHeight;
+            }
+            else if (cellTruncatedFormatText != null) {
+                height = cellTruncatedFormatText.scrollHeight;
+            }
+            else if (cellTruncatedText != null) {
+                height = cellTruncatedText.scrollHeight;
+            }
+            else {
+                // it's not anything we recognize, just use the current height of the cell
+                height = cells.item(i).scrollHeight;
+            }
+            if (height > max) {
+                max = height;
+            }
+        }
+        return max;
+    };
+    Locator.prototype.convertPointToColumn = function (clientX, useMidpoint) {
+        var tableRect = this.getTableRect();
+        if (!tableRect.containsX(clientX)) {
+            return -1;
+        }
+        var tableX = this.toTableRelativeX(clientX);
+        var limit = useMidpoint ? this.grid.numCols : this.grid.numCols - 1;
+        var lookupFn = useMidpoint ? this.convertCellMidpointToClientX : this.convertCellIndexToClientX;
+        return utils_1.Utils.binarySearch(tableX, limit, lookupFn);
+    };
+    Locator.prototype.convertPointToRow = function (clientY, useMidpoint) {
+        var tableRect = this.getTableRect();
+        if (!tableRect.containsY(clientY)) {
+            return -1;
+        }
+        var tableY = this.toTableRelativeY(clientY);
+        var limit = useMidpoint ? this.grid.numRows : this.grid.numRows - 1;
+        var lookupFn = useMidpoint ? this.convertCellMidpointToClientY : this.convertCellIndexToClientY;
+        return utils_1.Utils.binarySearch(tableY, limit, lookupFn);
+    };
+    Locator.prototype.convertPointToCell = function (clientX, clientY) {
+        var tableX = this.toTableRelativeX(clientX);
+        var tableY = this.toTableRelativeY(clientY);
+        var col = utils_1.Utils.binarySearch(tableX, this.grid.numCols - 1, this.convertCellIndexToClientX);
+        var row = utils_1.Utils.binarySearch(tableY, this.grid.numRows - 1, this.convertCellIndexToClientY);
+        return { col: col, row: row };
+    };
+    Locator.prototype.getTableRect = function () {
+        return rect_1.Rect.wrap(this.tableElement.getBoundingClientRect());
+    };
+    return Locator;
+}());
+Locator.CELL_HORIZONTAL_PADDING = 10;
+exports.Locator = Locator;
+
+
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2016 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var classNames = __webpack_require__(2);
+var React = __webpack_require__(0);
+var cell_1 = __webpack_require__(25);
+var batcher_1 = __webpack_require__(72);
+var Classes = __webpack_require__(6);
+var contextMenuTargetWrapper_1 = __webpack_require__(147);
+var rect_1 = __webpack_require__(20);
+var utils_1 = __webpack_require__(10);
+var menus_1 = __webpack_require__(67);
+var selectable_1 = __webpack_require__(38);
+var regions_1 = __webpack_require__(11);
+/**
+ * For perf, we want to ignore changes to the `ISelectableProps` part of the
+ * `ITableBodyProps` since those are only used when a context menu is launched.
+ */
+var UPDATE_PROPS_KEYS = [
+    "grid",
+    "locator",
+    "viewportRect",
+    "cellRenderer",
+    "rowIndexStart",
+    "rowIndexEnd",
+    "columnIndexStart",
+    "columnIndexEnd",
+    "selectedRegions",
+];
+/**
+ * We don't want to reset the batcher when this set of keys changes. Any other
+ * changes should reset the batcher's internal cache.
+ */
+var RESET_CELL_KEYS_BLACKLIST = [
+    "columnIndexEnd",
+    "columnIndexStart",
+    "rowIndexEnd",
+    "rowIndexStart",
+    "viewportRect",
+];
+var TableBody = (function (_super) {
+    tslib_1.__extends(TableBody, _super);
+    function TableBody() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.batcher = new batcher_1.Batcher();
+        _this.renderContextMenu = function (e) {
+            var _a = _this.props, selectedRegions = _a.selectedRegions, renderBodyContextMenu = _a.renderBodyContextMenu, grid = _a.grid;
+            if (renderBodyContextMenu == null) {
+                return undefined;
+            }
+            var target = _this.locateClick(e.nativeEvent);
+            return renderBodyContextMenu(new menus_1.MenuContext(target, selectedRegions, grid.numRows, grid.numCols));
+        };
+        _this.renderNewCell = function (row, col) {
+            var _a = _this.props, columnIndexEnd = _a.columnIndexEnd, grid = _a.grid, rowIndexEnd = _a.rowIndexEnd;
+            var extremaClasses = grid.getExtremaClasses(row, col, rowIndexEnd, columnIndexEnd);
+            var isGhost = grid.isGhostIndex(row, col);
+            return _this.renderCell(row, col, extremaClasses, isGhost);
+        };
+        _this.renderCell = function (rowIndex, columnIndex, extremaClasses, isGhost) {
+            var _a = _this.props, cellRenderer = _a.cellRenderer, loading = _a.loading, grid = _a.grid;
+            var baseCell = isGhost ? cell_1.emptyCellRenderer() : cellRenderer(rowIndex, columnIndex);
+            var className = classNames(TableBody.cellClassNames(rowIndex, columnIndex), extremaClasses, (_b = {},
+                _b[Classes.TABLE_CELL_GHOST] = isGhost,
+                _b[Classes.TABLE_CELL_LEDGER_ODD] = (rowIndex % 2) === 1,
+                _b[Classes.TABLE_CELL_LEDGER_EVEN] = (rowIndex % 2) === 0,
+                _b), baseCell.props.className);
+            var key = TableBody.cellReactKey(rowIndex, columnIndex);
+            var rect = isGhost ? grid.getGhostCellRect(rowIndex, columnIndex) : grid.getCellRect(rowIndex, columnIndex);
+            var cellLoading = baseCell.props.loading != null ? baseCell.props.loading : loading;
+            var style = tslib_1.__assign({}, baseCell.props.style, rect_1.Rect.style(rect));
+            return React.cloneElement(baseCell, { className: className, key: key, loading: cellLoading, style: style });
+            var _b;
+        };
+        _this.handleSelectionEnd = function () {
+            _this.activationCell = null; // not strictly required, but good practice
+        };
+        _this.locateClick = function (event) {
+            _this.activationCell = _this.props.locator.convertPointToCell(event.clientX, event.clientY);
+            return regions_1.Regions.cell(_this.activationCell.row, _this.activationCell.col);
+        };
+        _this.locateDrag = function (_event, coords) {
+            var start = _this.activationCell;
+            var end = _this.props.locator.convertPointToCell(coords.current[0], coords.current[1]);
+            return regions_1.Regions.cell(start.row, start.col, end.row, end.col);
+        };
+        return _this;
+    }
+    /**
+     * Returns the array of class names that must be applied to each table
+     * cell so that we can locate any cell based on its coordinate.
+     */
+    TableBody.cellClassNames = function (rowIndex, columnIndex) {
+        return [
+            Classes.rowCellIndexClass(rowIndex),
+            Classes.columnCellIndexClass(columnIndex),
+        ];
+    };
+    TableBody.cellReactKey = function (rowIndex, columnIndex) {
+        return "cell-" + rowIndex + "-" + columnIndex;
+    };
+    TableBody.prototype.shouldComponentUpdate = function (nextProps) {
+        var propKeysWhitelist = { include: UPDATE_PROPS_KEYS };
+        return !utils_1.Utils.shallowCompareKeys(this.props, nextProps, propKeysWhitelist);
+    };
+    TableBody.prototype.componentWillUpdate = function (nextProps) {
+        var resetKeysBlacklist = { exclude: RESET_CELL_KEYS_BLACKLIST };
+        var shouldResetBatcher = !utils_1.Utils.shallowCompareKeys(this.props, nextProps, resetKeysBlacklist);
+        if (shouldResetBatcher) {
+            this.batcher.reset();
+        }
+    };
+    TableBody.prototype.componentWillUnmount = function () {
+        this.batcher.cancelOutstandingCallback();
+    };
+    TableBody.prototype.render = function () {
+        var _this = this;
+        var _a = this.props, allowMultipleSelection = _a.allowMultipleSelection, columnIndexEnd = _a.columnIndexEnd, columnIndexStart = _a.columnIndexStart, grid = _a.grid, onFocus = _a.onFocus, onSelection = _a.onSelection, rowIndexEnd = _a.rowIndexEnd, rowIndexStart = _a.rowIndexStart, selectedRegions = _a.selectedRegions, selectedRegionTransform = _a.selectedRegionTransform;
+        // render cells in batches
+        this.batcher.startNewBatch();
+        for (var rowIndex = rowIndexStart; rowIndex <= rowIndexEnd; rowIndex++) {
+            for (var columnIndex = columnIndexStart; columnIndex <= columnIndexEnd; columnIndex++) {
+                this.batcher.addArgsToBatch(rowIndex, columnIndex);
+            }
+        }
+        this.batcher.removeOldAddNew(this.renderNewCell);
+        if (!this.batcher.isDone()) {
+            this.batcher.idleCallback(function () { return _this.forceUpdate(); });
+        }
+        var cells = this.batcher.getList();
+        var style = grid.getRect().sizeStyle();
+        return (React.createElement(selectable_1.DragSelectable, { allowMultipleSelection: allowMultipleSelection, locateClick: this.locateClick, locateDrag: this.locateDrag, onFocus: onFocus, onSelection: onSelection, onSelectionEnd: this.handleSelectionEnd, selectedRegions: selectedRegions, selectedRegionTransform: selectedRegionTransform },
+            React.createElement(contextMenuTargetWrapper_1.ContextMenuTargetWrapper, { className: classNames(Classes.TABLE_BODY_VIRTUAL_CLIENT, Classes.TABLE_CELL_CLIENT), renderContextMenu: this.renderContextMenu, style: style }, cells)));
+    };
+    return TableBody;
+}(React.Component));
+TableBody.defaultProps = {
+    loading: false,
+};
+exports.TableBody = TableBody;
+
+
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ * Licensed under the BSD-3 License as modified (the “License”); you may obtain a copy
+ * of the license at https://github.com/palantir/blueprint/blob/master/LICENSE
+ * and https://github.com/palantir/blueprint/blob/master/PATENTS
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(1);
+var core_1 = __webpack_require__(7);
+var PureRender = __webpack_require__(4);
+var React = __webpack_require__(0);
+/**
+ * Since the ContextMenuTarget uses the `onContextMenu` prop instead
+ * `element.addEventListener`, the prop can be lost. This wrapper helps us
+ * maintain context menu fuctionality when doing fancy React.cloneElement
+ * chains.
+ */
+var ContextMenuTargetWrapper = (function (_super) {
+    tslib_1.__extends(ContextMenuTargetWrapper, _super);
+    function ContextMenuTargetWrapper() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ContextMenuTargetWrapper.prototype.render = function () {
+        var _a = this.props, className = _a.className, children = _a.children, style = _a.style;
+        return React.createElement("div", { className: className, style: style }, children);
+    };
+    ContextMenuTargetWrapper.prototype.renderContextMenu = function (e) {
+        return this.props.renderContextMenu(e);
+    };
+    return ContextMenuTargetWrapper;
+}(React.Component));
+ContextMenuTargetWrapper = tslib_1.__decorate([
+    core_1.ContextMenuTarget,
+    PureRender
+], ContextMenuTargetWrapper);
+exports.ContextMenuTargetWrapper = ContextMenuTargetWrapper;
 
 
 
