@@ -1,13 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Hello } from "./components/Hello";
-import {TableEx  } from "./components/table";
+import { Game } from "./components/game";
+ 
 
 ReactDOM.render(
     <div>
-    <Hello compiler="TypeScript" framework="React" />
-    <TableEx></TableEx>
+     <Game playerName='unknown'></Game>
     </div>,
     document.getElementById("example")
 );
