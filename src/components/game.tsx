@@ -8,6 +8,7 @@ interface GameState {
 }
 export class Game extends React.Component<GameProps, GameState> {
     public state: GameState = { started: false, name: '' };
+    private gameData=['x', 'y', 'z','a', 'b', 'c','m', 'n', 'o'];
     constructor(props: GameProps) {
         super(props)
     }
@@ -17,6 +18,10 @@ export class Game extends React.Component<GameProps, GameState> {
 
     private cb = () => {
         console.log('Clicked! do something');
+    }
+
+    private saveGame= () => {
+        console.log('Saved game!', DataService.getByKey('GAME'));
     }
 
     render() {
@@ -35,7 +40,8 @@ export class Game extends React.Component<GameProps, GameState> {
                 <h5> You: {this.state.name} </h5>
             }
 
-            <Grid cells={['x', 'o', 'x']} doX={this.cb} ></Grid>
+            <Grid cells={this.gameData} doX={this.cb} ></Grid>
+            <button onClick={this.saveGame} className="pt-button pt-primary">Save </button>
 
         </div>;
     }
@@ -47,6 +53,7 @@ class Grid extends React.Component<any, any> {
         super(props)
         this.state.cells = props.cells;
         console.log('sts', this.state.cells);
+        DataService.addKey('GAME');
     }
     private edit = (x: number, y: number, evt: any) => {
         console.log('Edit', evt.target.value, 'at: (', x, ',', y, ')');
@@ -56,8 +63,9 @@ class Grid extends React.Component<any, any> {
         this.state.cells.forEach((e: string) => {
             n.push(e);
         });
-        n[x] = cx;
+        n[x+y*3] = cx;
         this.setState({ cells: n });
+        DataService.save('GAME',n);
     }
     render() {
         return <div>
@@ -89,7 +97,7 @@ class Grid extends React.Component<any, any> {
             [0, 1, 2].forEach(k => {
                 els.push(
                 <input type={'text'} 
-                value={this.state.cells[k]} className="pt-input pt-round"
+                value={this.state.cells[k+3*y]} className="pt-input pt-round"
                 onChange={(e) => this.edit(k, y, e)} key={"cell_" + k} />
             );
             })
@@ -99,5 +107,37 @@ class Grid extends React.Component<any, any> {
         </td>
 
 
+    }
+}
+
+export class DataService {
+
+    static store:Array<{key:string,data:any, version?:number}>=[];
+
+    static save(key:string, data:any, history=false) {
+       
+        DataService.store.forEach(e=>{
+            if(e.key===key){
+                e.version++;
+                e.data=data;
+                return;
+            }
+        });
+    }
+
+    static getByKey(key:string):any {
+        let d= {};
+        DataService.store.forEach(e=>{
+            if(e.key===key){
+                console.log("Data Found for Key: ", key);
+                d= e.data;
+            }
+        });
+        return d;
+    }
+
+    static addKey(key:string) {
+        console.log('New Key =>',key);
+        DataService.store.push({key:key,data:{},version:0})
     }
 }

@@ -22406,11 +22406,15 @@ var Game = (function (_super) {
     function Game(props) {
         var _this = _super.call(this, props) || this;
         _this.state = { started: false, name: '' };
+        _this.gameData = ['x', 'y', 'z', 'a', 'b', 'c', 'm', 'n', 'o'];
         _this.updateInputValue = function (v) {
             _this.setState({ name: v.target.value });
         };
         _this.cb = function () {
             console.log('Clicked! do something');
+        };
+        _this.saveGame = function () {
+            console.log('Saved game!', DataService.getByKey('GAME'));
         };
         return _this;
     }
@@ -22429,7 +22433,8 @@ var Game = (function (_super) {
                 " You: ",
                 this.state.name,
                 " "),
-            React.createElement(Grid, { cells: ['x', 'o', 'x'], doX: this.cb }));
+            React.createElement(Grid, { cells: this.gameData, doX: this.cb }),
+            React.createElement("button", { onClick: this.saveGame, className: "pt-button pt-primary" }, "Save "));
     };
     return Game;
 }(React.Component));
@@ -22446,8 +22451,9 @@ var Grid = (function (_super) {
             _this.state.cells.forEach(function (e) {
                 n.push(e);
             });
-            n[x] = cx;
+            n[x + y * 3] = cx;
             _this.setState({ cells: n });
+            DataService.save('GAME', n);
         };
         _this.renderTrs = function () {
             var trs = [];
@@ -22463,13 +22469,14 @@ var Grid = (function (_super) {
             var els = [];
             {
                 [0, 1, 2].forEach(function (k) {
-                    els.push(React.createElement("input", { type: 'text', value: _this.state.cells[k], className: "pt-input pt-round", onChange: function (e) { return _this.edit(k, y, e); }, key: "cell_" + k }));
+                    els.push(React.createElement("input", { type: 'text', value: _this.state.cells[k + 3 * y], className: "pt-input pt-round", onChange: function (e) { return _this.edit(k, y, e); }, key: "cell_" + k }));
                 });
             }
             return React.createElement("td", null, els);
         };
         _this.state.cells = props.cells;
         console.log('sts', _this.state.cells);
+        DataService.addKey('GAME');
         return _this;
     }
     Grid.prototype.render = function () {
@@ -22479,6 +22486,37 @@ var Grid = (function (_super) {
     };
     return Grid;
 }(React.Component));
+var DataService = (function () {
+    function DataService() {
+    }
+    DataService.save = function (key, data, history) {
+        if (history === void 0) { history = false; }
+        DataService.store.forEach(function (e) {
+            if (e.key === key) {
+                e.version++;
+                e.data = data;
+                return;
+            }
+        });
+    };
+    DataService.getByKey = function (key) {
+        var d = {};
+        DataService.store.forEach(function (e) {
+            if (e.key === key) {
+                console.log("Data Found for Key: ", key);
+                d = e.data;
+            }
+        });
+        return d;
+    };
+    DataService.addKey = function (key) {
+        console.log('New Key =>', key);
+        DataService.store.push({ key: key, data: {}, version: 0 });
+    };
+    DataService.store = [];
+    return DataService;
+}());
+exports.DataService = DataService;
 
 
 /***/ })
