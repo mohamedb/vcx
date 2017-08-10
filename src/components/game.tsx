@@ -129,7 +129,6 @@ export class DataService {
         let d= {};
         DataService.store.forEach(e=>{
             if(e.key===key){
-                console.log("Data Found for Key: ", key);
                 d= e.data;
             }
         });
@@ -137,7 +136,6 @@ export class DataService {
     }
 
     static addKey(key:string) {
-        console.log('New Key =>',key);
         DataService.store.push({key:key,data:{},version:0})
     }
 }

@@ -22503,14 +22503,12 @@ var DataService = (function () {
         var d = {};
         DataService.store.forEach(function (e) {
             if (e.key === key) {
-                console.log("Data Found for Key: ", key);
                 d = e.data;
             }
         });
         return d;
     };
     DataService.addKey = function (key) {
-        console.log('New Key =>', key);
         DataService.store.push({ key: key, data: {}, version: 0 });
     };
     DataService.store = [];
