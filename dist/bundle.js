@@ -22439,8 +22439,8 @@ var Grid = (function (_super) {
     function Grid(props) {
         var _this = _super.call(this, props) || this;
         _this.state = { cells: Array };
-        _this.edit = function (x, evt) {
-            console.log('Edit', evt.target.value, 'at', x);
+        _this.edit = function (x, y, evt) {
+            console.log('Edit', evt.target.value, 'at: (', x, ',', y, ')');
             var cx = evt.target.value;
             var n = [];
             _this.state.cells.forEach(function (e) {
@@ -22453,17 +22453,17 @@ var Grid = (function (_super) {
             var trs = [];
             {
                 [0, 1, 2].forEach(function (k) {
-                    trs.push(React.createElement("tr", { key: "tr_" + k }, _this.renderCells()));
+                    trs.push(React.createElement("tr", { key: "tr_" + k }, _this.renderCells(k)));
                 });
             }
             ;
             return (React.createElement("tbody", null, trs));
         };
-        _this.renderCells = function () {
+        _this.renderCells = function (y) {
             var els = [];
             {
                 [0, 1, 2].forEach(function (k) {
-                    els.push(React.createElement("input", { type: 'text', value: _this.state.cells[k], onChange: function (e) { return _this.edit(k, e); }, key: "cell_" + k }));
+                    els.push(React.createElement("input", { type: 'text', value: _this.state.cells[k], className: "pt-input pt-round", onChange: function (e) { return _this.edit(k, y, e); }, key: "cell_" + k }));
                 });
             }
             return React.createElement("td", null, els);
@@ -22475,7 +22475,7 @@ var Grid = (function (_super) {
     Grid.prototype.render = function () {
         return React.createElement("div", null,
             React.createElement("h5", { onClick: this.props.doX }, " Game board!"),
-            React.createElement("table", null, this.renderTrs()));
+            React.createElement("table", { className: "pt-table pt-bordered" }, this.renderTrs()));
     };
     return Grid;
 }(React.Component));

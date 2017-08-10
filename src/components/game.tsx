@@ -48,8 +48,8 @@ class Grid extends React.Component<any, any> {
         this.state.cells = props.cells;
         console.log('sts', this.state.cells);
     }
-    private edit = (x: any, evt: any) => {
-        console.log('Edit', evt.target.value, 'at', x);
+    private edit = (x: number, y: number, evt: any) => {
+        console.log('Edit', evt.target.value, 'at: (', x, ',', y, ')');
         let cx = evt.target.value;
         let n: any = [];
 
@@ -62,7 +62,7 @@ class Grid extends React.Component<any, any> {
     render() {
         return <div>
             <h5 onClick={this.props.doX}> Game board!</h5>
-            <table>
+            <table className="pt-table pt-bordered">
                 {this.renderTrs()}
             </table>
         </div>
@@ -74,7 +74,7 @@ class Grid extends React.Component<any, any> {
             [0, 1, 2].forEach(k => {
                 trs.push(
                     <tr key={"tr_" + k}>
-                         {this.renderCells()}
+                        {this.renderCells(k)}
                     </tr>);
             })
         };
@@ -83,11 +83,15 @@ class Grid extends React.Component<any, any> {
         </tbody>);
     }
 
-    private renderCells = () => {
+    private renderCells = (y: number) => {
         let els: Array<any> = [];
         {
             [0, 1, 2].forEach(k => {
-                els.push(<input type={'text'} value={this.state.cells[k]} onChange={(e) => this.edit(k, e)} key={"cell_" + k} />);
+                els.push(
+                <input type={'text'} 
+                value={this.state.cells[k]} className="pt-input pt-round"
+                onChange={(e) => this.edit(k, y, e)} key={"cell_" + k} />
+            );
             })
         }
         return <td>
