@@ -22409,12 +22409,15 @@ var Game = (function (_super) {
         _this.updateInputValue = function (v) {
             _this.setState({ name: v.target.value });
         };
+        _this.cb = function () {
+            console.log('Clicked! do something');
+        };
         return _this;
     }
     Game.prototype.render = function () {
         var _this = this;
         return React.createElement("div", null,
-            React.createElement("input", { type: 'text', value: this.state.name, onChange: function (evt) { return _this.updateInputValue(evt); } }),
+            React.createElement("input", { type: 'email', value: this.state.name, onChange: function (evt) { return _this.updateInputValue(evt); } }),
             React.createElement("button", { onClick: function () {
                     _this.state = { started: true };
                 } }, "Play"),
@@ -22425,11 +22428,57 @@ var Game = (function (_super) {
             React.createElement("h5", null,
                 " You: ",
                 this.state.name,
-                " "));
+                " "),
+            React.createElement(Grid, { cells: ['x', 'o', 'x'], doX: this.cb }));
     };
     return Game;
 }(React.Component));
 exports.Game = Game;
+var Grid = (function (_super) {
+    __extends(Grid, _super);
+    function Grid(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = { cells: Array };
+        _this.edit = function (x, evt) {
+            console.log('Edit', evt.target.value, 'at', x);
+            var cx = evt.target.value;
+            var n = [];
+            _this.state.cells.forEach(function (e) {
+                n.push(e);
+            });
+            n[x] = cx;
+            _this.setState({ cells: n });
+        };
+        _this.renderTrs = function () {
+            var trs = [];
+            {
+                [0, 1, 2].forEach(function (k) {
+                    trs.push(React.createElement("tr", { key: "tr_" + k }, _this.renderCells()));
+                });
+            }
+            ;
+            return (React.createElement("tbody", null, trs));
+        };
+        _this.renderCells = function () {
+            var els = [];
+            {
+                [0, 1, 2].forEach(function (k) {
+                    els.push(React.createElement("input", { type: 'text', value: _this.state.cells[k], onChange: function (e) { return _this.edit(k, e); }, key: "cell_" + k }));
+                });
+            }
+            return React.createElement("td", null, els);
+        };
+        _this.state.cells = props.cells;
+        console.log('sts', _this.state.cells);
+        return _this;
+    }
+    Grid.prototype.render = function () {
+        return React.createElement("div", null,
+            React.createElement("h5", { onClick: this.props.doX }, " Game board!"),
+            React.createElement("table", null, this.renderTrs()));
+    };
+    return Grid;
+}(React.Component));
 
 
 /***/ })
